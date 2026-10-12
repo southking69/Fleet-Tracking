@@ -1,0 +1,42 @@
+# Fleetbase console (Ember) + the Service Tracker engine.
+#
+# Build context: <fleetbase>/console   (docker-compose.override.yml: context ./console, dockerfile ../jalal-ops/Dockerfile.console)
+# Prerequisite (done by ops/scripts/prepare-fleetbase.sh): console/vendor/service-tracker holds the engine
+# and console/package.json + console/pnpm-lock.yaml already list "@jalal/service-tracker-engine": "file:./vendor/service-tracker".
+#
+# Differences from the stock console/Dockerfile: (1) the engine directory is copied BEFORE `pnpm install`
+# (a `file:` dependency must exist at install time); (2) runtime config stays enabled so console/fleetbase.config.json
+# (mounted by the override) can point the console at the API host without a rebuild.
+#
+# NOT EXECUTED where this file was written (no Docker daemon, no registry access).
+FROM node:22.22.0-alpine3.22 AS builder
+WORKDIR /console
+
+RUN mkdir -p ~/.pnpm
+ENV PNPM_HOME=/root/.pnpm
+ENV PATH=/root/.pnpm/bin:$PATH
+
+ARG ENVIRONMENT=production
+ARG DISABLE_FLEETBASE_ATTRIBUTION=false
+ARG DISABLE_RUNTIME_CONFIG=false
+ENV DISABLE_FLEETBASE_ATTRIBUTION=$DISABLE_FLEETBASE_ATTRIBUTION
+ENV DISABLE_RUNTIME_CONFIG=$DISABLE_RUNTIME_CONFIG
+
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
+COPY .npmr[c] ./
+COPY vendor/service-tracker ./vendor/service-tracker
+
+RUN npm install -g ember-cli pnpm
+RUN apk update && apk add git openssh-client
+RUN mkdir -p -m 0600 ~/.ssh && ssh-keyscan github.com >> ~/.ssh/known_hosts
+
+RUN pnpm install --frozen-lockfile
+
+COPY . .
+RUN pnpm build --environment $ENVIRONMENT
+
+FROM nginx:alpine
+COPY --from=builder /console/dist /usr/share/nginx/html
+EXPOSE 4200
+COPY nginx.conf /etc/nginx/conf.d/default.conf
+CMD ["nginx", "-g", "daemon off;"]

@@ -1,0 +1,172 @@
+# INTEGRATION: stand up a real Fleetbase with docker compose, install the Service Tracker extension, migrate, and run ops/smoke/smoke.sh.
+#
+# HONESTY NOTE: THIS WORKFLOW HAS NEVER RUN. It was written against the Fleetbase repository files (docker-compose.yml, docker/Dockerfile,
+# api/deploy.sh, scripts/ci/mint-api-key.php) read on 12 Oct 2026, but there was no Docker daemon, no packagist and no registry access where it
+# was written. Expect the first runs to fail for mundane reasons (image tag names, composer resolution of fleetops-api 0.6.71, MySQL privileges,
+# a tinker quirk, an assumption in smoke.sh about a response shape). Treat the first red run as the beginning of the work, not as a regression.
+# See ops/RISKS.md R-01.
+#
+# Manual dispatch only. Takes ~10-25 min without the console build, much longer with it.
+name: Integration (manual)
+
+on:
+  workflow_dispatch:
+    inputs:
+      fleetbase_ref:
+        description: "fleetbase/fleetbase git ref (branch, tag or SHA)"
+        default: "main"
+        required: true
+      base_image:
+        description: "Stock API image the extension is layered on (must ship fleetops-api 0.6.71)"
+        default: "fleetbase/fleetbase-api:latest"
+        required: true
+      pdf_combos:
+        description: "PDF toggle combinations: sample (14) or all (64)"
+        type: choice
+        options: [sample, all]
+        default: sample
+      build_console:
+        description: "Also build the console image with the Ember engine (slow; never run)"
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+
+jobs:
+  integration:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    env:
+      COMPOSE_PROJECT_NAME: stint
+    steps:
+      - name: Checkout this repository
+        uses: actions/checkout@v4
+        with:
+          path: ext
+
+      - name: Checkout Fleetbase
+        uses: actions/checkout@v4
+        with:
+          repository: fleetbase/fleetbase
+          ref: ${{ inputs.fleetbase_ref }}
+          path: fleetbase
+
+      - uses: actions/setup-node@v4
+        if: ${{ inputs.build_console }}
+        with:
+          node-version: "22"
+
+      - name: Install the extension into the checkout (copies files, adds the console dependency)
+        working-directory: fleetbase
+        run: |
+          set -euo pipefail
+          if [ "${{ inputs.build_console }}" = "true" ]; then
+            corepack enable
+            bash ../ext/ops/scripts/prepare-fleetbase.sh . --src ../ext/service-tracker
+          else
+            bash ../ext/ops/scripts/prepare-fleetbase.sh . --src ../ext/service-tracker --no-pnpm
+          fi
+
+      - name: Write .env with throw-away secrets
+        working-directory: fleetbase
+        run: |
+          set -euo pipefail
+          rootpw="$(openssl rand -hex 16)"; apppw="$(openssl rand -hex 16)"
+          echo "::add-mask::$rootpw"; echo "::add-mask::$apppw"
+          {
+            echo "APP_SCHEME=http"
+            echo "API_FQDN=localhost:8000"
+            echo "CONSOLE_FQDN=localhost:4200"
+            echo "SESSION_DOMAIN=localhost"
+            echo "APP_KEY=base64:$(openssl rand -base64 32)"
+            echo "DB_ROOT_PASSWORD=$rootpw"
+            echo "DB_PASSWORD=$apppw"
+            echo "FLEETBASE_API_BASE_IMAGE=${{ inputs.base_image }}"
+            echo "GITHUB_AUTH_KEY=${{ secrets.GITHUB_TOKEN }}"
+            echo "MAIL_MAILER=log"
+          } > .env
+          echo "DB_ROOT_PASSWORD=$rootpw" >> "$GITHUB_ENV"
+
+      - name: Build the API image (stock image + composer require jalal/service-tracker-api)
+        working-directory: fleetbase
+        run: docker compose build application
+
+      - name: Build the console image with the engine (optional)
+        if: ${{ inputs.build_console }}
+        working-directory: fleetbase
+        run: |
+          printf '{ "API_HOST": "http://localhost:8000" }\n' > console/fleetbase.config.json
+          docker compose build console
+
+      - name: Start database and cache
+        working-directory: fleetbase
+        run: |
+          set -euo pipefail
+          docker compose up -d database cache
+          for i in $(seq 1 60); do
+            [ "$(docker inspect -f '{{.State.Health.Status}}' "$(docker compose ps -q database)")" = healthy ] && break
+            sleep 3
+          done
+          docker compose exec -T database sh -c 'mysql -uroot -p"$MYSQL_ROOT_PASSWORD" -e "GRANT ALL PRIVILEGES ON *.* TO \"$MYSQL_USER\"@\"%\"; FLUSH PRIVILEGES;"'
+
+      - name: Start the application tier
+        working-directory: fleetbase
+        run: docker compose up -d application queue scheduler socket httpd
+
+      - name: Deploy (migrate incl. the 7 Service Tracker tables, seed, create permissions) with Fleetbase's own deploy.sh
+        working-directory: fleetbase
+        run: |
+          set -euo pipefail
+          docker compose exec -T application bash -c "./deploy.sh"
+          docker compose exec -T application php artisan storage:link || true
+          docker compose exec -T application php artisan migrate:status | tee migrate-status.txt
+          grep -q 'create_service_visits_table' migrate-status.txt
+          if grep -Ei 'pending' migrate-status.txt; then echo 'pending migrations remain'; exit 1; fi
+
+      - name: Wait for the API
+        run: |
+          for i in $(seq 1 60); do
+            curl -fsS http://localhost:8000/health | grep -q '"status"' && exit 0
+            sleep 5
+          done
+          echo "API did not come up"; exit 1
+
+      - name: Mint two throw-away companies, users and API keys
+        working-directory: fleetbase
+        run: bash ../ext/ops/smoke/bootstrap.sh smoke.env
+
+      - name: Run the smoke test
+        working-directory: fleetbase
+        env:
+          BASE_URL: http://localhost:8000
+          PDF_COMBOS: ${{ inputs.pdf_combos }}
+        run: |
+          set -euo pipefail
+          export DB_QUERY_CMD="docker compose exec -T database mysql -uroot -p${DB_ROOT_PASSWORD} fleetbase -N -e"
+          bash ../ext/ops/smoke/smoke.sh --env smoke.env 2>&1 | tee smoke-output.txt
+
+      - name: Collect logs
+        if: always()
+        working-directory: fleetbase
+        run: |
+          docker compose ps || true
+          docker compose logs --no-color --tail=500 application queue scheduler database > compose-logs.txt 2>&1 || true
+          docker compose exec -T application sh -c 'tail -n 300 storage/logs/*.log' > laravel-log-tail.txt 2>&1 || true
+
+      - name: Upload evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: integration-evidence
+          path: |
+            fleetbase/smoke-output.txt
+            fleetbase/compose-logs.txt
+            fleetbase/laravel-log-tail.txt
+            fleetbase/migrate-status.txt
+          if-no-files-found: ignore
+
+      - name: Tear down
+        if: always()
+        working-directory: fleetbase
+        run: docker compose down -v || true

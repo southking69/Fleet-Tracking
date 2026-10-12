@@ -1,0 +1,77 @@
+# server NOTES (data layer)
+
+## Controller methods the routes expect
+Internal (explicit REST routes in routes.php: query, find, create, update, delete, bulkDelete) on Visit, VendorStop, ServiceJob, Catalog, Lane, Damage, PettyCash controllers, plus:
+- VisitController: `stops($id)`, `createStop($id)`, `jobs($id)`, `createJob($id)`
+- VehicleController@due, DashboardController@index, ReportController@visitPdf($id), ReportController@export($type) (`full|period`)
+- Api: Visit `query|find|create|update|delete`; VendorStop `create($id)`, `checkIn($id,$stop)`, `approvalRequested($id,$stop)`, `approvalReceived($id,$stop)`, `left($id,$stop)`, `query|find|update`; ServiceJob `query|find|create|update` (create also serves `visits/{id}/jobs`); Damage/PettyCash `query|find|create|update`; Upload `create`.
+
+## Verification against the real Fleetbase sources
+`php tests/Verify/verify_fleetbase_compat.php [refDir]` (218 checks, no Laravel/DB needed) parses the real `fleetbase/core-api` v1.6.68 and `fleetbase/fleetops` v0.6.71 checkouts and checks routes -> controller methods, migrations, model fillables, every column/enum the close hook writes, the permission schema and composer constraints. What it found and what was changed:
+- `fleetbaseRoutes()` (core `Expansions/Route.php`) takes `($name, $registerFn, $options, $controller)`, ignores `['controller' => ...]` in `$options`, and dispatches to `queryRecord/findRecord/createRecord/updateRecord/deleteRecord/bulkDelete` (core `Routing/RESTRegistrar.php`). Our controllers expose `query/find/create/update/delete`, so `routes.php` now registers the same URL shapes explicitly (`$rest(...)`), including `DELETE x/bulk-delete` before `{id}`.
+- Models declared `protected $publicIdColumn`; `HasApiModelBehavior` declares `public static $publicIdColumn` -> PHP fatal on class load. Removed.
+- Close hook: `issues.location` is NOT NULL spatial with no default (MySQL 1364) -> now written (vehicle position or Point(0,0), like `InspectionSubmission::failureLocation`); `maintainable_type`/`subject_type` are the Vehicle FQCN (FleetOps queries `static::class`; `getMorphClass()` would return the legacy `Fleetbase\Models\Vehicle` alias); schedules use `interval_method=distance` + `interval_distance` (FleetOps `resetAfterCompletion` does `add("$interval_value $interval_unit")`, so `interval_unit='km'` would throw); odometers cast to unsigned ints; `performed_by` = the FleetOps Vendor when known.
+- Permissions are now a core-style schema (`src/Auth/Schemas/ServiceTracker.php`) materialised by `php artisan fleetbase:create-permissions`; the composer package carries the `fleetbase-extension` keyword (needed for schema and sandbox-migration discovery). Resource names are deliberately distinctive because `Auth::isResourceGuarded()` matches `name like '% {resource}'` across all services.
+- Migrations moved to `server/migrations` (the path core scans for `fleetbase-extension` packages, e.g. `fleetbase:migrate-sandbox`); the provider loads them from there.
+
+## Still unverified (needs a running Fleetbase + MySQL)
+- Migrations/models/seeders were never executed against MySQL (packagist is unreachable from the build sandbox, so no `composer install` of core-api/fleetops was possible); only parsed and `php -l`'d.
+- `Setting::lookupCompany/configureCompany` runtime behaviour (source read, not run); `Company::created` seeding hook inside Fleetbase's sign-up transaction.
+- Spatie activitylog `LogOptions` on our models (same API FleetOps models use).
+- Our controllers do not extend `FleetbaseController`, so core's `AuthorizationGuard` does not enforce the permission schema (it skips controllers without `getResourceSingularName()`); access control is the role checks in `ServiceTrackerController`.
+- Active distance schedules written by the close hook are picked up by `fleetops:process-maintenance-triggers`: when `vehicles.odometer >= next_due_odometer` FleetOps opens a preventive-maintenance WorkOrder. Intended, but it relies on the vehicle odometer in FleetOps being maintained.
+- Global `BelongsToCompany` scope fails open in CLI/queue; every controller query carries an explicit `company_uuid` clause (core-api's own stated tenancy rule).
+- `VisitMapper::filterColumns` / `Schema::hasColumn` use the default DB connection; Fleetbase models use `config('fleetbase.connection.db','mysql')` (same in a default install).
+
+## Deviations from SPEC
+- Added nullable `client_uuid` (unique per company) on visits, stops, jobs, damages, petty cash for offline idempotency.
+- Added `suggested_vendor_name` on service_catalog_items so the vendor is not lost when the FleetOps vendor does not exist yet.
+- Dropdown lists (categories, damage locations, etc.) live in the settings payload only, not tables.
+- Technician "own visits only" is not expressible via permission names; controllers must enforce it.
+
+---
+
+# Application layer
+
+Files: `src/Http/Controllers/**`, `src/Http/Requests/**`, `src/Http/Resources/**`, `src/Observers/ServiceVisitObserver.php`, `src/Services/VisitMapper.php`, `src/Exports/**`, `src/Reports/**`, `resources/views/report.blade.php`, `src/Console/Commands/ImportAppsScriptData.php`.
+
+## Structure
+- `ServiceTrackerController` (company/user/roles/idempotency/response helpers) -> `CrudController` (query, find, create, update, delete, bulkDelete) -> `ChildCrudController` (records that belong to a visit). Controllers do **not** extend `FleetbaseController` (its action signatures are not verifiable here); they expose the same action names `fleetbaseRoutes()` dispatches to.
+- `Api\v1\*` controllers extend the console ones with `$internal = false` (envelope `{data, meta}`, `id` = public id). Console envelope is `{<plural_snake>: [...], meta: {total, per_page, current_page, last_page}}` and single records are returned bare. The envelope lives in `ServiceTrackerController::respondList/respondOne` (one place to change if the Ember adapter wants something else).
+- `VisitMapper` is the only Eloquent -> engine-array mapper. `calc()` adds `stops` and `jobs` (arrays) to the engine output; `sinfo[i]` / `si[i]` are aligned with `visit->jobs[i]` / `visit->stops[i]` (relation order). The engine ctx is sliced per plate (`engineContext`) so the engine's linear previous-due scan stays cheap.
+- Visit `find` embeds: stops, jobs, damages (+photos), petty cash (+receipts), pickup/return photos and the full engine output under `calc`. `query` embeds the engine summary (without `si`/`sinfo`/`stops`/`jobs`) per row (`?calc=0` to skip).
+
+## Behaviour
+- **Idempotency**: every create accepts `client_uuid`; a repeat returns the existing record (HTTP 200 instead of 201) via the unique `(company_uuid, client_uuid)` column. Stop events (`check-in`, `approval-requested`, `approval-received`, `left`) never overwrite an existing timestamp (retry-safe); a supervisor can force with `overwrite=1`. Timestamps on a stop must be non-decreasing (422 otherwise). Photo uploads are idempotent per `client_uuid#index#subject` through the cache (30 days).
+- **Roles**: Supervisor / Fleetbase admin / users without the Technician role = full access. Technician (role `Technician`, not Supervisor): sees and edits only visits where `technician_uuid` = self, creates damage + petty cash, cannot delete, cannot touch catalog / lanes / settings / exports. Petty cash has no creator column, so a technician sees unlinked entries plus those on their own visits.
+- **Photos**: stored exactly as uploaded (client already resizes) as core `File` rows, `subject_uuid`/`subject_type` = the record, `type` one of `service-tracker:{pickup,return,damage,receipt,stop}`. Upload body: `subject` (`visit_pickup|visit_return|damage|petty_cash|stop`), `subject_uuid`, `photos[]` or `photo`, `client_uuid`.
+- **Visit status** is derived on every save (`returned_at` -> closed, else `arrived_at_lsa` -> in_progress, else not_started).
+- **Money**: integer minor units everywhere in the API (`amount`); `amount_major` accepted on input and returned on output; dashboard/exports/PDF show major units.
+- **Timezone**: client datetimes without an offset are read in `settings.timezone` (default `Asia/Riyadh`); stored/returned as UTC (`...Z`). Exports and the PDF render in the settings timezone. Dashboard / period ranges are whole days in that timezone, filtered by arrival (`basis=returned` filters by return).
+- **Dashboard** (`TrackerStats`): visits, closed, in progress, jobs, stops, petty cash total, avg turnaround, % within target, open > 24 h, avg hours per stage (+ share, owner), biggest-delay owner, by lane, by vendor, jobs by category, damage/inspection gaps (incl. closed visits without pickup/return photos), overdue compliance. Same numbers feed the period report Summary sheet.
+- **Vehicles due** (`GET vehicles/due[?plate=][&status=OVERDUE|Due soon|OK]`): per plate last odometer, next services due (latest per service, km remaining, OK / Due soon <= 1000 km / OVERDUE), overdue-at-pickup count, petty cash; history when a plate is asked.
+- **Close hook** (`ServiceVisitObserver`, register with `ServiceVisit::observe`; the provider already does through `$observers`): when a visit is saved as `closed` (created closed, or status/returned_at changed) it writes, in one DB transaction and idempotently: a FleetOps `Maintenance` per job that is not Pending (marker `service-tracker:job:<uuid>` in notes/summary), updates/creates the vehicle's `MaintenanceSchedule` per service (`last_service_odometer`, `next_due_odometer = odometer + interval_km`, or the job's override; never moves backwards), and raises an `Issue` per damage with condition `New` (`damage_records.issue_uuid` is the guard). Skipped when the vehicle is unknown or FleetOps classes are missing; only columns that exist are written (`VisitMapper::filterColumns`). A failure rolls the surrounding request back so the close can be retried. Damage added/edited after close raises its Issue from `DamageController`.
+- **Excel** (maatwebsite/excel): `FullTrackerExport` (Vehicles, Visits, Vendor Stops, Services, Damage Log, Petty Cash, Service Catalog) and `PeriodReportExport` (Summary, optional Vehicles, Visits, Vendor Stops, Services, Damage Log, optional Petty Cash; `timing=0` drops every timing column and the timing blocks of the Summary). Columns, headers and widths mirror the tracker. Period: `preset=today|last7|last30|month|lastmonth` or `from`/`to`, `basis=arrived|returned`, `timing|petty|vehicles` default to the settings (`excelTiming/excelPetty/excelVehicles`).
+- **PDF** (barryvdh/laravel-dompdf, pure PHP, table layout, DejaVu Sans): `GET reports/visit/{id}.pdf?turnaround=&vendorTimes=&overdue=&petty=&photos=&condPhotos=`; toggles default to `settings.reportOpts`. Sections mirror `reportPaper`: header, vehicle and visit, vendor times, services, overdue note, damage record, damage photos (3 per row), pickup/return photos, petty cash (linked to the visit, or same plate within the visit dates and unlinked), notes, signature block. Arabic text would need an Arabic-capable font in dompdf (not configured).
+- **Import** `php artisan service-tracker:import --company=<uuid|public_id> --data=fleet-data.json --photos=<dir> [--tz=Asia/Riyadh] [--dry-run] [--skip-settings] [--report=out.json]`: accepts the Drive db or an app backup; skips tombstoned records and orphans; names -> FleetOps vendor / user UUIDs (unmatched kept as text + warning); plates normalised; local time -> UTC; old ids kept in `legacy_ref` (re-run updates in place; records you soft-deleted afterwards are not resurrected); photos from `<id>.jpg` become File rows (idempotent per photo id). FleetOps side effects are deliberately not triggered for imported history. `--dry-run` runs everything in a transaction that is rolled back (no files written) and still prints the reconciliation: counts source vs DB, and per visit turnaround, six stage hours, overdue count and petty total computed by the engine on the source JSON and on the imported rows (differences listed, exit code 1).
+
+## Wiring the provider / routes must do (not in my file set)
+1. `$this->loadViewsFrom(__DIR__ . '/../../resources/views', 'service-tracker');` (the PDF uses `service-tracker::report`).
+2. `$this->commands([\Jalal\ServiceTracker\Console\Commands\ImportAppsScriptData::class]);`
+3. composer: `"maatwebsite/excel": "^3.1"`, `"barryvdh/laravel-dompdf": "^2.0|^3.0"`.
+4. Done: `routes.php` registers every controller/method above (settings, uploads, calc, vehicles/due, lookups, exports) explicitly; the provider loads views and registers the import command; composer requires maatwebsite/excel and barryvdh/laravel-dompdf.
+
+## Contract assumptions (engine, models)
+- Engine ctx = `{catalog, lanes, vendors, allVisits, allJobs, now}` as documented in `DueCalculator` / `TurnaroundCalculator` (all static). Visit array `{id: uuid, plate, odo, arrived, picked, returned}`, stop `{vendor, arrived, apprReq, apprRec, left}`, job `{id, visitId, service, nextOverride}` with ISO-8601 `...Z` times. Output keys as in JS `calcVisit` (`stages`, `total`, `target`, `lane`, `status` = Closed|In progress|Not started, `met`, `open`, `check`, `overdueN`, `worstOver`, `perVendor`, `THV`, `si`, `sinfo`).
+- Models: relations `stops`, `jobs`, `damages`, `pettyCash`, `technician` on ServiceVisit; `files()` only on DamageRecord and PettyCashEntry (visits and stops get their files through `VisitMapper::attachFiles`); `lane()` on catalog item; `client_uuid` fillable on the five record models (not lanes/catalog); `withTrashed` (SoftDeletes) on all.
+- FleetOps columns assumed (each write is filtered to existing columns): `Maintenance` (`maintainable_type/uuid`, `type`, `status`, `completed_at`, `odometer`, `notes`/`summary`, `meta`), `MaintenanceSchedule` (`name`, `subject_uuid` or `maintainable_uuid`, `last_service_odometer`, `next_due_odometer`, `interval_*`), `Issue` (`vehicle_uuid`, `report`, `priority`, `status`, `category`, `type`, `reported_by_uuid`), `Vehicle.plate_number`, `Vendor.name`.
+- Fleetbase core: `Setting::lookupCompany/configureCompany` (falls back to `lookup/configure`), `File` (`subject_uuid`, `subject_type`, `type`, `disk`, `path`, `original_filename`, `content_type`, `file_size`, `uploader_uuid`, `url` accessor), `CompanyUser`, `session('company')`, Spatie `hasRole`.
+
+## Unverified here (needs a Fleetbase install)
+Everything that touches Laravel/Fleetbase is syntax-checked only (`php -l` on every file). Executed here: the engine-facing logic of `VisitMapper::calc/plateIndex/engineContext`, `TrackerStats`, `VehicleIndex` against stubs (stage hours, previous-due overdue, plate normalisation, KPIs matched hand-computed values). Not executed:
+- All controllers/requests/resources (validation rules, company scoping, role checks, envelopes vs what the Ember adapter expects).
+- Observer writes into FleetOps `Maintenance`, `MaintenanceSchedule`, `Issue` (real column sets, enums for `type`/`status`/`priority`).
+- Excel exports (maatwebsite/excel + PhpSpreadsheet column formats/dates) and the dompdf rendering of `report.blade.php` (layout, page breaks, image sizes, fonts).
+- File storage via `Storage::disk(config('filesystems.default'))` and the `File` row columns/`url` accessor.
+- The import command end to end (name matching, `withoutEvents`, dry-run rollback with file storage, reconciliation on a real MySQL).
+- `Setting::lookupCompany/configureCompany` behaviour and JSON-column `where` are not used; marker lookups use LIKE on text columns instead.

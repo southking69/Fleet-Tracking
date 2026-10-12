@@ -1,0 +1,39 @@
+<div class="mb-3 rounded-lg border border-gray-200 dark:border-gray-700 p-3" ...attributes>
+  <div class="mb-2 flex items-center gap-2">
+    <b>{{t "service-tracker.visit.job" n=(st-inc @index)}}</b>
+    <span class="flex-1"></span>
+    <button type="button" class="rounded bg-red-600 px-2 py-1 text-xs font-semibold text-white hover:bg-red-700" {{on "click" (fn @onDelete @job)}}>{{t "service-tracker.common.delete"}}</button>
+  </div>
+  <div class="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
+    <div class="block text-xs font-medium text-gray-600 dark:text-gray-300 sm:col-span-2">{{t "service-tracker.visit.service-search"}}
+      <CatalogPicker @value={{@job.service_name}} @items={{@catalog}} @onPick={{this.pick}} @onCreate={{this.create}} class="mt-1" />
+    </div>
+    <label class="block text-xs font-medium text-gray-600 dark:text-gray-300">{{t "service-tracker.visit.vendor-used"}}
+      <SelectField @value={{@job.vendor_uuid}} @options={{@vendorOptions}} @onChange={{this.setVendor}} class="mt-1" />
+    </label>
+    <label class="block text-xs font-medium text-gray-600 dark:text-gray-300">{{t "service-tracker.visit.approval-needed"}}
+      <SelectField @value={{this.approvalValue}} @options={{this.approvalOptions}} @onChange={{this.setApproval}} class="mt-1" />
+    </label>
+    <label class="block text-xs font-medium text-gray-600 dark:text-gray-300">{{t "service-tracker.common.status"}}
+      <SelectField @value={{@job.status}} @options={{@statuses}} @blank={{false}} @onChange={{fn this.update "status"}} class="mt-1" />
+    </label>
+    <label class="block text-xs font-medium text-gray-600 dark:text-gray-300">{{t "service-tracker.visit.parts-replaced"}}
+      <input type="text" class="mt-1 w-full rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 px-2 py-1.5 text-sm" value={{@job.parts_replaced}} {{on "change" (fn this.setText "parts_replaced")}} />
+    </label>
+    <label class="block text-xs font-medium text-gray-600 dark:text-gray-300">{{t "service-tracker.visit.next-due-override"}}
+      <input type="number" min="0" step="any" placeholder={{t "service-tracker.common.auto"}} class="mt-1 w-full rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 px-2 py-1.5 text-sm" value={{@job.next_due_override_km}} {{on "change" (fn this.setNumber "next_due_override_km")}} />
+    </label>
+    <label class="block text-xs font-medium text-gray-600 dark:text-gray-300">{{t "service-tracker.visit.next-due-date"}}
+      <input type="date" class="mt-1 w-full rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 px-2 py-1.5 text-sm" value={{@job.next_due_date}} {{on "change" (fn this.setDate "next_due_date")}} />
+    </label>
+    <label class="block text-xs font-medium text-gray-600 dark:text-gray-300">{{t "service-tracker.common.notes"}}
+      <input type="text" class="mt-1 w-full rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 px-2 py-1.5 text-sm" value={{@job.notes}} {{on "change" (fn this.setText "notes")}} />
+    </label>
+  </div>
+  <div class="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-gray-600 dark:text-gray-300">
+    <span>{{t "service-tracker.visit.lane"}}: <b>{{if @info.lane @info.lane "–"}}{{#if @info.target}} ({{@info.target}}h){{/if}}</b></span>
+    <span>{{t "service-tracker.visit.next-due"}}: <b>{{#if @info.nextDue}}{{fmt-int @info.nextDue}} km{{else}}–{{/if}}</b></span>
+    <span>{{t "service-tracker.visit.previous-due"}}: <b>{{#if @info.prev}}{{fmt-int @info.prev}} km{{else}}–{{/if}}</b>{{#if @info.kmOver}} ({{fmt-int @info.kmOver}} km){{/if}}</span>
+    {{#if @info.status}}<StatusBadge @status={{@info.status}} />{{/if}}
+  </div>
+</div>

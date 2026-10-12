@@ -1,0 +1,165 @@
+<div class="mb-3 flex flex-wrap items-center gap-2">
+  <LinkTo @route="vehicles" class="rounded border border-gray-300 dark:border-gray-600 px-3 py-1.5 text-sm hover:bg-gray-50 dark:hover:bg-gray-800">← {{t "service-tracker.vehicles.all"}}</LinkTo>
+  <h1 class="text-xl font-bold">{{this.title}}</h1>
+</div>
+
+<div class="mb-4 grid grid-cols-2 gap-3 sm:grid-cols-4 lg:grid-cols-7">
+  <KpiCard @value={{@model.vehicle.visits}} @label={{t "service-tracker.vehicles.kpi.visits"}} />
+  <KpiCard @value={{@model.vehicle.closedVisits}} @label={{t "service-tracker.vehicles.kpi.completed"}} />
+  <KpiCard @value={{@model.vehicle.jobs}} @label={{t "service-tracker.vehicles.kpi.jobs"}} />
+  <KpiCard @value={{fmt-date @model.vehicle.lastVisit}} @label={{t "service-tracker.vehicles.kpi.last-visit"}} />
+  <KpiCard @value={{fmt-int @model.vehicle.lastOdometer}} @label={{t "service-tracker.vehicles.kpi.last-odo"}} />
+  <KpiCard @value={{@model.vehicle.damageRecords}} @label={{t "service-tracker.vehicles.kpi.damages"}} />
+  <KpiCard @value={{fmt-money @model.vehicle.pettyCashMinor}} @label={{t "service-tracker.vehicles.kpi.petty" currency=this.settings.currency}} />
+</div>
+
+<section class="mb-4 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-4">
+  <h2 class="mb-2 text-base font-bold">{{t "service-tracker.vehicles.visits"}}</h2>
+  <div class="overflow-x-auto">
+    <table class="w-full text-sm">
+      <thead class="text-left text-xs uppercase text-gray-500">
+        <tr>
+          <th class="px-2 py-1.5">{{t "service-tracker.visits.col.visit"}}</th>
+          <th class="px-2 py-1.5">{{t "service-tracker.visits.col.arrived"}}</th>
+          <th class="px-2 py-1.5">{{t "service-tracker.visit.returned-lsa"}}</th>
+          <th class="px-2 py-1.5 text-right">{{t "service-tracker.vehicles.odometer"}}</th>
+          <th class="px-2 py-1.5">{{t "service-tracker.visits.col.jobs"}}</th>
+          <th class="px-2 py-1.5">{{t "service-tracker.common.status"}}</th>
+        </tr>
+      </thead>
+      <tbody>
+        {{#each @model.visits as |v|}}
+          <tr class="cursor-pointer border-t border-gray-100 dark:border-gray-700 hover:bg-blue-50 dark:hover:bg-gray-700" {{on "click" (fn this.openVisit v)}}>
+            <td class="px-2 py-1.5 font-bold">{{v.public_id}}</td>
+            <td class="px-2 py-1.5">{{fmt-datetime v.arrived_at_lsa}}</td>
+            <td class="px-2 py-1.5">{{fmt-datetime v.returned_at}}</td>
+            <td class="px-2 py-1.5 text-right tabular-nums">{{fmt-int v.odometer}}</td>
+            <td class="px-2 py-1.5">{{v.jobs_count}}</td>
+            <td class="px-2 py-1.5"><StatusBadge @status={{v.calc.status}} /></td>
+          </tr>
+        {{else}}
+          <tr><td colspan="6" class="px-2 py-6 text-center text-gray-500">{{t "service-tracker.vehicles.no-visits"}}</td></tr>
+        {{/each}}
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<section class="mb-4 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-4">
+  <h2 class="mb-2 text-base font-bold">{{t "service-tracker.vehicles.due-title"}}</h2>
+  {{#if @model.due.length}}
+    <div class="overflow-x-auto">
+      <table class="w-full text-sm">
+        <thead class="text-left text-xs uppercase text-gray-500">
+          <tr>
+            <th class="px-2 py-1.5">{{t "service-tracker.vehicles.service"}}</th>
+            <th class="px-2 py-1.5 text-right">{{t "service-tracker.vehicles.last-done"}}</th>
+            <th class="px-2 py-1.5 text-right">{{t "service-tracker.vehicles.next-due-at"}}</th>
+            <th class="px-2 py-1.5 text-right">{{t "service-tracker.vehicles.km-remaining"}}</th>
+            <th class="px-2 py-1.5"></th>
+          </tr>
+        </thead>
+        <tbody>
+          {{#each @model.due as |d|}}
+            <tr class="border-t border-gray-100 dark:border-gray-700">
+              <td class="px-2 py-1.5">{{d.service}}</td>
+              <td class="px-2 py-1.5 text-right tabular-nums">{{fmt-int d.lastDoneKm}}</td>
+              <td class="px-2 py-1.5 text-right tabular-nums">{{fmt-int d.nextDueKm}}</td>
+              <td class="px-2 py-1.5 text-right tabular-nums">{{fmt-int d.kmRemaining}}</td>
+              <td class="px-2 py-1.5">{{#if d.status}}<StatusBadge @status={{d.status}} />{{/if}}</td>
+            </tr>
+          {{/each}}
+        </tbody>
+      </table>
+    </div>
+  {{else}}
+    <div class="py-4 text-center text-sm text-gray-500">{{t "service-tracker.vehicles.no-due"}}</div>
+  {{/if}}
+</section>
+
+<section class="mb-4 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-4">
+  <h2 class="mb-2 text-base font-bold">{{t "service-tracker.vehicles.history-title"}}</h2>
+  {{#if @model.history.length}}
+    <div class="overflow-x-auto">
+      <table class="w-full text-sm">
+        <thead class="text-left text-xs uppercase text-gray-500">
+          <tr>
+            <th class="px-2 py-1.5">{{t "service-tracker.common.date"}}</th>
+            <th class="px-2 py-1.5">{{t "service-tracker.visits.col.visit"}}</th>
+            <th class="px-2 py-1.5">{{t "service-tracker.vehicles.service"}}</th>
+            <th class="px-2 py-1.5">{{t "service-tracker.visit.vendor"}}</th>
+            <th class="px-2 py-1.5 text-right">{{t "service-tracker.vehicles.odometer"}}</th>
+            <th class="px-2 py-1.5 text-right">{{t "service-tracker.visit.next-due"}}</th>
+            <th class="px-2 py-1.5">{{t "service-tracker.vehicles.status-pickup"}}</th>
+          </tr>
+        </thead>
+        <tbody>
+          {{#each @model.history as |h|}}
+            <tr class="cursor-pointer border-t border-gray-100 dark:border-gray-700 hover:bg-blue-50 dark:hover:bg-gray-700" {{on "click" (fn this.openVisitId h.visit)}}>
+              <td class="px-2 py-1.5">{{fmt-date h.date}}</td>
+              <td class="px-2 py-1.5">{{h.visit}}</td>
+              <td class="px-2 py-1.5">{{h.service}}</td>
+              <td class="px-2 py-1.5">{{h.vendor}}</td>
+              <td class="px-2 py-1.5 text-right tabular-nums">{{fmt-int h.odometer}}</td>
+              <td class="px-2 py-1.5 text-right tabular-nums">{{fmt-int h.nextDueKm}}</td>
+              <td class="px-2 py-1.5">{{#if h.statusAtPickup}}<StatusBadge @status={{h.statusAtPickup}} />{{/if}}</td>
+            </tr>
+          {{/each}}
+        </tbody>
+      </table>
+    </div>
+  {{else}}
+    <div class="py-4 text-center text-sm text-gray-500">{{t "service-tracker.vehicles.no-history"}}</div>
+  {{/if}}
+</section>
+
+<section class="mb-4 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-4">
+  <h2 class="mb-2 text-base font-bold">{{t "service-tracker.vehicles.damage-history"}}</h2>
+  {{#if @model.damages.length}}
+    <div class="overflow-x-auto">
+      <table class="w-full text-sm">
+        <thead class="text-left text-xs uppercase text-gray-500">
+          <tr>
+            <th class="px-2 py-1.5">{{t "service-tracker.damage.ref"}}</th>
+            <th class="px-2 py-1.5">{{t "service-tracker.visits.col.visit"}}</th>
+            <th class="px-2 py-1.5">{{t "service-tracker.damage.occurred-at"}}</th>
+            <th class="px-2 py-1.5">{{t "service-tracker.damage.location"}}</th>
+            <th class="px-2 py-1.5">{{t "service-tracker.damage.type"}}</th>
+            <th class="px-2 py-1.5">{{t "service-tracker.damage.severity"}}</th>
+            <th class="px-2 py-1.5">{{t "service-tracker.damage.condition"}}</th>
+            <th class="px-2 py-1.5 text-right">{{t "service-tracker.damage.photos"}}</th>
+          </tr>
+        </thead>
+        <tbody>
+          {{#each @model.damages as |d|}}
+            <tr class="cursor-pointer border-t border-gray-100 dark:border-gray-700 hover:bg-blue-50 dark:hover:bg-gray-700" {{on "click" (fn this.openVisitId d.service_visit_public_id)}}>
+              <td class="px-2 py-1.5">{{d.public_id}}</td>
+              <td class="px-2 py-1.5">{{d.service_visit_public_id}}</td>
+              <td class="px-2 py-1.5">{{fmt-datetime d.occurred_at}}</td>
+              <td class="px-2 py-1.5">{{d.location}}</td>
+              <td class="px-2 py-1.5">{{d.damage_type}}</td>
+              <td class="px-2 py-1.5">{{d.severity}}</td>
+              <td class="px-2 py-1.5">{{d.condition}}</td>
+              <td class="px-2 py-1.5 text-right">{{st-photo-count d.photos}}</td>
+            </tr>
+          {{/each}}
+        </tbody>
+      </table>
+    </div>
+  {{else}}
+    <div class="py-4 text-center text-sm text-gray-500">{{t "service-tracker.vehicles.no-damage"}}</div>
+  {{/if}}
+</section>
+
+<section class="rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-4">
+  <div class="mb-3 flex items-center gap-2">
+    <h2 class="text-base font-bold">{{t "service-tracker.vehicles.petty-title"}}</h2>
+    <span class="flex-1"></span>
+    <button type="button" class="rounded bg-blue-600 px-2.5 py-1 text-xs font-semibold text-white hover:bg-blue-700" {{on "click" this.addPetty}}>{{t "service-tracker.petty.add"}}</button>
+  </div>
+  {{#each this.petty as |entry|}}
+    <PettyEditor @record={{entry}} @settings={{this.settings}} @visitOptions={{this.visitOptions}} @lockPlate={{true}} @onDelete={{this.deletePetty}} />
+  {{else}}
+    <div class="py-4 text-center text-sm text-gray-500">{{t "service-tracker.petty.none"}}</div>
+  {{/each}}
+</section>

@@ -1,0 +1,1577 @@
+<!DOCTYPE html>
+<html lang="en"><head><base target="_top"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Fleet Service Tracker</title>
+<style>:root{--navy:#1F3864;--blue:#2E75B6;--bg:#f3f5f9;--card:#fff;--line:#d9dee8;--txt:#1b2333;--mut:#667085;--ok:#1e8e4e;--bad:#c0392b;--warn:#b7791f;--okbg:#e3f5ea;--badbg:#fde8e6;--warnbg:#fff4d6}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{font-family:"Segoe UI",Arial,Helvetica,sans-serif;font-size:14px;color:var(--txt);background:var(--bg)}
+header.top{background:var(--navy);color:#fff;display:flex;align-items:center;gap:20px;padding:0 20px;position:sticky;top:0;z-index:20;flex-wrap:wrap}
+.brand{font-weight:700;font-size:16px;padding:14px 0;white-space:nowrap}
+nav{display:flex;gap:2px;flex:1;flex-wrap:wrap}
+nav button{background:none;border:0;color:#cfd8ea;padding:16px 14px;cursor:pointer;font:inherit;border-bottom:3px solid transparent}
+nav button:hover{color:#fff}
+nav button.on{color:#fff;border-bottom-color:#7fb2e5;font-weight:600}
+#saved{font-size:12px;color:#b8c6e0;white-space:nowrap}
+main{padding:20px;max-width:1500px;margin:0 auto}
+h1{font-size:20px;margin:0 0 4px}h2{font-size:16px;margin:0 0 10px;color:var(--navy)}h3{font-size:14px;margin:0 0 8px}
+.sub{color:var(--mut);margin:0 0 16px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:16px;margin-bottom:16px}
+.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.spacer{flex:1}
+button.btn{background:var(--blue);color:#fff;border:0;border-radius:7px;padding:8px 14px;font:inherit;font-weight:600;cursor:pointer}
+button.btn:hover{background:#25639a}
+button.btn.sec{background:#fff;color:var(--navy);border:1px solid var(--line)}
+button.btn.sec:hover{background:#eef2f8}
+button.btn.danger{background:#fff;color:var(--bad);border:1px solid #f0c4be}
+button.btn.danger:hover{background:var(--badbg)}
+button.btn.sm{padding:4px 9px;font-size:12px}
+input,select,textarea{font:inherit;color:inherit;border:1px solid #c5ccda;border-radius:6px;padding:6px 8px;background:#fff;width:100%;min-width:0}
+input:focus,select:focus,textarea:focus{outline:2px solid #9cc4ee;border-color:var(--blue)}
+input[type=checkbox]{width:auto}
+textarea{resize:vertical;min-height:54px}
+.grid{display:grid;gap:12px;grid-template-columns:repeat(auto-fill,minmax(190px,1fr))}
+.grid .wide{grid-column:1/-1}.grid .w2{grid-column:span 2}
+.f>span{display:block;font-size:12px;color:var(--mut);margin-bottom:3px;font-weight:600}
+.f.chk{display:flex;align-items:center;gap:8px;padding-top:20px}
+.dt{display:flex;gap:4px}
+button.now{border:1px solid var(--line);background:#eef2f8;border-radius:6px;padding:0 8px;cursor:pointer;font-size:12px;color:var(--navy);font-weight:600}
+button.now:hover{background:#dde6f3}
+table{border-collapse:collapse;width:100%}
+th,td{padding:8px 10px;text-align:left;border-bottom:1px solid var(--line);white-space:nowrap}
+th{font-size:12px;color:var(--mut);background:#f7f9fc;position:sticky;top:0}
+tbody tr.click{cursor:pointer}tbody tr.click:hover{background:#f0f5fc}
+.tw{overflow:auto;max-height:70vh}
+td.n,th.n{text-align:right}
+.badge{display:inline-block;padding:2px 9px;border-radius:99px;font-size:12px;font-weight:600;background:#e7ebf3;color:#44506a}
+.badge.ok{background:var(--okbg);color:var(--ok)}.badge.bad{background:var(--badbg);color:var(--bad)}.badge.warn{background:var(--warnbg);color:var(--warn)}.badge.blue{background:#dcebfa;color:#1d5f9e}
+.detail{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:16px;align-items:start}
+.dside{position:sticky;top:64px}
+@media(max-width:1050px){.detail{grid-template-columns:1fr}.dside{position:static;order:-1}}
+.line{border:1px solid var(--line);border-radius:9px;padding:12px;margin-bottom:10px;background:#fbfcfe}
+.line .calc{margin-top:10px;display:flex;gap:8px;flex-wrap:wrap;align-items:center;font-size:13px;color:var(--mut)}
+.line .calc b{color:var(--txt)}
+.line .hd{display:flex;align-items:center;margin-bottom:8px;gap:8px}.line .hd b{color:var(--navy)}
+.picker{position:relative}
+.plist{position:absolute;left:0;right:0;top:100%;background:#fff;border:1px solid var(--blue);border-radius:7px;box-shadow:0 8px 24px rgba(20,40,80,.18);z-index:30;max-height:300px;overflow:auto}
+.plist[hidden]{display:none}
+.popt{padding:7px 10px;cursor:pointer;display:flex;justify-content:space-between;gap:10px;border-bottom:1px solid #f0f2f6}
+.popt:hover{background:#eaf3fc}.popt small{color:var(--mut)}.popt.add{color:var(--blue);font-weight:600}
+.cards{display:grid;gap:12px;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));margin-bottom:16px}
+.kpi{background:#fff;border:1px solid var(--line);border-radius:10px;padding:12px 14px}
+.kpi b{display:block;font-size:24px;color:var(--navy)}.kpi span{color:var(--mut);font-size:12px}
+.bar{height:9px;border-radius:5px;background:#e7ebf3;overflow:hidden;min-width:90px}.bar i{display:block;height:100%;background:var(--blue)}
+.srow{display:grid;grid-template-columns:130px 1fr 52px;gap:8px;align-items:center;margin:5px 0;font-size:13px}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:16px}@media(max-width:900px){.two{grid-template-columns:1fr}}
+.alert{padding:10px 12px;border-radius:8px;margin-bottom:14px;background:var(--warnbg);color:#7a5200;border:1px solid #f0d58a}
+.thumb{max-width:150px;max-height:110px;border-radius:6px;border:1px solid var(--line);display:block;margin-top:6px}
+.empty{color:var(--mut);padding:18px;text-align:center}
+/* report */
+.paper{background:#fff;max-width:900px;margin:0 auto;padding:30px 34px;border:1px solid var(--line);border-radius:6px;font-size:13px}
+.paper h1{color:var(--navy);font-size:22px}
+.paper .meta{display:flex;justify-content:space-between;gap:20px;border-bottom:3px solid var(--navy);padding-bottom:10px;margin-bottom:14px}
+.paper h2{background:var(--navy);color:#fff;padding:5px 10px;font-size:13px;margin:16px 0 8px;border-radius:3px}
+.paper table td,.paper table th{white-space:normal;border:1px solid #ccd3df;padding:5px 8px}
+.paper table th{position:static;background:#e8edf5;color:#1b2333}
+.kv{display:grid;grid-template-columns:1fr 1fr;gap:4px 24px}.kv div{display:flex;gap:8px}.kv b{min-width:150px}
+.photos{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:8px}.photos figure{margin:0;border:1px solid #ccd3df;padding:4px}.photos img{width:100%;height:150px;object-fit:cover;display:block}.photos figcaption{font-size:11px;color:#555;padding-top:3px}
+.sig{display:flex;gap:40px;margin-top:36px}.sig div{flex:1;border-top:1px solid #333;padding-top:4px;font-size:12px}
+@media print{
+ @page{size:A4;margin:12mm}
+ body{background:#fff}.no-print,header.top{display:none!important}
+ main{padding:0;max-width:none}
+ .paper{border:0;padding:0;max-width:none;border-radius:0}
+ .paper h2{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+ .paper table th{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+ tr,figure{break-inside:avoid}
+}
+
+.drop{border:2px dashed #9cc4ee;border-radius:9px;padding:14px;text-align:center;color:#2E75B6;cursor:pointer;background:#f5f9fe;font-weight:600}
+.drop:hover,.drop.over{background:#e3effb;border-color:#2E75B6}
+.drop small{display:block;font-weight:400;color:#667085;margin-top:2px}
+.thumbs{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}
+.tb{position:relative}
+.tb img{width:120px;height:90px;object-fit:cover;border-radius:6px;border:1px solid #d9dee8;display:block;cursor:zoom-in}
+.tb button{position:absolute;top:4px;right:4px;border:0;border-radius:50%;width:22px;height:22px;background:rgba(0,0,0,.6);color:#fff;cursor:pointer;font-size:13px;line-height:22px;padding:0}
+.dphoto{border:1px solid #d9dee8;border-radius:9px;padding:10px;margin-bottom:10px}
+.dphoto .hd{font-size:13px;margin-bottom:6px}
+.photos figure{break-inside:avoid}
+img.ploading{background:#e7ebf3}
+img.pmissing{background:#fde8e6}
+.tblwrap{overflow-x:auto}
+@media (max-width:700px){
+ body{font-size:15px}
+ header.top{padding:0 10px;gap:0;position:sticky}
+ .brand{padding:10px 0 2px;font-size:15px}
+ #saved{width:100%;padding-bottom:4px;font-size:11px;white-space:normal}
+ nav{flex:0 0 100%;flex-wrap:nowrap;overflow-x:auto;width:100%;order:3;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+ nav::-webkit-scrollbar{display:none}
+ nav button{padding:10px 11px;white-space:nowrap;flex:0 0 auto}
+ main{padding:12px 10px}
+ .card{padding:12px;border-radius:9px;margin-bottom:12px}
+ h1{font-size:18px}
+ .sub{font-size:13px}
+ input,select,textarea{font-size:16px;padding:9px 10px}
+ button.btn{padding:10px 14px}
+ button.btn.sm{padding:7px 11px;font-size:13px}
+ button.now{padding:0 12px}
+ .grid{grid-template-columns:1fr;gap:10px}
+ .grid .w2,.grid .wide{grid-column:auto}
+ .f.chk{padding-top:4px}
+ .row>input[type=search],.row>select{max-width:none!important;flex:1 1 100%}
+ .row>input[type=date]{flex:1 1 38%}
+ .row>.spacer{display:none}
+ .row>h1{flex:1 1 100%;margin:4px 0 0;font-size:17px}
+ .dside{order:0;position:static}
+ .cards{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+ .kpi{padding:10px}
+ .kpi b{font-size:19px}
+ .two{grid-template-columns:1fr;gap:0}
+ table.resp thead{display:none}
+ table.resp,table.resp tbody,table.resp tr,table.resp td{display:block;width:100%}
+ table.resp tr{border:1px solid var(--line);border-radius:9px;margin:0 0 8px;padding:6px 2px;background:#fff}
+ table.resp td{border:0;padding:3px 10px;white-space:normal;display:flex;justify-content:space-between;align-items:center;gap:12px;text-align:right;min-height:24px}
+ table.resp td::before{content:attr(data-label);font-weight:600;color:var(--mut);text-align:left;font-size:13px;flex:0 1 auto}
+ table.resp td[data-label=""]::before{display:none}
+ table.resp td[data-label=""]{justify-content:flex-end}
+ table.resp td.empty,table.resp td[colspan]{display:block;text-align:center}
+ table.resp td:empty{display:none}
+ .tw{max-height:none;overflow:visible}
+ .card.tw{background:transparent;border:0;padding:0!important}
+ .card .tw table.resp tr{background:#fbfcfe}
+ td input,td select{min-width:0;max-width:62%}
+ .paper{padding:14px;font-size:12px}
+ .paper .meta{flex-direction:column;gap:6px}
+ .paper h1{font-size:18px}
+ .kv{grid-template-columns:1fr}
+ .kv b{min-width:120px}
+ .photos{grid-template-columns:repeat(2,1fr)}
+ .photos img{height:120px}
+ .srow{grid-template-columns:105px 1fr 44px}
+ .tb img{width:92px;height:70px}
+ .line{padding:10px}
+ .line .hd{flex-wrap:wrap}
+ .detail{gap:12px}
+ .alert{margin:10px 10px 0!important}
+ .sig{gap:14px}
+ label.row{flex-wrap:nowrap;align-items:flex-start}
+ label.row input[type=checkbox]{margin-top:3px;flex:0 0 auto}
+ table.resp td.mh{display:none}
+ table.resp td:first-child{font-size:16px;border-bottom:1px solid var(--line);margin-bottom:4px;padding-bottom:6px}
+ header.top{gap:0 10px}
+}
+
+.dlg-back{position:fixed;inset:0;background:rgba(15,25,45,.5);z-index:200;display:flex;align-items:center;justify-content:center;padding:16px}
+.dlg{background:#fff;border-radius:12px;padding:18px;max-width:440px;width:100%;box-shadow:0 12px 40px rgba(0,0,0,.3)}
+.dlg h2{margin-bottom:8px}
+.dlg-btns{display:flex;gap:10px;justify-content:flex-end;margin-top:16px}
+.errbox{background:#fde8e6;border:1px solid #e0a39b;color:#7a1d12;border-radius:9px;padding:12px;margin:12px;font-size:13px;white-space:pre-wrap;word-break:break-word}
+.ver{font-size:10px;opacity:.6;font-weight:400;margin-left:6px}
+</style></head>
+<body>
+<header class="top no-print"><div class="brand">Fleet Service Tracker<span class="ver">v2.3</span></div><nav id="nav"></nav><div id="saved"></div></header>
+<div id="banner" class="no-print"></div>
+<main id="view"><div class="card" style="max-width:520px;margin:40px auto;text-align:center">Starting&hellip;</div></main>
+<script>
+(function () {
+  function show(msg) {
+    var v = document.getElementById('view'); if (!v) return;
+    var d = document.createElement('div'); d.className = 'errbox';
+    d.textContent = 'Something went wrong while starting the tracker (v2.3).\n\n' + msg + '\n\nPlease send a screenshot of this message.\nBrowser: ' + navigator.userAgent;
+    v.insertBefore(d, v.firstChild);
+  }
+  var off = 0; try { throw new Error('x'); } catch (er) { var fr = String(er.stack || '').split('\n')[1] || ''; var m = /:(\d+):\d+\)?\s*$/.exec(fr); if (m) off = +m[1] - 182; }
+  window.addEventListener('error', function (e) {
+    var info = (e.message || 'Error') + (e.lineno ? ' (page line ' + e.lineno + ', col ' + e.colno + ')' : '');
+    try {
+      var app = document.getElementById('app'), fl = e.lineno - off, k = fl - 196;
+      if (app && k >= 0) { var ln = app.textContent.split('\n')[k] || '', c = Math.max(0, (e.colno || 1) - 1);
+        var bad = ln.charAt(c); info += '\nFile line ' + fl + ', text: ' + ln.slice(Math.max(0, c - 70), c) + ' >>' + bad + '<< ' + ln.slice(c + 1, c + 40) + '\nchar code: ' + (bad ? bad.charCodeAt(0) : 'none') + ', line length: ' + ln.length; }
+    } catch (x) { }
+    show(info);
+  });
+  window.addEventListener('unhandledrejection', function (e) { var r = e.reason; show('Unhandled: ' + (r && (r.message || r)) ); });
+  setTimeout(function () { if (!window.__ftAlive) show('The app code did not start. Most likely Index.html was not pasted completely (it must end with </' + 'html>), or this browser is blocking scripts on this page.'); }, 8000);
+})();
+</script>
+<script id="app">
+'use strict';
+const SEED_CATALOG = [
+{"service": "Oil change - engine oil & filter", "category": "Routine Maintenance", "lane": "Express", "vendor": "Petromin", "interval": 5000},
+{"service": "Oil filter replacement", "category": "Routine Maintenance", "lane": "Express", "vendor": "Petromin", "interval": 5000},
+{"service": "Engine oil top-up", "category": "Routine Maintenance", "lane": "Express", "vendor": "Petromin", "interval": 0},
+{"service": "Air filter replacement", "category": "Routine Maintenance", "lane": "Express", "vendor": "Petromin", "interval": 20000},
+{"service": "Cabin / AC filter replacement", "category": "Routine Maintenance", "lane": "Express", "vendor": "Petromin", "interval": 20000},
+{"service": "Fuel filter replacement", "category": "Routine Maintenance", "lane": "Standard", "vendor": "Local Mechanic", "interval": 40000},
+{"service": "Spark plugs replacement", "category": "Routine Maintenance", "lane": "Standard", "vendor": "Local Mechanic", "interval": 40000},
+{"service": "Wiper blades replacement", "category": "Routine Maintenance", "lane": "Express", "vendor": "Petromin", "interval": 0},
+{"service": "Battery replacement", "category": "Routine Maintenance", "lane": "Express", "vendor": "Petromin", "interval": 0},
+{"service": "Battery test / terminal cleaning", "category": "Routine Maintenance", "lane": "Express", "vendor": "Petromin", "interval": 0},
+{"service": "Headlight / tail light bulb replacement", "category": "Routine Maintenance", "lane": "Express", "vendor": "Petromin", "interval": 0},
+{"service": "Coolant top-up / flush", "category": "Routine Maintenance", "lane": "Express", "vendor": "Petromin", "interval": 40000},
+{"service": "Brake fluid flush", "category": "Routine Maintenance", "lane": "Express", "vendor": "Petromin", "interval": 40000},
+{"service": "Power steering fluid change", "category": "Routine Maintenance", "lane": "Express", "vendor": "Petromin", "interval": 60000},
+{"service": "Transmission fluid (ATF) change", "category": "Routine Maintenance", "lane": "Standard", "vendor": "Petromin", "interval": 60000},
+{"service": "Differential oil change", "category": "Routine Maintenance", "lane": "Standard", "vendor": "Petromin", "interval": 60000},
+{"service": "Washer fluid top-up", "category": "Routine Maintenance", "lane": "Express", "vendor": "Petromin", "interval": 0},
+{"service": "Drive belt (serpentine) replacement", "category": "Routine Maintenance", "lane": "Standard", "vendor": "Local Mechanic", "interval": 80000},
+{"service": "Timing belt / chain replacement", "category": "Routine Maintenance", "lane": "Heavy", "vendor": "Local Mechanic", "interval": 100000},
+{"service": "Periodic service - minor (oil, filters, check)", "category": "Routine Maintenance", "lane": "Express", "vendor": "Petromin", "interval": 5000},
+{"service": "Periodic service - major (full service)", "category": "Routine Maintenance", "lane": "Standard", "vendor": "Petromin", "interval": 40000},
+{"service": "Multi-point inspection", "category": "Routine Maintenance", "lane": "Express", "vendor": "Petromin", "interval": 0},
+{"service": "Car wash / interior cleaning", "category": "Routine Maintenance", "lane": "Express", "vendor": "Other Specialist", "interval": 0},
+{"service": "Tyre replacement - single", "category": "Tyres & Wheels", "lane": "Express", "vendor": "Tyre Vendor", "interval": 0},
+{"service": "Tyre replacement - set of 4", "category": "Tyres & Wheels", "lane": "Express", "vendor": "Tyre Vendor", "interval": 0},
+{"service": "Tyre puncture repair", "category": "Tyres & Wheels", "lane": "Express", "vendor": "Tyre Vendor", "interval": 0},
+{"service": "Wheel balancing", "category": "Tyres & Wheels", "lane": "Express", "vendor": "Tyre Vendor", "interval": 0},
+{"service": "Wheel alignment", "category": "Tyres & Wheels", "lane": "Express", "vendor": "Tyre Vendor", "interval": 10000},
+{"service": "Tyre rotation", "category": "Tyres & Wheels", "lane": "Express", "vendor": "Tyre Vendor", "interval": 10000},
+{"service": "Tyre pressure / TPMS check", "category": "Tyres & Wheels", "lane": "Express", "vendor": "Tyre Vendor", "interval": 0},
+{"service": "TPMS sensor replacement", "category": "Tyres & Wheels", "lane": "Express", "vendor": "Tyre Vendor", "interval": 0},
+{"service": "Spare tyre replacement", "category": "Tyres & Wheels", "lane": "Express", "vendor": "Tyre Vendor", "interval": 0},
+{"service": "Rim / alloy wheel repair", "category": "Tyres & Wheels", "lane": "Standard", "vendor": "Tyre Vendor", "interval": 0},
+{"service": "Rim / alloy wheel replacement", "category": "Tyres & Wheels", "lane": "Standard", "vendor": "Tyre Vendor", "interval": 0},
+{"service": "Valve stem replacement", "category": "Tyres & Wheels", "lane": "Express", "vendor": "Tyre Vendor", "interval": 0},
+{"service": "Wheel stud / nut replacement", "category": "Tyres & Wheels", "lane": "Standard", "vendor": "Tyre Vendor", "interval": 0},
+{"service": "Brake pads - front", "category": "Brakes", "lane": "Standard", "vendor": "Local Mechanic", "interval": 0},
+{"service": "Brake pads - rear", "category": "Brakes", "lane": "Standard", "vendor": "Local Mechanic", "interval": 0},
+{"service": "Brake discs / rotors - front", "category": "Brakes", "lane": "Standard", "vendor": "Local Mechanic", "interval": 0},
+{"service": "Brake discs / rotors - rear", "category": "Brakes", "lane": "Standard", "vendor": "Local Mechanic", "interval": 0},
+{"service": "Brake shoes / drums - rear", "category": "Brakes", "lane": "Standard", "vendor": "Local Mechanic", "interval": 0},
+{"service": "Brake caliper repair / replacement", "category": "Brakes", "lane": "Standard", "vendor": "Local Mechanic", "interval": 0},
+{"service": "Brake hose / line repair", "category": "Brakes", "lane": "Standard", "vendor": "Local Mechanic", "interval": 0},
+{"service": "Brake master cylinder repair / replacement", "category": "Brakes", "lane": "Standard", "vendor": "Local Mechanic", "interval": 0},
+{"service": "Brake booster repair / replacement", "category": "Brakes", "lane": "Standard", "vendor": "Local Mechanic", "interval": 0},
+{"service": "ABS sensor / module repair", "category": "Brakes", "lane": "Standard", "vendor": "Local Mechanic", "interval": 0},
+{"service": "Handbrake / parking brake adjustment", "category": "Brakes", "lane": "Standard", "vendor": "Local Mechanic", "interval": 0},
+{"service": "Brake noise / vibration diagnosis", "category": "Brakes", "lane": "Standard", "vendor": "Local Mechanic", "interval": 0},
+{"service": "Engine diagnostics (scan / check-engine light)", "category": "Engine & Cooling", "lane": "Standard", "vendor": "Local Mechanic", "interval": 0},
+{"service": "Engine overhaul / rebuild", "category": "Engine & Cooling", "lane": "Heavy", "vendor": "Local Mechanic", "interval": 0},
+{"service": "Engine mount replacement", "category": "Engine & Cooling", "lane": "Standard", "vendor": "Local Mechanic", "interval": 0},
+{"service": "Engine oil leak repair", "category": "Engine & Cooling", "lane": "Standard", "vendor": "Local Mechanic", "interval": 0},
+{"service": "Valve cover gasket replacement", "category": "Engine & Cooling", "lane": "Standard", "vendor": "Local Mechanic", "interval": 0},
+{"service": "Head gasket replacement", "category": "Engine & Cooling", "lane": "Heavy", "vendor": "Local Mechanic", "interval": 0},
+{"service": "Water pump replacement", "category": "Engine & Cooling", "lane": "Standard", "vendor": "Local Mechanic", "interval": 0},
+{"service": "Radiator repair / replacement", "category": "Engine & Cooling", "lane": "Standard", "vendor": "Local Mechanic", "interval": 0},
+{"service": "Radiator hose / thermostat replacement", "category": "Engine & Cooling", "lane": "Standard", "vendor": "Local Mechanic", "interval": 0},
+{"service": "Overheating diagnosis", "category": "Engine & Cooling", "lane": "Standard", "vendor": "Local Mechanic", "interval": 0},
+{"service": "Turbocharger repair / replacement", "category": "Engine & Cooling", "lane": "Heavy", "vendor": "Local Mechanic", "interval": 0},
+{"service": "Fuel pump replacement", "category": "Engine & Cooling", "lane": "Standard", "vendor": "Local Mechanic", "interval": 0},
+{"service": "Fuel injector cleaning / replacement", "category": "Engine & Cooling", "lane": "Standard", "vendor": "Local Mechanic", "interval": 0},
+{"service": "Throttle body cleaning", "category": "Engine & Cooling", "lane": "Express", "vendor": "Local Mechanic", "interval": 0},
+{"service": "Engine misfire / rough idle diagnosis", "category": "Engine & Cooling", "lane": "Standard", "vendor": "Local Mechanic", "interval": 0},
+{"service": "Ignition coil replacement", "category": "Engine & Cooling", "lane": "Standard", "vendor": "Local Mechanic", "interval": 0},
+{"service": "Oxygen (O2) sensor replacement", "category": "Engine & Cooling", "lane": "Standard", "vendor": "Local Mechanic", "interval": 0},
+{"service": "Exhaust system repair", "category": "Engine & Cooling", "lane": "Standard", "vendor": "Local Mechanic", "interval": 0},
+{"service": "Catalytic converter replacement", "category": "Engine & Cooling", "lane": "Standard", "vendor": "Local Mechanic", "interval": 0},
+{"service": "Engine tune-up", "category": "Engine & Cooling", "lane": "Standard", "vendor": "Local Mechanic", "interval": 0},
+{"service": "Engine stalling / no-start diagnosis", "category": "Engine & Cooling", "lane": "Standard", "vendor": "Local Mechanic", "interval": 0},
+{"service": "Clutch replacement", "category": "Transmission & Drivetrain", "lane": "Heavy", "vendor": "Local Mechanic", "interval": 0},
+{"service": "Gearbox repair / overhaul", "category": "Transmission & Drivetrain", "lane": "Heavy", "vendor": "Local Mechanic", "interval": 0},
+{"service": "Gearbox oil change (manual)", "category": "Transmission & Drivetrain", "lane": "Standard", "vendor": "Local Mechanic", "interval": 0},
+{"service": "Axle repair (general)", "category": "Transmission & Drivetrain", "lane": "Standard", "vendor": "Local Mechanic", "interval": 0},
+{"service": "CV axle / drive shaft replacement", "category": "Transmission & Drivetrain", "lane": "Standard", "vendor": "Local Mechanic", "interval": 0},
+{"service": "Axle seal / CV boot replacement", "category": "Transmission & Drivetrain", "lane": "Standard", "vendor": "Local Mechanic", "interval": 0},
+{"service": "Differential repair", "category": "Transmission & Drivetrain", "lane": "Heavy", "vendor": "Local Mechanic", "interval": 0},
+{"service": "Transfer case service (4x4)", "category": "Transmission & Drivetrain", "lane": "Standard", "vendor": "Local Mechanic", "interval": 0},
+{"service": "Propeller shaft / U-joint repair", "category": "Transmission & Drivetrain", "lane": "Standard", "vendor": "Local Mechanic", "interval": 0},
+{"service": "Wheel bearing replacement", "category": "Transmission & Drivetrain", "lane": "Standard", "vendor": "Local Mechanic", "interval": 0},
+{"service": "Flywheel replacement", "category": "Transmission & Drivetrain", "lane": "Heavy", "vendor": "Local Mechanic", "interval": 0},
+{"service": "Shock absorbers replacement", "category": "Suspension & Steering", "lane": "Standard", "vendor": "Local Mechanic", "interval": 0},
+{"service": "Struts replacement", "category": "Suspension & Steering", "lane": "Standard", "vendor": "Local Mechanic", "interval": 0},
+{"service": "Control arm / ball joint replacement", "category": "Suspension & Steering", "lane": "Standard", "vendor": "Local Mechanic", "interval": 0},
+{"service": "Tie rod end replacement", "category": "Suspension & Steering", "lane": "Standard", "vendor": "Local Mechanic", "interval": 0},
+{"service": "Steering rack repair / replacement", "category": "Suspension & Steering", "lane": "Heavy", "vendor": "Local Mechanic", "interval": 0},
+{"service": "Power steering pump repair / replacement", "category": "Suspension & Steering", "lane": "Standard", "vendor": "Local Mechanic", "interval": 0},
+{"service": "Stabilizer bar link / bushing replacement", "category": "Suspension & Steering", "lane": "Standard", "vendor": "Local Mechanic", "interval": 0},
+{"service": "Coil spring replacement", "category": "Suspension & Steering", "lane": "Standard", "vendor": "Local Mechanic", "interval": 0},
+{"service": "Leaf spring replacement", "category": "Suspension & Steering", "lane": "Standard", "vendor": "Local Mechanic", "interval": 0},
+{"service": "Suspension noise diagnosis", "category": "Suspension & Steering", "lane": "Standard", "vendor": "Local Mechanic", "interval": 0},
+{"service": "Steering wheel vibration / pull diagnosis", "category": "Suspension & Steering", "lane": "Standard", "vendor": "Local Mechanic", "interval": 0},
+{"service": "Alternator repair / replacement", "category": "Electrical & Electronics", "lane": "Standard", "vendor": "Local Mechanic", "interval": 0},
+{"service": "Starter motor repair / replacement", "category": "Electrical & Electronics", "lane": "Standard", "vendor": "Local Mechanic", "interval": 0},
+{"service": "Battery drain diagnosis", "category": "Electrical & Electronics", "lane": "Standard", "vendor": "Local Mechanic", "interval": 0},
+{"service": "Wiring repair", "category": "Electrical & Electronics", "lane": "Standard", "vendor": "Local Mechanic", "interval": 0},
+{"service": "Fuse / relay replacement", "category": "Electrical & Electronics", "lane": "Express", "vendor": "Local Mechanic", "interval": 0},
+{"service": "Central locking repair", "category": "Electrical & Electronics", "lane": "Standard", "vendor": "Local Mechanic", "interval": 0},
+{"service": "Power window repair", "category": "Electrical & Electronics", "lane": "Standard", "vendor": "Local Mechanic", "interval": 0},
+{"service": "Door lock actuator repair", "category": "Electrical & Electronics", "lane": "Standard", "vendor": "Local Mechanic", "interval": 0},
+{"service": "Dashboard warning light diagnosis", "category": "Electrical & Electronics", "lane": "Standard", "vendor": "Local Mechanic", "interval": 0},
+{"service": "Sensor replacement (general)", "category": "Electrical & Electronics", "lane": "Standard", "vendor": "Local Mechanic", "interval": 0},
+{"service": "Horn repair", "category": "Electrical & Electronics", "lane": "Express", "vendor": "Local Mechanic", "interval": 0},
+{"service": "Lighting electrical fault repair", "category": "Electrical & Electronics", "lane": "Standard", "vendor": "Local Mechanic", "interval": 0},
+{"service": "Key fob programming / replacement", "category": "Electrical & Electronics", "lane": "Standard", "vendor": "Local Mechanic", "interval": 0},
+{"service": "Infotainment / audio repair", "category": "Electrical & Electronics", "lane": "Standard", "vendor": "Local Mechanic", "interval": 0},
+{"service": "Parking sensor / reverse camera repair", "category": "Electrical & Electronics", "lane": "Standard", "vendor": "Local Mechanic", "interval": 0},
+{"service": "GPS tracker install / repair", "category": "Electrical & Electronics", "lane": "Express", "vendor": "Local Mechanic", "interval": 0},
+{"service": "ECU diagnosis / programming", "category": "Electrical & Electronics", "lane": "Heavy", "vendor": "Local Mechanic", "interval": 0},
+{"service": "Instrument cluster repair", "category": "Electrical & Electronics", "lane": "Standard", "vendor": "Local Mechanic", "interval": 0},
+{"service": "A/C regas (refrigerant recharge)", "category": "A/C & Heating", "lane": "Express", "vendor": "Local Mechanic", "interval": 0},
+{"service": "A/C compressor repair / replacement", "category": "A/C & Heating", "lane": "Standard", "vendor": "Local Mechanic", "interval": 0},
+{"service": "A/C condenser / evaporator repair", "category": "A/C & Heating", "lane": "Standard", "vendor": "Local Mechanic", "interval": 0},
+{"service": "A/C blower motor replacement", "category": "A/C & Heating", "lane": "Standard", "vendor": "Local Mechanic", "interval": 0},
+{"service": "A/C leak repair", "category": "A/C & Heating", "lane": "Standard", "vendor": "Local Mechanic", "interval": 0},
+{"service": "A/C not cooling diagnosis", "category": "A/C & Heating", "lane": "Standard", "vendor": "Local Mechanic", "interval": 0},
+{"service": "Heater repair", "category": "A/C & Heating", "lane": "Standard", "vendor": "Local Mechanic", "interval": 0},
+{"service": "Windshield replacement", "category": "Body, Glass & Interior", "lane": "Standard", "vendor": "Other Specialist", "interval": 0},
+{"service": "Windshield chip / crack repair", "category": "Body, Glass & Interior", "lane": "Express", "vendor": "Other Specialist", "interval": 0},
+{"service": "Side window / rear glass replacement", "category": "Body, Glass & Interior", "lane": "Standard", "vendor": "Other Specialist", "interval": 0},
+{"service": "Side mirror replacement", "category": "Body, Glass & Interior", "lane": "Standard", "vendor": "Other Specialist", "interval": 0},
+{"service": "Bumper repair / replacement", "category": "Body, Glass & Interior", "lane": "Standard", "vendor": "Other Specialist", "interval": 0},
+{"service": "Dent removal (paintless)", "category": "Body, Glass & Interior", "lane": "Standard", "vendor": "Other Specialist", "interval": 0},
+{"service": "Scratch repair / polishing", "category": "Body, Glass & Interior", "lane": "Standard", "vendor": "Other Specialist", "interval": 0},
+{"service": "Panel repaint", "category": "Body, Glass & Interior", "lane": "Heavy", "vendor": "Other Specialist", "interval": 0},
+{"service": "Accident / collision repair", "category": "Body, Glass & Interior", "lane": "Heavy", "vendor": "Other Specialist", "interval": 0},
+{"service": "Door handle / lock repair", "category": "Body, Glass & Interior", "lane": "Standard", "vendor": "Other Specialist", "interval": 0},
+{"service": "Headlight restoration", "category": "Body, Glass & Interior", "lane": "Express", "vendor": "Other Specialist", "interval": 0},
+{"service": "Headlight / tail light assembly replacement", "category": "Body, Glass & Interior", "lane": "Standard", "vendor": "Other Specialist", "interval": 0},
+{"service": "Seat / upholstery repair", "category": "Body, Glass & Interior", "lane": "Standard", "vendor": "Other Specialist", "interval": 0},
+{"service": "Floor mats replacement", "category": "Body, Glass & Interior", "lane": "Express", "vendor": "Other Specialist", "interval": 0},
+{"service": "Window tinting", "category": "Body, Glass & Interior", "lane": "Express", "vendor": "Other Specialist", "interval": 0},
+{"service": "Deep interior / exterior detailing", "category": "Body, Glass & Interior", "lane": "Express", "vendor": "Other Specialist", "interval": 0},
+{"service": "Rust / corrosion repair", "category": "Body, Glass & Interior", "lane": "Heavy", "vendor": "Other Specialist", "interval": 0},
+{"service": "Periodic technical inspection (Fahas)", "category": "Inspection & Compliance", "lane": "Express", "vendor": "Other Specialist", "interval": 0},
+{"service": "Pre-rental / hand-back inspection", "category": "Inspection & Compliance", "lane": "Express", "vendor": "Local Mechanic", "interval": 0},
+{"service": "Damage assessment / repair estimate", "category": "Inspection & Compliance", "lane": "Express", "vendor": "Local Mechanic", "interval": 0},
+{"service": "Condition report", "category": "Inspection & Compliance", "lane": "Express", "vendor": "Local Mechanic", "interval": 0},
+{"service": "Towing / vehicle recovery", "category": "Recovery & Roadside", "lane": "Express", "vendor": "Other Specialist", "interval": 0},
+{"service": "Jump start / battery boost", "category": "Recovery & Roadside", "lane": "Express", "vendor": "Petromin", "interval": 0},
+{"service": "Flat tyre roadside assistance", "category": "Recovery & Roadside", "lane": "Express", "vendor": "Tyre Vendor", "interval": 0},
+{"service": "Fuel delivery", "category": "Recovery & Roadside", "lane": "Express", "vendor": "Other Specialist", "interval": 0},
+{"service": "Other - mechanical (describe in Notes)", "category": "Other", "lane": "Standard", "vendor": "Local Mechanic", "interval": 0},
+{"service": "Other - electrical (describe in Notes)", "category": "Other", "lane": "Standard", "vendor": "Local Mechanic", "interval": 0},
+{"service": "Other - body / interior (describe in Notes)", "category": "Other", "lane": "Standard", "vendor": "Other Specialist", "interval": 0},
+{"service": "Other - maintenance (describe in Notes)", "category": "Other", "lane": "Express", "vendor": "Petromin", "interval": 0}
+];
+/* ================= helpers ================= */
+const $ = (s, el) => (el || document).querySelector(s);
+function h(tag, attrs, ...kids) {
+  const e = document.createElement(tag);
+  for (const k in (attrs || {})) {
+    const v = attrs[k];
+    if (v == null || v === false) continue;
+    if (k === 'class') e.className = v;
+    else if (k === 'html') e.innerHTML = v;
+    else if (k.slice(0, 2) === 'on') e.addEventListener(k.slice(2), v);
+    else if (k === 'value') e.value = v;
+    else if (k === 'checked') e.checked = !!v;
+    else e.setAttribute(k, v === true ? '' : v);
+  }
+  kids.flat(Infinity).forEach(c => { if (c == null || c === false) return; e.append(c.nodeType ? c : document.createTextNode(String(c))); });
+  return e;
+}
+const MON = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+const pad2 = n => String(n).padStart(2, '0');
+function nowISO() { const d = new Date(); return `${d.getFullYear()}-${pad2(d.getMonth()+1)}-${pad2(d.getDate())}T${pad2(d.getHours())}:${pad2(d.getMinutes())}`; }
+function fmtDT(s) { const m = /^(\d{4})-(\d\d)-(\d\d)T(\d\d):(\d\d)/.exec(s || ''); return m ? `${m[3]}-${MON[+m[2]-1]}-${m[1].slice(2)} ${m[4]}:${m[5]}` : ''; }
+function fmtD(s) { const m = /^(\d{4})-(\d\d)-(\d\d)/.exec(s || ''); return m ? `${m[3]}-${MON[+m[2]-1]}-${m[1].slice(2)}` : ''; }
+const ms = s => { if (!s) return null; const t = new Date(s).getTime(); return isNaN(t) ? null : t; };
+const diffH = (a, b) => { const x = ms(a), y = ms(b); return (x == null || y == null) ? null : (y - x) / 36e5; };
+const f1 = n => (n == null || isNaN(n)) ? '\u2013' : (Math.round(n * 10) / 10 + 0).toFixed(1);
+const fInt = n => (n == null || n === '' || isNaN(Number(n))) ? '\u2013' : Number(n).toLocaleString('en-US');
+const num = x => (x === '' || x == null || isNaN(Number(x))) ? null : Number(x);
+const norm = s => String(s || '').toUpperCase().replace(/[\s\-_.]/g, '');
+const avg = a => { const b = a.filter(x => x != null && !isNaN(x)); return b.length ? b.reduce((p, c) => p + c, 0) / b.length : null; };
+const sum = a => a.reduce((p, c) => p + (c || 0), 0);
+function download(blob, name) { if (LS.get('ft-dl-drive') === '1') { saveToDrive(blob, name); return; } const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = name; document.body.append(a); a.click(); setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 500); }
+const todayStr = () => nowISO().slice(0, 10);
+
+/* ================= state ================= */
+function defaultSettings() {
+  return {
+    company: 'Jalal Holding', client: '',
+    lanes: [{ name: 'Express', target: 12 }, { name: 'Standard', target: 24 }, { name: 'Heavy', target: 48 }],
+    vendors: ['Local Mechanic', 'Petromin', 'Tyre Vendor', 'Other Specialist'],
+    staff: ['Supervisor', 'Technician 1', 'Technician 2'],
+    categories: ['Routine Maintenance','Tyres & Wheels','Brakes','Engine & Cooling','Transmission & Drivetrain','Suspension & Steering','Electrical & Electronics','A/C & Heating','Body, Glass & Interior','Inspection & Compliance','Recovery & Roadside','Other'],
+    damageLocations: ['Front bumper','Rear bumper','Hood','Roof','Trunk','Windshield','Rear window','Left front door','Left rear door','Right front door','Right rear door','Left mirror','Right mirror','Wheel / Rim','Tyre','Interior','Other'],
+    expenseCats: ['Fuel', 'Spare parts', 'Oil / fluids top-up', 'Towing / transport', 'Car wash', 'Parking / tolls', 'Tools / consumables', 'Other'],
+    currency: 'SAR',
+    damageTypes: ['Scratch','Dent','Crack','Broken part','Missing item','Stain / interior damage','Other'],
+    severities: ['Minor', 'Moderate', 'Major'],
+    stages: ['Pickup inspection', 'Return inspection', 'Vendor reported'],
+    svcStatuses: ['Pending', 'In progress', 'Done'],
+    reportOpts: { turnaround: true, vendorTimes: true, photos: true, overdue: true, condPhotos: false, petty: true },
+    excelTiming: true, excelPetty: false, excelVehicles: true
+  };
+}
+function freshState() {
+  return { app: 'fleet-service-tracker', version: 1, settings: defaultSettings(), catalog: SEED_CATALOG.map(c => ({ ...c })),
+    visits: [], stops: [], services: [], damages: [], expenses: [], tomb: {}, _su: 0, _cu: 0, counters: { visit: 1, stop: 1, service: 1, damage: 1 }, lastBackup: null };
+}
+let S = null;            // state
+let P = {};              // photos {id: dataURL}
+const dirtyPhotos = new Set(), deletedPhotos = new Set();
+
+/* ================= storage: Google Drive via the Apps Script server ================= */
+let saveTimer = null;
+function setSaved(t, bad) { const el = $('#saved'); if (el) { el.textContent = t; el.style.color = bad ? '#ffb4a8' : ''; } }
+function save() { setSaved('Saving\u2026'); clearTimeout(saveTimer); saveTimer = setTimeout(persist, 300); }
+function persist() { try { stamp(); stashPending(); scheduleSync(120); } catch (e) { console.error(e); setSaved('\u26A0 ' + e.message, true); } }
+
+/* ================= lookups ================= */
+const visitById = id => S.visits.find(v => v.id === id);
+const vLabel = v => v ? v.id : '';
+const catEntry = name => S.catalog.find(c => c.service === name);
+const laneTarget = l => { const x = S.settings.lanes.find(y => y.name === l); return x ? num(x.target) : null; };
+const vendors = () => S.settings.vendors.filter(Boolean);
+function visitOdo(v) { return v ? num(v.odo) : null; }
+function nextDueOf(sv) {
+  const o = num(sv.nextOverride); if (o != null) return o;
+  const v = visitById(sv.visitId), odo = visitOdo(v), ce = catEntry(sv.service);
+  const iv = ce ? num(ce.interval) : null;
+  return (odo != null && iv > 0) ? odo + iv : null;
+}
+function svcInfo(sv) {
+  const v = visitById(sv.visitId), odo = visitOdo(v), ce = catEntry(sv.service);
+  const lane = ce ? ce.lane : '', target = laneTarget(lane);
+  const nextDue = nextDueOf(sv);
+  let prev = null;
+  if (odo != null && v && norm(v.plate)) {
+    for (const s2 of S.services) {
+      if (s2 === sv || s2.service !== sv.service) continue;
+      const v2 = visitById(s2.visitId); if (!v2 || norm(v2.plate) !== norm(v.plate)) continue;
+      const o2 = visitOdo(v2); if (o2 == null || !(o2 < odo)) continue;
+      const nd = nextDueOf(s2); if (nd != null && nd > 0 && (prev == null || nd > prev)) prev = nd;
+    }
+  }
+  const kmOver = (prev != null && odo != null) ? odo - prev : null;
+  const status = odo == null ? 'Odometer missing' : prev == null ? 'No previous due' : kmOver > 0 ? 'OVERDUE' : 'On time';
+  return { odo, lane, target, category: ce ? ce.category : '', suggested: ce ? ce.vendor : '', nextDue, prev, kmOver, status };
+}
+function stopInfo(st) {
+  const atVendor = diffH(st.arrived, st.left), appr = diffH(st.apprReq, st.apprRec);
+  return { atVendor, appr, net: atVendor == null ? null : atVendor - (appr || 0) };
+}
+const STAGE_NAMES = ['Wait at LSA for pickup', 'Transit to first vendor', 'Approval wait (Splendor)', 'Vendor work (excl. approval)', 'Between vendors', 'Return transit to LSA'];
+const STAGE_SHORT = ['Pickup wait', 'Transit to 1st vendor', 'Approval wait', 'Vendor work', 'Between vendors', 'Return transit'];
+const STAGE_OWNER = ['Our team', 'Our team', 'Splendor', 'Vendor', 'Our team', 'Our team'];
+function calcVisit(v) {
+  const stops = S.stops.filter(x => x.visitId === v.id), svcs = S.services.filter(x => x.visitId === v.id);
+  const si = stops.map(stopInfo), sinfo = svcs.map(svcInfo);
+  const targets = sinfo.map(x => x.target).filter(t => t > 0);
+  const target = targets.length ? Math.max(...targets) : null;
+  const lane = target == null ? '' : ((S.settings.lanes.find(l => num(l.target) === target) || {}).name || '');
+  const status = v.returned ? 'Closed' : v.arrived ? 'In progress' : 'Not started';
+  const perVendor = S.settings.vendors.map(name => name ? stops.reduce((a, s, i) => a + (s.vendor === name && si[i].atVendor != null ? si[i].atVendor : 0), 0) : null);
+  const doneN = si.filter(x => x.atVendor != null).length;
+  const THV = stops.length ? sum(si.map(x => x.atVendor)) : null;
+  const wPick = diffH(v.arrived, v.picked);
+  const arrs = stops.map(s => ms(s.arrived)).filter(x => x != null), lefts = stops.map(s => ms(s.left)).filter(x => x != null);
+  const wTrans = (ms(v.picked) != null && arrs.length) ? (Math.min(...arrs) - ms(v.picked)) / 36e5 : null;
+  const wAppr = THV == null ? null : sum(si.map(x => x.appr));
+  const wWork = THV == null ? null : THV - wAppr;
+  const wRet = (ms(v.returned) != null && lefts.length) ? (ms(v.returned) - Math.max(...lefts)) / 36e5 : null;
+  const total = diffH(v.arrived, v.returned);
+  const wBetw = [total, wPick, wTrans, THV, wRet].every(x => x != null) ? Math.max(0, Math.round((total - wPick - wTrans - THV - wRet) * 100) / 100) : null;
+  const stages = [wPick, wTrans, wAppr, wWork, wBetw, wRet];
+  const have = stages.filter(x => x != null);
+  let big = -1;
+  if (status === 'Closed' && have.length) { const mx = Math.max(...have); big = stages.findIndex(x => x != null && x === mx); }
+  const odo = visitOdo(v);
+  let check = '';
+  if (status === 'Closed') check = !svcs.length ? 'No services logged' : !stops.length ? 'No vendor stops logged' : stops.length > doneN ? 'Vendor stop times missing' : have.length < 6 ? 'Timestamp missing' : odo == null ? 'Odometer missing' : 'OK';
+  const overdue = sinfo.filter(x => x.status === 'OVERDUE');
+  return { stops, svcs, si, sinfo, target, lane, status, perVendor, THV, stages, total, big, bigName: big >= 0 ? STAGE_SHORT[big] : '', owner: big >= 0 ? STAGE_OWNER[big] : '',
+    met: (total != null && target != null) ? total <= target : null,
+    open: (v.arrived && !v.returned) ? (Date.now() - ms(v.arrived)) / 36e5 : null,
+    check, overdueN: overdue.length, worstOver: overdue.length ? Math.max(...overdue.map(x => x.kmOver)) : null };
+}
+
+/* ================= device, ids, change tracking, merge ================= */
+const LS = { get(k) { try { return localStorage.getItem(k); } catch (e) { return null; } }, set(k, v) { try { localStorage.setItem(k, v); } catch (e) { } }, del(k) { try { localStorage.removeItem(k); } catch (e) { } } };
+let device = null, booted = false, pendingRefresh = false;
+function loadDevice() { try { device = JSON.parse(LS.get('ft-device') || 'null'); } catch (e) { device = null; } }
+function saveDevice() { LS.set('ft-device', JSON.stringify(device)); }
+const uid = () => 'x' + Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
+function ensureDevice() { if (device && device.initials) return true; askInitials(false).then(ok => { if (ok) draw(); }); return false; }
+async function askInitials(force) {
+  if (!device) device = { id: uid(), initials: '' };
+  let msg = 'Enter your initials (1\u20134 letters, e.g. JA).\nYou and the supervisor must use different initials \u2013 they appear in numbers like V-JA0001.';
+  for (;;) {
+    const r = await uiDialog({ title: 'Your initials', msg, input: true, def: device.initials || '', cancel: force ? 'Cancel' : false, ok: 'Save' });
+    if (r == null) return false;
+    const v = String(r).trim().toUpperCase();
+    if (/^[A-Z]{1,4}$/.test(v)) { device.initials = v; saveDevice(); return true; }
+    msg = 'Please use 1\u20134 letters only (e.g. JA).';
+  }
+}
+function nextId(prefix, coll) {   // lowest free number for this person (a deleted number is used again)
+  const re = new RegExp('^' + prefix + '-' + device.initials + '(\\d+)$'), used = new Set();
+  S[coll].forEach(r => { const m = re.exec(r.id); if (m) used.add(+m[1]); });
+  let n = 1; while (used.has(n)) n++;
+  return prefix + '-' + device.initials + String(n).padStart(4, '0');
+}
+const COLL = ['visits', 'stops', 'services', 'damages', 'expenses'];
+const jsonNoU = r => JSON.stringify(r, (k, v) => (k === '_u' || k === '_r') ? undefined : v);
+let snap = new Map();
+const dirty = new Set();
+function initSnap() {
+  snap = new Map();
+  COLL.forEach(c => S[c].forEach(r => snap.set(c + ':' + r.id, jsonNoU(r))));
+  snap.set('settings', JSON.stringify(S.settings)); snap.set('catalog', JSON.stringify(S.catalog));
+}
+function stamp(now) {
+  now = now || Date.now(); const cur = new Map();
+  COLL.forEach(c => S[c].forEach(r => { const k = c + ':' + r.id, j = jsonNoU(r); cur.set(k, j); if (snap.get(k) !== j) { r._u = now; dirty.add(k); } }));
+  snap.forEach((_, k) => { if (k.includes(':') && !cur.has(k)) { S.tomb[k] = now; dirty.add(k); } });
+  const sj = JSON.stringify(S.settings), cj = JSON.stringify(S.catalog);
+  if (snap.get('settings') !== sj) { S._su = now; dirty.add('settings'); }
+  if (snap.get('catalog') !== cj) { S._cu = now; dirty.add('catalog'); }
+  cur.set('settings', sj); cur.set('catalog', cj); snap = cur;
+}
+function replaceContents(target, src) { Object.keys(target).forEach(k => delete target[k]); Object.assign(target, JSON.parse(JSON.stringify(src))); }
+function mergeRemote(R) {
+  let changes = 0;
+  Object.keys(R.tomb || {}).forEach(k => { if (!((S.tomb[k] || 0) >= R.tomb[k])) S.tomb[k] = R.tomb[k]; });
+  COLL.forEach(c => {
+    const map = new Map(S[c].map(r => [String(r.id), r]));
+    (R[c] || []).forEach(rr => {
+      const k = c + ':' + rr.id, lr = map.get(String(rr.id));
+      if (S.tomb[k] && S.tomb[k] >= (rr._u || 0)) return;
+      if (!lr) { const copy = JSON.parse(JSON.stringify(rr)); S[c].push(copy); snap.set(k, jsonNoU(copy)); changes++; }
+      else if ((rr._u || 0) > (lr._u || 0)) { replaceContents(lr, rr); snap.set(k, jsonNoU(lr)); changes++; }
+    });
+    const keep = S[c].filter(r => !(S.tomb[c + ':' + r.id] && S.tomb[c + ':' + r.id] >= (r._u || 0)));
+    if (keep.length !== S[c].length) { S[c].filter(r => !keep.includes(r)).forEach(r => snap.delete(c + ':' + r.id)); S[c].splice(0, S[c].length, ...keep); changes++; }
+  });
+  if ((R._su || 0) > (S._su || 0) && R.settings) { replaceContents(S.settings, R.settings); S._su = R._su; snap.set('settings', JSON.stringify(S.settings)); changes++; }
+  if ((R._cu || 0) > (S._cu || 0) && Array.isArray(R.catalog)) { S.catalog.splice(0, S.catalog.length, ...JSON.parse(JSON.stringify(R.catalog))); S._cu = R._cu; snap.set('catalog', JSON.stringify(S.catalog)); changes++; }
+  return changes;
+}
+
+/* ================= talking to the Apps Script server ================= */
+let accessCode = LS.get('ft-code') || '';
+const hasServer = () => !!(window.google && google.script && google.script.run);
+function gs(fn, ...args) {
+  return new Promise((res, rej) => {
+    if (!hasServer()) return rej(new Error('NO_SERVER'));
+    google.script.run.withSuccessHandler(res).withFailureHandler(e => rej(e instanceof Error ? e : new Error(String(e && e.message || e))))[fn](accessCode, ...args);
+  });
+}
+let codeAsked = false;
+async function call(fn, ...args) {
+  try { return await gs(fn, ...args); }
+  catch (e) {
+    if (/ACCESS_DENIED/.test(e.message) && !codeAsked) { codeAsked = true; const ok = await askCode(true); codeAsked = false; if (ok) return gs(fn, ...args); }
+    throw e;
+  }
+}
+async function askCode(wrong) {
+  const c = await uiDialog({ title: 'Access code', msg: (wrong ? 'That access code was not accepted. Please try again.\n\n' : '') + 'Enter the access code for the Fleet Tracker (ask the owner).', input: true, cancel: false, ok: 'Continue' });
+  if (c == null || !String(c).trim()) return false;
+  accessCode = String(c).trim(); LS.set('ft-code', accessCode); return true;
+}
+/* in-page dialogs (phone browsers can block pop-up dialogs inside web apps) */
+function uiDialog(o) {
+  if (window.__autoDialog) return Promise.resolve(window.__autoDialog(o));
+  return new Promise(res => {
+    const inp = o.input ? h('input', { type: 'text', value: o.def || '', autocomplete: 'off', autocapitalize: 'characters' }) : null;
+    const back = h('div', { class: 'dlg-back' });
+    const close = v => { back.remove(); res(v); };
+    const okB = h('button', { class: 'btn', onclick: () => close(inp ? inp.value : true) }, o.ok || 'OK');
+    back.append(h('div', { class: 'dlg', role: 'dialog' }, o.title ? h('h2', {}, o.title) : '', h('div', { style: 'white-space:pre-wrap' }, o.msg || ''), inp ? h('div', { style: 'margin-top:12px' }, inp) : '',
+      h('div', { class: 'dlg-btns' }, o.cancel === false ? '' : h('button', { class: 'btn sec', onclick: () => close(inp ? null : false) }, o.cancel || 'Cancel'), okB)));
+    document.body.append(back);
+    if (inp) { setTimeout(() => inp.focus(), 50); inp.addEventListener('keydown', e => { if (e.key === 'Enter') okB.click(); }); }
+  });
+}
+const uiConfirm = (msg, ok) => uiDialog({ msg, ok: ok || 'OK' });
+const uiAlert = msg => uiDialog({ msg, cancel: false });
+const uiPrompt = (msg, def) => uiDialog({ msg, input: true, def });
+let rev = 0, syncing = false, again = false, syncTimer = null, pollTimer = null, lastSync = '', online = true, serverInfo = null;
+function scheduleSync(ms) { clearTimeout(syncTimer); syncTimer = setTimeout(() => sync(), ms == null ? 600 : ms); }
+function curU(k) { if (k === 'settings') return S._su; if (k === 'catalog') return S._cu; const i = k.indexOf(':'), c = k.slice(0, i), id = k.slice(i + 1), r = S[c].find(x => String(x.id) === id); return r ? r._u : 'T' + S.tomb[k]; }
+function buildChanges(keys) {
+  const ch = { tomb: {} }; COLL.forEach(c => ch[c] = []);
+  keys.forEach(k => {
+    if (k === 'settings') { ch.settings = S.settings; ch._su = S._su; }
+    else if (k === 'catalog') { ch.catalog = S.catalog; ch._cu = S._cu; }
+    else { const i = k.indexOf(':'), c = k.slice(0, i), id = k.slice(i + 1), r = S[c].find(x => String(x.id) === id); if (r) ch[c].push(r); else if (S.tomb[k]) ch.tomb[k] = S.tomb[k]; }
+  });
+  return ch;
+}
+function stashPending() { if (dirty.size) LS.set('ft-pending', JSON.stringify(buildChanges([...dirty]))); else LS.del('ft-pending'); }
+async function sync() {
+  if (!booted) return;
+  if (syncing) { again = true; return; }
+  syncing = true; const wasOffline = !online;
+  try {
+    stamp();
+    const keys = [...dirty]; let R;
+    if (keys.length) {
+      setSaved('Saving\u2026'); const sent = {}; keys.forEach(k => sent[k] = curU(k));
+      R = await call('api_push', buildChanges(keys), rev);
+      keys.forEach(k => { if (curU(k) === sent[k]) dirty.delete(k); }); stashPending();
+    } else R = await call('api_pull', rev);
+    const n = mergeRemote(R); rev = R.rev; online = true;
+    await flushPhotos();
+    lastSync = nowISO().slice(11);
+    setSaved(dirty.size || dirtyPhotos.size ? 'Saving\u2026' : 'Saved to Google Drive ' + lastSync + ' \u2713');
+    if (n) onRemoteChanged(); else if (wasOffline) renderBanner();
+  } catch (e) {
+    online = false; try { stamp(); stashPending(); } catch (e2) { }
+    setSaved('\u26A0 Not saved yet \u2013 ' + (/NO_SERVER/.test(e.message) ? 'open the tracker from its web link' : 'no connection, will retry'), true); renderBanner();
+    clearTimeout(syncTimer); syncTimer = setTimeout(() => sync(), 15000);
+  } finally { syncing = false; if (again) { again = false; scheduleSync(100); } }
+}
+function startPoll() {
+  clearInterval(pollTimer); pollTimer = setInterval(() => { if (!document.hidden) sync(); }, 20000);
+  document.addEventListener('visibilitychange', () => { if (!document.hidden) sync(); });
+  window.addEventListener('online', () => sync());
+  window.addEventListener('beforeunload', e => { if (dirty.size || dirtyPhotos.size || syncing) { e.preventDefault(); e.returnValue = ''; } });
+}
+function onRemoteChanged() {
+  const ae = document.activeElement, typing = ae && /^(INPUT|TEXTAREA|SELECT)$/.test(ae.tagName);
+  if (route.visit || typing || route.tab === 'petty') { pendingRefresh = true; renderBanner(); } else draw();
+}
+
+/* ================= photos on Google Drive ================= */
+async function flushPhotos() {
+  for (const id of [...dirtyPhotos]) { if (P[id]) await call('api_putPhoto', id, P[id]); dirtyPhotos.delete(id); }
+  for (const id of [...deletedPhotos]) { await call('api_delPhoto', id); deletedPhotos.delete(id); }
+}
+const BLANK = 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7';
+const photoWait = new Set(), photoMissing = new Set(); let photoTimer = null, photoBusy = false;
+function pimg(id, attrs) {
+  const img = h('img', Object.assign({ 'data-pid': id, alt: 'photo' }, attrs || {}));
+  if (P[id]) img.src = P[id]; else { img.src = BLANK; img.classList.add('ploading'); if (!photoMissing.has(id)) { photoWait.add(id); clearTimeout(photoTimer); photoTimer = setTimeout(fetchPhotos, 50); } }
+  return img;
+}
+function showPhoto(id, url) { document.querySelectorAll('img[data-pid="' + id + '"]').forEach(im => { if (url) { im.src = url; im.classList.remove('ploading'); } else im.classList.add('pmissing'); }); }
+async function fetchPhotos() {
+  if (photoBusy) return; photoBusy = true;
+  try {
+    while (photoWait.size) {
+      const ids = [...photoWait].slice(0, 12); ids.forEach(i => photoWait.delete(i));
+      const need = ids.filter(i => !P[i]); if (!need.length) { ids.forEach(i => showPhoto(i, P[i])); continue; }
+      const r = await call('api_getPhotos', need);
+      Object.keys(r).forEach(id => { if (r[id]) { P[id] = r[id]; showPhoto(id, r[id]); } else { photoMissing.add(id); setTimeout(() => photoMissing.delete(id), 30000); showPhoto(id, null); } });
+    }
+  } catch (e) { } finally { photoBusy = false; }
+}
+async function ensurePhotos(ids) {
+  const need = [...new Set(ids)].filter(i => !P[i]);
+  for (let i = 0; i < need.length; i += 12) { const r = await call('api_getPhotos', need.slice(i, i + 12)); Object.keys(r).forEach(k => { if (r[k]) P[k] = r[k]; }); }
+}
+function openPhoto(id) { const url = P[id]; if (!url) return; const w = window.open(); if (w) { w.document.write('<title>Photo</title><body style="margin:0;background:#111"><img src="' + url + '" style="max-width:100%;display:block;margin:auto">'); w.document.close(); } }
+async function saveToDrive(blob, name) {
+  try {
+    setSaved('Saving ' + name + ' to Google Drive\u2026');
+    const b64 = await new Promise((res, rej) => { const r = new FileReader(); r.onload = () => res(String(r.result).split(',')[1]); r.onerror = rej; r.readAsDataURL(blob); });
+    const url = await call('api_saveExport', name, b64, blob.type || 'application/octet-stream');
+    setSaved('Saved to Drive \u2713');
+    if (!window.open(url, '_blank')) uiAlert('Saved to Google Drive: FleetTracker Data \u203A exports \u203A ' + name);
+  } catch (e) { uiAlert('Could not save to Drive: ' + e.message); }
+}
+
+/* ================= banner ================= */
+function renderBanner() {
+  const b = $('#banner'); if (!b) return; b.replaceChildren();
+  const bar = (msg, btnText, fn) => b.append(h('div', { class: 'alert', style: 'max-width:1500px;margin:12px auto 0;display:flex;gap:12px;align-items:center;flex-wrap:wrap' }, h('span', { style: 'flex:1' }, msg), btnText ? h('button', { class: 'btn sm', onclick: fn }, btnText) : ''));
+  if (pendingRefresh) bar('\u21BB The other person made changes.', 'Refresh view', () => { pendingRefresh = false; draw(); });
+  if (booted && !online) bar('\u26A0 No connection to Google Drive. Keep this page open \u2013 your changes will save automatically when the connection is back.', 'Retry now', () => sync());
+}
+
+const XMLH = '<' + '?xml version="1.0" encoding="UTF-8" standalone="yes"?' + '>';
+/* ================= minimal .xlsx writer (no libraries, works offline) ================= */
+const CRC_T = (() => { const t = new Uint32Array(256); for (let n = 0; n < 256; n++) { let c = n; for (let k = 0; k < 8; k++) c = c & 1 ? 0xEDB88320 ^ (c >>> 1) : c >>> 1; t[n] = c >>> 0; } return t; })();
+function crc32(u8) { let c = 0xFFFFFFFF; for (let i = 0; i < u8.length; i++) c = CRC_T[(c ^ u8[i]) & 0xFF] ^ (c >>> 8); return (c ^ 0xFFFFFFFF) >>> 0; }
+function zipStore(files) { // files: [{name, data:Uint8Array}]
+  const enc = new TextEncoder(); const chunks = []; const central = []; let offset = 0;
+  const DOSDATE = ((2026 - 1980) << 9) | (1 << 5) | 1, DOSTIME = 0;
+  files.forEach(f => {
+    const name = enc.encode(f.name), crc = crc32(f.data), size = f.data.length;
+    const lh = new DataView(new ArrayBuffer(30)); lh.setUint32(0, 0x04034b50, true); lh.setUint16(4, 20, true); lh.setUint16(6, 0x0800, true); lh.setUint16(8, 0, true);
+    lh.setUint16(10, DOSTIME, true); lh.setUint16(12, DOSDATE, true); lh.setUint32(14, crc, true); lh.setUint32(18, size, true); lh.setUint32(22, size, true); lh.setUint16(26, name.length, true); lh.setUint16(28, 0, true);
+    chunks.push(new Uint8Array(lh.buffer), name, f.data);
+    const ch = new DataView(new ArrayBuffer(46)); ch.setUint32(0, 0x02014b50, true); ch.setUint16(4, 20, true); ch.setUint16(6, 20, true); ch.setUint16(8, 0x0800, true); ch.setUint16(10, 0, true);
+    ch.setUint16(12, DOSTIME, true); ch.setUint16(14, DOSDATE, true); ch.setUint32(16, crc, true); ch.setUint32(20, size, true); ch.setUint32(24, size, true); ch.setUint16(28, name.length, true);
+    ch.setUint32(42, offset, true);
+    central.push(new Uint8Array(ch.buffer), name);
+    offset += 30 + name.length + size;
+  });
+  const cdSize = central.reduce((a, c) => a + c.length, 0);
+  const end = new DataView(new ArrayBuffer(22)); end.setUint32(0, 0x06054b50, true); end.setUint16(8, files.length, true); end.setUint16(10, files.length, true); end.setUint32(12, cdSize, true); end.setUint32(16, offset, true);
+  return new Blob([...chunks, ...central, new Uint8Array(end.buffer)], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+}
+const xe = s => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/[\u0000-\u0008\u000B\u000C\u000E-\u001F]/g, '');
+function colL(i) { let s = ''; i++; while (i > 0) { const m = (i - 1) % 26; s = String.fromCharCode(65 + m) + s; i = Math.floor((i - 1) / 26); } return s; }
+function excelSerial(iso) { const m = /^(\d{4})-(\d\d)-(\d\d)(?:T(\d\d):(\d\d))?/.exec(iso || ''); if (!m) return null; return Date.UTC(+m[1], +m[2] - 1, +m[3], +(m[4] || 0), +(m[5] || 0)) / 86400000 + 25569; }
+// sheet = {name, cols:[{h, w, t}], rows:[[...]]}; t: 'dt' | 'date' | 'h1' | 'int' | undefined
+function sheetXml(sh) {
+  const sty = { dt: 2, h1: 3, int: 4, date: 5, money: 6 };
+  let x = XMLH + '<worksheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main"><sheetViews><sheetView workbookViewId="0"><pane ySplit="1" topLeftCell="A2" activePane="bottomLeft" state="frozen"/></sheetView></sheetViews><sheetFormatPr defaultRowHeight="15"/><cols>';
+  sh.cols.forEach((c, i) => { x += `<col min="${i + 1}" max="${i + 1}" width="${c.w || 14}" customWidth="1"/>`; });
+  x += '</cols><sheetData><row r="1" ht="42" customHeight="1">';
+  sh.cols.forEach((c, i) => { x += `<c r="${colL(i)}1" s="1" t="inlineStr"><is><t>${xe(c.h)}</t></is></c>`; });
+  x += '</row>';
+  sh.rows.forEach((row, ri) => {
+    x += `<row r="${ri + 2}">`;
+    row.forEach((v, ci) => {
+      if (v == null || v === '') return;
+      const ref = colL(ci) + (ri + 2), t = sh.cols[ci].t;
+      if (t === 'dt' || t === 'date') { const n = excelSerial(v); if (n != null) x += `<c r="${ref}" s="${sty[t]}"><v>${n}</v></c>`; }
+      else if (typeof v === 'number') { if (isFinite(v)) x += `<c r="${ref}"${sty[t] ? ` s="${sty[t]}"` : ''}><v>${v}</v></c>`; }
+      else x += `<c r="${ref}" t="inlineStr"><is><t xml:space="preserve">${xe(v)}</t></is></c>`;
+    });
+    x += '</row>';
+  });
+  x += `</sheetData><autoFilter ref="A1:${colL(sh.cols.length - 1)}${Math.max(1, sh.rows.length + 1)}"/></worksheet>`;
+  return x;
+}
+function buildXlsx(sheets) {
+  const enc = new TextEncoder(), NS = 'http://schemas.openxmlformats.org/spreadsheetml/2006/main', RN = 'http://schemas.openxmlformats.org/officeDocument/2006/relationships';
+  const files = [];
+  files.push({ name: '[Content_Types].xml', data: enc.encode(XMLH + '<Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types"><Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/><Default Extension="xml" ContentType="application/xml"/><Override PartName="/xl/workbook.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml"/><Override PartName="/xl/styles.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.styles+xml"/>' + sheets.map((s, i) => `<Override PartName="/xl/worksheets/sheet${i + 1}.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml"/>`).join('') + '</Types>') });
+  files.push({ name: '_rels/.rels', data: enc.encode(`${XMLH}<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="${RN}/officeDocument" Target="xl/workbook.xml"/></Relationships>`) });
+  files.push({ name: 'xl/workbook.xml', data: enc.encode(`${XMLH}<workbook xmlns="${NS}" xmlns:r="${RN}"><sheets>` + sheets.map((s, i) => `<sheet name="${xe(s.name)}" sheetId="${i + 1}" r:id="rId${i + 1}"/>`).join('') + '</sheets></workbook>') });
+  files.push({ name: 'xl/_rels/workbook.xml.rels', data: enc.encode(XMLH + '<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">' + sheets.map((s, i) => `<Relationship Id="rId${i + 1}" Type="${RN}/worksheet" Target="worksheets/sheet${i + 1}.xml"/>`).join('') + `<Relationship Id="rId${sheets.length + 1}" Type="${RN}/styles" Target="styles.xml"/></Relationships>`) });
+  files.push({ name: 'xl/styles.xml', data: enc.encode(`${XMLH}<styleSheet xmlns="${NS}"><numFmts count="3"><numFmt numFmtId="164" formatCode="dd\\-mmm\\-yy\\ hh:mm"/><numFmt numFmtId="165" formatCode="0.0"/><numFmt numFmtId="166" formatCode="dd\\-mmm\\-yy"/></numFmts><fonts count="2"><font><sz val="10"/><name val="Arial"/></font><font><b/><sz val="10"/><color rgb="FFFFFFFF"/><name val="Arial"/></font></fonts><fills count="3"><fill><patternFill patternType="none"/></fill><fill><patternFill patternType="gray125"/></fill><fill><patternFill patternType="solid"><fgColor rgb="FF1F3864"/><bgColor indexed="64"/></patternFill></fill></fills><borders count="1"><border><left/><right/><top/><bottom/><diagonal/></border></borders><cellStyleXfs count="1"><xf numFmtId="0" fontId="0" fillId="0" borderId="0"/></cellStyleXfs><cellXfs count="7"><xf numFmtId="0" fontId="0" fillId="0" borderId="0" xfId="0"/><xf numFmtId="0" fontId="1" fillId="2" borderId="0" xfId="0" applyFont="1" applyFill="1" applyAlignment="1"><alignment horizontal="center" vertical="center" wrapText="1"/></xf><xf numFmtId="164" fontId="0" fillId="0" borderId="0" xfId="0" applyNumberFormat="1"/><xf numFmtId="165" fontId="0" fillId="0" borderId="0" xfId="0" applyNumberFormat="1"/><xf numFmtId="3" fontId="0" fillId="0" borderId="0" xfId="0" applyNumberFormat="1"/><xf numFmtId="166" fontId="0" fillId="0" borderId="0" xfId="0" applyNumberFormat="1"/><xf numFmtId="4" fontId="0" fillId="0" borderId="0" xfId="0" applyNumberFormat="1"/></cellXfs><cellStyles count="1"><cellStyle name="Normal" xfId="0" builtinId="0"/></cellStyles></styleSheet>`) });
+  sheets.forEach((s, i) => files.push({ name: `xl/worksheets/sheet${i + 1}.xml`, data: enc.encode(sheetXml(s)) }));
+  return zipStore(files);
+}
+const r1 = n => n == null ? null : Math.round(n * 100) / 100;
+const BASIS = { arrived: 'Arrived at LSA', returned: 'Returned to LSA' };
+function inPeriod(v, from, to, basis) { const d = (v[basis || 'arrived'] || '').slice(0, 10); if (!from && !to) return true; if (!d) return false; return (!from || d >= from) && (!to || d <= to); }
+function summarySheet(visitsSel, opts, hideTiming, exP) {
+  const ids = new Set(visitsSel.map(v => v.id)), cs = visitsSel.map(v => ({ v, c: calcVisit(v) }));
+  const svcs = S.services.filter(s => ids.has(s.visitId)), stops = S.stops.filter(s => ids.has(s.visitId)), dmg = S.damages.filter(d => ids.has(d.visitId)), si = svcs.map(svcInfo);
+  const judged = cs.filter(x => x.c.met != null), pct = (a, b) => b ? Math.round(a / b * 100) + '%' : '\u2013';
+  const rows = [
+    ['Period', (opts.from ? fmtD(opts.from) : 'start') + '  to  ' + (opts.to ? fmtD(opts.to) : 'today')], ['Visits selected by', BASIS[opts.basis || 'arrived'] + ' date'], ['Generated', fmtDT(nowISO())], ['', ''],
+    ['Visits', cs.length], ['Closed (back at LSA)', cs.filter(x => x.c.status === 'Closed').length], ['Still in progress', cs.filter(x => x.c.status === 'In progress').length],
+    ['Jobs / services', svcs.length], ['Vendor stops', stops.length]];
+  if (!hideTiming) {
+    rows.push(['Average total turnaround (hrs)', r1(avg(cs.map(x => x.c.total)))], ['Closed visits within target', pct(judged.filter(x => x.c.met).length, judged.length)], ['', ''], ['AVERAGE HOURS PER STAGE', '']);
+    STAGE_SHORT.forEach((n, i) => rows.push([n + '  (' + STAGE_OWNER[i] + ')', r1(avg(cs.map(x => x.c.stages[i])))]));
+  }
+  if (exP) { const byC = {}; exP.forEach(e => { const k = e.category || '(no category)'; byC[k] = (byC[k] || 0) + (num(e.amount) || 0); });
+    rows.push(['', ''], ['PETTY CASH (' + cur() + ')', ''], ['Entries', exP.length], ['Total spent', Math.round(sum(exP.map(e => num(e.amount))) * 100) / 100]);
+    Object.entries(byC).sort((a, b) => b[1] - a[1]).forEach(([k, v]) => rows.push(['  ' + k, Math.round(v * 100) / 100])); }
+  rows.push(['', ''], ['SERVICE INTERVALS', ''], ['Jobs overdue at pickup', si.filter(x => x.status === 'OVERDUE').length], ['Visits with an overdue job', cs.filter(x => x.c.overdueN > 0).length],
+    ['', ''], ['DAMAGE', ''], ['Damage records', dmg.length], ['\u2026of which NEW (found after pickup)', dmg.filter(d => d.condition === 'New').length], ['', ''], ['JOBS BY CATEGORY', '']);
+  S.settings.categories.forEach(c => { const n = si.filter(x => x.category === c).length; if (n) rows.push([c, n]); });
+  if (!hideTiming) rows.push(['', ''], ['TIME AT VENDORS', 'Avg hrs per stop']);
+  if (!hideTiming) vendors().forEach(n => { const inf = stops.filter(s => s.vendor === n).map(stopInfo); if (inf.length) rows.push([n + '  (' + inf.length + (inf.length === 1 ? ' stop)' : ' stops)'), r1(avg(inf.map(x => x.atVendor)))]); });
+  return { name: 'Summary', cols: [{ h: 'Service report summary', w: 46 }, { h: '', w: 26 }], rows };
+}
+function exportSheets(opts) {
+  opts = opts || {};
+  const vn = S.settings.vendors;
+  const VIS = opts.visits || S.visits, IDS = new Set(VIS.map(v => v.id));
+  const visits = { name: 'Visits', cols: [
+    { h: 'Visit ID', w: 9 }, { h: 'Car Plate', w: 12 }, { h: 'Make / Model', w: 16 }, { h: 'Technician', w: 14 }, { h: 'Odometer at Pickup (km)', w: 12, t: 'int' },
+    { h: 'Arrived at LSA', w: 16, t: 'dt' }, { h: 'Picked Up from LSA', w: 16, t: 'dt' }, { h: 'Returned to LSA', w: 16, t: 'dt' }, { h: 'Pickup Inspection Done?', w: 11 }, { h: 'Return Inspection Done?', w: 11 }, { h: 'Pickup Photos', w: 9 }, { h: 'Return Photos', w: 9 }, { h: 'Notes', w: 28 },
+    { h: 'Status', w: 11 }, { h: '# Services', w: 9 }, { h: '# Vendor Stops', w: 9 }, { h: 'Lane (highest job)', w: 11, tm: 1 }, { h: 'Target (hrs)', w: 8, tm: 1 },
+    ...vn.map((n, i) => ({ h: n ? 'Hrs at ' + n : 'Hrs at vendor ' + (i + 1), w: 12, t: 'h1', tm: 1 })),
+    { h: 'TOTAL Hrs at Vendors', w: 11, t: 'h1', tm: 1 }, { h: 'Wait for Pickup (hrs)', w: 10, t: 'h1', tm: 1 }, { h: 'Transit to 1st Vendor (hrs)', w: 10, t: 'h1', tm: 1 }, { h: 'Approval Wait (hrs)', w: 10, t: 'h1', tm: 1 },
+    { h: 'Vendor Work excl. Approval (hrs)', w: 12, t: 'h1', tm: 1 }, { h: 'Between Vendors (hrs)', w: 10, t: 'h1', tm: 1 }, { h: 'Return Transit (hrs)', w: 10, t: 'h1', tm: 1 }, { h: 'TOTAL Turnaround (hrs)', w: 11, t: 'h1', tm: 1 },
+    { h: 'Met Target?', w: 9, tm: 1 }, { h: 'Biggest Delay', w: 18, tm: 1 }, { h: 'Delay Owner', w: 12, tm: 1 }, { h: 'Data Check', w: 24 }, { h: 'Overdue Services at Pickup', w: 11 }, { h: 'Worst Overdue (km)', w: 11, t: 'int' }], rows: [] };
+  VIS.forEach(v => {
+    const c = calcVisit(v);
+    visits.rows.push([v.id, v.plate, v.make, v.tech, num(v.odo), v.arrived, v.picked, v.returned, v.pins ? 'Yes' : 'No', v.rins ? 'Yes' : 'No', listOf(v, 'pickupPhotos').length, listOf(v, 'returnPhotos').length, v.notes,
+      c.status, c.svcs.length, c.stops.length, c.lane, c.target, ...c.perVendor.map(x => x == null ? null : r1(x)), r1(c.THV), r1(c.stages[0]), r1(c.stages[1]), r1(c.stages[2]), r1(c.stages[3]), r1(c.stages[4]), r1(c.stages[5]), r1(c.total),
+      c.met == null ? '' : c.met ? 'Yes' : 'No', c.bigName, c.owner, c.check, c.overdueN, c.worstOver]);
+  });
+  const stops = { name: 'Vendor Stops', cols: [{ h: 'Visit ID', w: 9 }, { h: 'Car Plate', w: 12 }, { h: 'Stop #', w: 7 }, { h: 'Vendor', w: 18 }, { h: 'Arrived at Vendor', w: 16, t: 'dt' }, { h: 'Approval Requested', w: 16, t: 'dt' },
+    { h: 'Approval Received', w: 16, t: 'dt' }, { h: 'Left Vendor (work done)', w: 16, t: 'dt' }, { h: 'Notes', w: 28 }, { h: 'Time at Vendor (hrs)', w: 11, t: 'h1', tm: 1 }, { h: 'Approval Wait (hrs)', w: 11, t: 'h1', tm: 1 }, { h: 'Net Work Time (hrs)', w: 11, t: 'h1', tm: 1 }], rows: [] };
+  const cnt = {};
+  S.stops.filter(s => IDS.has(s.visitId)).forEach(s => { const v = visitById(s.visitId), i = stopInfo(s); cnt[s.visitId] = (cnt[s.visitId] || 0) + 1; stops.rows.push([s.visitId, v ? v.plate : '', cnt[s.visitId], s.vendor, s.arrived, s.apprReq, s.apprRec, s.left, s.notes, r1(i.atVendor), r1(i.appr), r1(i.net)]); });
+  const svc = { name: 'Services', cols: [{ h: 'Visit ID', w: 9 }, { h: 'Car Plate', w: 12 }, { h: 'Service', w: 42 }, { h: 'Category', w: 22 }, { h: 'Lane', w: 10, tm: 1 }, { h: 'Target (hrs)', w: 9, tm: 1 }, { h: 'Suggested Vendor', w: 16 }, { h: 'Vendor Used', w: 16 },
+    { h: 'Splendor Approval Needed?', w: 11 }, { h: 'Status', w: 11 }, { h: 'Odometer at Service (km)', w: 12, t: 'int' }, { h: 'Parts Replaced', w: 24 }, { h: 'Next Due Override (km)', w: 12, t: 'int' }, { h: 'NEXT DUE (km)', w: 12, t: 'int' }, { h: 'Next Due (date)', w: 12, t: 'date' },
+    { h: 'Previous Due (km)', w: 12, t: 'int' }, { h: 'Km Over Previous Due', w: 12, t: 'int' }, { h: 'Due Status at Pickup', w: 16 }, { h: 'Notes', w: 26 }], rows: [] };
+  S.services.filter(s => IDS.has(s.visitId)).forEach(s => { const v = visitById(s.visitId), i = svcInfo(s); svc.rows.push([s.visitId, v ? v.plate : '', s.service, i.category, i.lane, i.target, i.suggested, s.vendor, s.apprNeeded, s.status, i.odo, s.parts, num(s.nextOverride), i.nextDue, s.nextDate, i.prev, i.kmOver, i.status, s.notes]); });
+  const dmg = { name: 'Damage Log', cols: [{ h: 'Damage ID', w: 10 }, { h: 'Visit ID', w: 9 }, { h: 'Car Plate', w: 12 }, { h: 'Date / Time Recorded', w: 16, t: 'dt' }, { h: 'Stage', w: 18 }, { h: 'Location on Car', w: 18 }, { h: 'Damage Type', w: 22 }, { h: 'Severity', w: 11 },
+    { h: 'Pre-existing or New', w: 14 }, { h: 'Photo Ref', w: 26 }, { h: 'Photos attached', w: 10 }, { h: 'Recorded By', w: 14 }, { h: 'Client Notified?', w: 11 }, { h: 'Notes', w: 28 }], rows: [] };
+  S.damages.filter(d => IDS.has(d.visitId)).forEach(d => { const v = visitById(d.visitId); dmg.rows.push([d.id, d.visitId, v ? v.plate : '', d.time, d.stage, d.location, d.type, d.severity, d.condition, d.photoRef, photosOf(d).length, d.by, d.notified, d.notes]); });
+  const cat = { name: 'Service Catalog', cols: [{ h: 'Service', w: 46 }, { h: 'Category', w: 26 }, { h: 'Lane', w: 12 }, { h: 'Suggested Vendor', w: 20 }, { h: 'Service Interval (km)', w: 14, t: 'int' }], rows: S.catalog.map(c => [c.service, c.category, c.lane, c.vendor, num(c.interval)]) };
+  if (opts.period) {
+    const p = opts.period, exP = S.expenses.filter(e => (!p.from || (e.date || '') >= p.from) && (!p.to || (e.date || '') <= p.to)).sort((a, b) => (a.date || '').localeCompare(b.date || ''));
+    const out = [summarySheet(VIS, p, opts.hideTiming, opts.petty ? exP : null)];
+    if (opts.vehicles) out.push(vehiclesSheet(VIS, opts.petty ? exP : []));
+    out.push(visits, stops, svc, dmg);
+    if (opts.petty) out.push(pettySheet(exP));
+    if (opts.hideTiming) out.forEach(sh => { const keep = sh.cols.map((c, i) => c.tm ? -1 : i).filter(i => i >= 0); sh.cols = keep.map(i => sh.cols[i]); sh.rows = sh.rows.map(r => keep.map(i => r[i])); });
+    return out;
+  }
+  return [vehiclesSheet(), visits, stops, svc, dmg, pettySheet([...S.expenses].sort((a, b) => (a.date || '').localeCompare(b.date || ''))), cat];
+}
+
+/* ================= small UI builders ================= */
+function sel(opts, value, onchange, blank) {
+  const s = h('select');
+  if (blank !== false) s.append(h('option', { value: '' }, typeof blank === 'string' ? blank : '\u2014'));
+  opts.forEach(o => { const [val, label] = Array.isArray(o) ? o : [o, o]; s.append(h('option', { value: val }, label)); });
+  if (value && ![...s.options].some(o => o.value === value)) s.append(h('option', { value }, value));
+  s.value = value == null ? '' : value;
+  s.addEventListener('change', () => onchange(s.value));
+  return s;
+}
+function fld(label, control, cls) { return h('div', { class: 'f ' + (cls || '') }, h('span', {}, label), control); }
+function txt(obj, key, onchange, opts) {
+  const i = h('input', { type: 'text', value: obj[key] || '', placeholder: (opts && opts.ph) || '' });
+  i.addEventListener('input', () => { obj[key] = (opts && opts.upper) ? i.value.toUpperCase() : i.value; onchange && onchange(); });
+  return i;
+}
+function numIn(obj, key, onchange, ph) {
+  const i = h('input', { type: 'number', step: 'any', min: '0', value: obj[key] == null ? '' : obj[key], placeholder: ph || '' });
+  i.addEventListener('input', () => { obj[key] = i.value === '' ? '' : Number(i.value); onchange && onchange(); });
+  return i;
+}
+function dtField(obj, key, onchange) {
+  const i = h('input', { type: 'datetime-local', value: obj[key] || '' });
+  i.addEventListener('change', () => { obj[key] = i.value; onchange && onchange(); });
+  const b = h('button', { class: 'now', type: 'button', title: 'Set to the current time', onclick: () => { i.value = nowISO(); obj[key] = i.value; onchange && onchange(); } }, 'Now');
+  return h('div', { class: 'dt' }, i, b);
+}
+function badge(text, cls) { return h('span', { class: 'badge ' + (cls || '') }, text); }
+const statusBadge = s => badge(s, s === 'Closed' ? 'ok' : s === 'In progress' ? 'blue' : '');
+const dueBadge = s => badge(s, s === 'OVERDUE' ? 'bad' : s === 'On time' ? 'ok' : s === 'Odometer missing' ? 'warn' : '');
+function pickerFor(sv, onpick) {
+  const wrap = h('div', { class: 'picker' });
+  const inp = h('input', { type: 'text', placeholder: 'Search service\u2026 e.g. brake, oil, tyre', value: sv.service || '' });
+  const list = h('div', { class: 'plist', hidden: true });
+  function pick(name) { sv.service = name; const ce = catEntry(name); if (ce && !sv.vendor && vendors().includes(ce.vendor)) sv.vendor = ce.vendor; list.hidden = true; save(); onpick(); }
+  function show() {
+    const q = inp.value.trim().toLowerCase(), words = q.split(/\s+/).filter(Boolean);
+    const res = S.catalog.filter(c => words.every(w => (c.service + ' ' + c.category).toLowerCase().includes(w))).slice(0, 15);
+    list.replaceChildren();
+    res.forEach(c => list.append(h('div', { class: 'popt', onmousedown: e => { e.preventDefault(); pick(c.service); } }, h('span', {}, c.service), h('small', {}, c.category + ' \u00B7 ' + c.lane))));
+    if (q && !S.catalog.some(c => c.service.toLowerCase() === q)) list.append(h('div', { class: 'popt add', onmousedown: e => {
+      e.preventDefault(); const name = inp.value.trim();
+      S.catalog.push({ service: name, category: 'Other', lane: 'Standard', vendor: vendors()[0] || '', interval: 0 }); pick(name);
+    } }, '+ Add "' + inp.value.trim() + '" as a new service (set its lane on the Catalog page)'));
+    list.hidden = !list.children.length;
+  }
+  inp.addEventListener('focus', () => { inp.select(); show(); });
+  inp.addEventListener('input', show);
+  inp.addEventListener('blur', () => { list.hidden = true; if (sv.service) inp.value = sv.service; });
+  inp.addEventListener('keydown', e => {
+    if (e.key === 'Escape') { list.hidden = true; inp.blur(); }
+    if (e.key === 'Enter') { e.preventDefault(); const first = list.querySelector('.popt'); if (first) first.dispatchEvent(new MouseEvent('mousedown', { bubbles: true, cancelable: true })); }
+  });
+  wrap.append(inp, list);
+  return wrap;
+}
+
+/* ================= photos (damage + pickup/return) ================= */
+const photosOf = d => Array.isArray(d.photos) ? d.photos : (d.photo ? [d.photo] : []);
+const listOf = (obj, key) => key === 'photos' ? photosOf(obj) : (Array.isArray(obj[key]) ? obj[key] : []);
+let imgShrinker = file => shrinkImage(file);
+async function addPhotos(d, files, after, key) {
+  key = key || 'photos';
+  const list = [...files].filter(f => /^image\//.test(f.type) || /\.(jpe?g|png|heic|webp|gif|bmp)$/i.test(f.name));
+  if (!list.length) return;
+  for (const f of list) {
+    try { const url = await imgShrinker(f); const id = 'p' + Date.now().toString(36) + Math.random().toString(36).slice(2, 7); P[id] = url; dirtyPhotos.add(id);
+      d[key] = [...listOf(d, key), id]; if (key === 'photos') { delete d.photo; if (!d.photoRef) d.photoRef = f.name; } }
+    catch (e) { uiAlert('Could not read "' + f.name + '". If it is a HEIC photo from an iPhone, export it as JPEG first.'); }
+  }
+  save(); after && after();
+}
+function removePhoto(d, id, after, key) { key = key || 'photos'; deletedPhotos.add(id); delete P[id]; d[key] = listOf(d, key).filter(x => x !== id); if (key === 'photos') delete d.photo; save(); after && after(); }
+function photoEditor(d, after, key, label, hint) {
+  key = key || 'photos';
+  const file = h('input', { type: 'file', accept: 'image/*', multiple: true, style: 'display:none' });
+  file.addEventListener('change', () => { addPhotos(d, file.files, after, key); file.value = ''; });
+  const zone = h('div', { class: 'drop', tabindex: '0', title: 'Click to choose photos, drag them here, or press Ctrl+V to paste' },
+    label || '\uD83D\uDCF7 Add photos of this damage', h('small', {}, hint || 'Click to choose \u00B7 drag & drop \u00B7 or click here and paste (Ctrl+V)'));
+  zone.addEventListener('click', () => file.click());
+  zone.addEventListener('dragover', e => { e.preventDefault(); zone.classList.add('over'); });
+  zone.addEventListener('dragleave', () => zone.classList.remove('over'));
+  zone.addEventListener('drop', e => { e.preventDefault(); zone.classList.remove('over'); addPhotos(d, e.dataTransfer.files, after, key); });
+  zone.addEventListener('paste', e => { const fs = [...(e.clipboardData && e.clipboardData.files || [])]; if (fs.length) { e.preventDefault(); addPhotos(d, fs, after, key); } });
+  const ids = listOf(d, key);
+  const thumbs = h('div', { class: 'thumbs' }, ids.map(id => h('div', { class: 'tb' }, pimg(id, { onclick: () => openPhoto(id) }),
+    h('button', { title: 'Remove photo', onclick: async () => { if (await uiConfirm('Remove this photo?')) removePhoto(d, id, after, key); } }, '\u00D7'))));
+  return h('div', {}, zone, file, ids.length ? thumbs : '');
+}
+const allPhotoIds = () => [...S.damages.flatMap(photosOf), ...S.visits.flatMap(v => [...listOf(v, 'pickupPhotos'), ...listOf(v, 'returnPhotos')]), ...S.expenses.flatMap(e => listOf(e, 'receipts'))];
+
+/* ================= router / shell ================= */
+const TABS = [['visits', 'Visits'], ['vehicles', 'Vehicles'], ['petty', 'Petty Cash'], ['dashboard', 'Dashboard'], ['report', 'Client Report'], ['catalog', 'Service Catalog'], ['settings', 'Settings'], ['data', 'Data & Export']];
+let route = { tab: 'visits', visit: null };
+function go(tab, visit) { route = { tab, visit: visit || null }; draw(); window.scrollTo(0, 0); }
+function draw() {
+  pendingRefresh = false; renderBanner();
+  const nav = $('#nav'); nav.replaceChildren();
+  TABS.forEach(([k, l]) => nav.append(h('button', { class: route.tab === k ? 'on' : '', onclick: () => go(k) }, l)));
+  const view = $('#view'); view.replaceChildren();
+  const fn = { visits: () => route.visit ? visitDetail(route.visit) : visitList(), vehicles: () => route.visit ? vehicleDetail(route.visit) : vehicleList(), petty: pettyCashView, dashboard: dashboardView, report: reportView, catalog: catalogView, settings: settingsView, data: dataView }[route.tab];
+  view.append(fn());
+}
+
+/* ================= visits list ================= */
+let listFilter = { q: '', status: '' };
+function visitList() {
+  const root = h('div');
+  const tbody = h('tbody');
+  function fill() {
+    tbody.replaceChildren();
+    const q = listFilter.q.trim().toLowerCase();
+    const rows = S.visits.map(v => ({ v, c: calcVisit(v) })).filter(({ v, c }) => (!q || (v.id + ' ' + v.plate + ' ' + v.make).toLowerCase().includes(q)) && (!listFilter.status || c.status === listFilter.status)).sort((a, b) => (b.v.created || 0) - (a.v.created || 0));
+    if (!rows.length) tbody.append(h('tr', {}, h('td', { colspan: 12, class: 'empty' }, S.visits.length ? 'No visits match.' : 'No visits yet. Click \u201C+ New visit\u201D when a car is picked up from LSA. (Data & Export \u2192 \u201CLoad sample data\u201D shows a worked example.)')));
+    rows.forEach(({ v, c }) => tbody.append(h('tr', { class: 'click', onclick: () => go('visits', v.id) },
+      h('td', {}, h('b', {}, v.id)), h('td', {}, v.plate || '\u2013'), h('td', {}, v.make), h('td', {}, statusBadge(c.status)), h('td', {}, fmtDT(v.arrived) || '\u2013'),
+      h('td', { class: 'n' }, c.total != null ? f1(c.total) : c.open != null ? f1(c.open) + ' open' : '\u2013'), h('td', { class: 'n' }, c.target ?? '\u2013'),
+      h('td', {}, c.met == null ? '' : badge(c.met ? 'Yes' : 'No', c.met ? 'ok' : 'bad')), h('td', { class: 'n' }, c.svcs.length), h('td', { class: 'n' }, c.stops.length),
+      h('td', {}, c.overdueN ? badge(c.overdueN + ' overdue', 'bad') : ''), h('td', {}, c.check && c.check !== 'OK' ? badge(c.check, 'warn') : c.check === 'OK' ? badge('OK', 'ok') : ''))));
+  }
+  root.append(h('h1', {}, 'Visits'), h('p', { class: 'sub' }, 'One visit = one trip of a car from LSA to its vendor(s) and back. Click a visit to enter its services, vendor stops and damage.'));
+  const bar = h('div', { class: 'row card' },
+    h('input', { type: 'search', placeholder: 'Search plate, visit ID, make\u2026', style: 'max-width:280px', value: listFilter.q, oninput: e => { listFilter.q = e.target.value; fill(); } }),
+    sel(['Not started', 'In progress', 'Closed'], listFilter.status, v => { listFilter.status = v; fill(); }, 'All statuses'), h('div', { class: 'spacer' }),
+    h('button', { class: 'btn', onclick: newVisit }, '+ New visit'));
+  root.append(bar, h('div', { class: 'card tw', style: 'padding:0' }, h('table', {},
+    h('thead', {}, h('tr', {}, ['Visit', 'Plate', 'Make / Model', 'Status', 'Arrived at LSA', 'Total / open (hrs)', 'Target (hrs)', 'Met target?', 'Jobs', 'Vendor stops', 'Overdue', 'Data check'].map((t, i) => h('th', { class: ([5, 6, 8, 9].includes(i) ? 'n' : '') + ([6, 8, 9].includes(i) ? ' mh' : '') }, t)))), tbody)));
+  fill();
+  return root;
+}
+function newVisit() {
+  if (!ensureDevice()) return;
+  const id = nextId('V', 'visits');
+  S.visits.push({ id, created: Date.now(), pickupPhotos: [], returnPhotos: [], plate: '', make: '', tech: '', odo: '', arrived: '', picked: '', returned: '', pins: false, rins: false, notes: '' });
+  save(); go('visits', id);
+}
+
+/* ================= visit detail ================= */
+function visitDetail(id) {
+  const v = visitById(id);
+  if (!v) { route.visit = null; return visitList(); }
+  let stopUpd = [], svcUpd = [];
+  const title = h('h1', {});
+  const summary = h('div', { class: 'card' });
+  const stopsBox = h('div'), svcBox = h('div'), dmgBox = h('div');
+  function refresh() {
+    title.textContent = 'Visit ' + v.id + (v.plate ? ' \u00B7 ' + v.plate : '') + (v.make ? ' \u00B7 ' + v.make : '');
+    renderSummary(v, summary); stopUpd.forEach(f => f()); svcUpd.forEach(f => f());
+  }
+  const chg = () => { save(); refresh(); };
+
+  function renderStops() {
+    stopUpd = []; stopsBox.replaceChildren();
+    S.stops.filter(s => s.visitId === v.id).forEach((s, idx) => {
+      const calc = h('div', { class: 'calc' });
+      stopUpd.push(() => { const i = stopInfo(s); calc.replaceChildren('Time at vendor: ', h('b', {}, f1(i.atVendor) + ' h'), ' \u00B7 Approval wait: ', h('b', {}, f1(i.appr) + ' h'), ' \u00B7 Net work: ', h('b', {}, f1(i.net) + ' h')); });
+      stopsBox.append(h('div', { class: 'line' },
+        h('div', { class: 'hd' }, h('b', {}, 'Stop ' + (idx + 1)), h('span', { class: 'spacer' }), h('button', { class: 'btn danger sm', onclick: async () => { if (await uiConfirm('Delete this vendor stop?')) { S.stops = S.stops.filter(x => x !== s); save(); renderStops(); refresh(); } } }, 'Delete')),
+        h('div', { class: 'grid' },
+          fld('Vendor', sel(vendors(), s.vendor, val => { s.vendor = val; chg(); })),
+          fld('Arrived at vendor', dtField(s, 'arrived', chg)), fld('Approval requested', dtField(s, 'apprReq', chg)),
+          fld('Approval received', dtField(s, 'apprRec', chg)), fld('Left vendor (work done)', dtField(s, 'left', chg)),
+          fld('Notes', txt(s, 'notes', save))), calc));
+    });
+    if (!stopsBox.children.length) stopsBox.append(h('div', { class: 'empty' }, 'No vendor stops yet. Add one each time the car arrives at a vendor.'));
+    stopUpd.forEach(f => f());
+  }
+  function renderSvcs() {
+    svcUpd = []; svcBox.replaceChildren();
+    S.services.filter(s => s.visitId === v.id).forEach((s, idx) => {
+      const calc = h('div', { class: 'calc' });
+      svcUpd.push(() => {
+        const i = svcInfo(s);
+        calc.replaceChildren('Lane: ', h('b', {}, i.lane ? i.lane + (i.target ? ' (' + i.target + 'h)' : '') : '\u2013'), ' \u00B7 Next due: ', h('b', {}, i.nextDue != null ? fInt(i.nextDue) + ' km' : '\u2013'),
+          ' \u00B7 Previous due: ', h('b', {}, i.prev != null ? fInt(i.prev) + ' km' : '\u2013'), i.kmOver != null ? h('span', {}, ' (' + (i.kmOver > 0 ? '+' : '') + fInt(i.kmOver) + ' km)') : '', ' ', dueBadge(i.status));
+      });
+      svcBox.append(h('div', { class: 'line' },
+        h('div', { class: 'hd' }, h('b', {}, 'Job ' + (idx + 1)), h('span', { class: 'spacer' }), h('button', { class: 'btn danger sm', onclick: async () => { if (await uiConfirm('Delete this job?')) { S.services = S.services.filter(x => x !== s); save(); renderSvcs(); refresh(); } } }, 'Delete')),
+        h('div', { class: 'grid' },
+          fld('Service (type to search)', pickerFor(s, () => { renderSvcs(); refresh(); }), 'w2'),
+          fld('Vendor used', sel(vendors(), s.vendor, val => { s.vendor = val; chg(); })),
+          fld('Splendor approval needed?', sel(['Yes', 'No'], s.apprNeeded, val => { s.apprNeeded = val; save(); })),
+          fld('Status', sel(S.settings.svcStatuses, s.status, val => { s.status = val; save(); })),
+          fld('Parts replaced', txt(s, 'parts', save)),
+          fld('Next due override (km)', numIn(s, 'nextOverride', chg, 'auto')),
+          fld('Next due (date)', (() => { const i = h('input', { type: 'date', value: s.nextDate || '' }); i.addEventListener('change', () => { s.nextDate = i.value; save(); }); return i; })()),
+          fld('Notes', txt(s, 'notes', save))), calc));
+    });
+    if (!svcBox.children.length) svcBox.append(h('div', { class: 'empty' }, 'No jobs yet. Add every job the car needs (oil change, brake pads, tyres\u2026).'));
+    svcUpd.forEach(f => f());
+  }
+  function renderDmgs() {
+    dmgBox.replaceChildren();
+    S.damages.filter(d => d.visitId === v.id).forEach(d => {
+      dmgBox.append(h('div', { class: 'line' },
+        h('div', { class: 'hd' }, h('b', {}, d.id), h('span', { style: 'color:#667085;font-size:13px' }, photosOf(d).length ? photosOf(d).length + ' photo(s)' : 'no photo yet'), h('span', { class: 'spacer' }),
+          h('button', { class: 'btn danger sm', onclick: async () => { if (await uiConfirm('Delete this damage record and its photos?')) { photosOf(d).forEach(id => { deletedPhotos.add(id); delete P[id]; }); S.damages = S.damages.filter(x => x !== d); save(); renderDmgs(); refresh(); } } }, 'Delete')),
+        h('div', { style: 'margin-bottom:10px' }, photoEditor(d, () => { renderDmgs(); refresh(); })),
+        h('div', { class: 'grid' },
+          fld('Stage', sel(S.settings.stages, d.stage, x => { d.stage = x; save(); })), fld('Location on car', sel(S.settings.damageLocations, d.location, x => { d.location = x; save(); })),
+          fld('Damage type', sel(S.settings.damageTypes, d.type, x => { d.type = x; save(); })), fld('Severity', sel(S.settings.severities, d.severity, x => { d.severity = x; save(); })),
+          fld('Pre-existing or new', sel(['Pre-existing', 'New'], d.condition, x => { d.condition = x; save(); renderSummary(v, summary); })),
+          fld('Date / time', dtField(d, 'time', save)), fld('Recorded by', sel(S.settings.staff.filter(Boolean), d.by, x => { d.by = x; save(); })),
+          fld('Client notified?', sel(['Yes', 'No'], d.notified, x => { d.notified = x; save(); })),
+          fld('Photo reference (optional \u2013 fills itself)', txt(d, 'photoRef', save)), fld('Notes', txt(d, 'notes', save), 'w2'))));
+    });
+    if (!dmgBox.children.length) dmgBox.append(h('div', { class: 'empty' }, 'No damage recorded for this visit. Click \u201C+ Add damage\u201D, then add photos.'));
+  }
+
+  const condBox = h('div');
+  function renderCond() {
+    const hint = 'Suggested: front, rear, left side, right side, odometer/dashboard, fuel gauge, interior, tyres';
+    condBox.replaceChildren(h('div', { class: 'two' },
+      h('div', {}, h('h3', {}, 'At pickup from LSA (' + listOf(v, 'pickupPhotos').length + ')'), photoEditor(v, () => { renderCond(); refresh(); }, 'pickupPhotos', '\uD83D\uDCF7 Add pickup photos', hint)),
+      h('div', {}, h('h3', {}, 'At return to LSA (' + listOf(v, 'returnPhotos').length + ')'), photoEditor(v, () => { renderCond(); refresh(); }, 'returnPhotos', '\uD83D\uDCF7 Add return photos', 'Same angles as pickup, so you can compare before / after'))));
+  }
+  renderCond();
+  const main = h('div', {},
+    h('div', { class: 'card' }, h('h2', {}, 'Visit details'), h('div', { class: 'grid' },
+      fld('Car plate', txt(v, 'plate', chg, { upper: true, ph: 'e.g. ABC 1234' })), fld('Make / model', txt(v, 'make', chg)),
+      fld('Technician', sel(S.settings.staff.filter(Boolean), v.tech, x => { v.tech = x; save(); })), fld('Odometer at pickup (km)', numIn(v, 'odo', chg)),
+      fld('Arrived at LSA (clock starts)', dtField(v, 'arrived', chg)), fld('Picked up from LSA', dtField(v, 'picked', chg)), fld('Returned to LSA (clock stops)', dtField(v, 'returned', chg)),
+      h('label', { class: 'f chk' }, h('input', { type: 'checkbox', checked: v.pins, onchange: e => { v.pins = e.target.checked; chg(); } }), 'Pickup inspection done'),
+      h('label', { class: 'f chk' }, h('input', { type: 'checkbox', checked: v.rins, onchange: e => { v.rins = e.target.checked; chg(); } }), 'Return inspection done'),
+      fld('Notes', h('textarea', { oninput: e => { v.notes = e.target.value; save(); } }, v.notes || ''), 'wide'))),
+    h('div', { class: 'card' }, h('h2', {}, 'Vehicle condition photos (internal)'), h('p', { class: 'sub', style: 'margin-bottom:10px' }, 'Your own record of the car\u2019s condition when it leaves and comes back to LSA. Not shown on the client report unless you switch it on there.'), condBox),
+    h('div', { class: 'card' }, h('div', { class: 'row', style: 'margin-bottom:10px' }, h('h2', { style: 'margin:0' }, 'Vendor stops \u2013 time at each vendor'), h('span', { class: 'spacer' }),
+      h('button', { class: 'btn sm', onclick: () => { S.stops.push({ id: uid(), visitId: v.id, vendor: '', arrived: '', apprReq: '', apprRec: '', left: '', notes: '' }); save(); renderStops(); refresh(); } }, '+ Add vendor stop')), stopsBox),
+    h('div', { class: 'card' }, h('div', { class: 'row', style: 'margin-bottom:10px' }, h('h2', { style: 'margin:0' }, 'Jobs / services on this car'), h('span', { class: 'spacer' }),
+      h('button', { class: 'btn sm', onclick: () => { S.services.push({ id: uid(), visitId: v.id, service: '', vendor: '', apprNeeded: '', status: 'Pending', parts: '', nextOverride: '', nextDate: '', notes: '' }); save(); renderSvcs(); refresh(); } }, '+ Add job')), svcBox),
+    expenseSection({ plate: v.plate, visitId: v.id }, 'Petty cash on this visit'),
+    h('div', { class: 'card' }, h('div', { class: 'row', style: 'margin-bottom:10px' }, h('h2', { style: 'margin:0' }, 'Damage records'), h('span', { class: 'spacer' }),
+      h('button', { class: 'btn sm', onclick: () => { S.damages.push({ id: nextId('D', 'damages'), visitId: v.id, time: nowISO(), stage: 'Pickup inspection', location: '', type: '', severity: '', condition: '', photoRef: '', photos: [], by: v.tech || '', notified: '', notes: '' }); save(); renderDmgs(); refresh(); } }, '+ Add damage')), dmgBox));
+  const side = h('aside', { class: 'dside' }, summary);
+  renderStops(); renderSvcs(); renderDmgs(); refresh();
+  return h('div', {},
+    h('div', { class: 'row no-print', style: 'margin-bottom:12px' }, h('button', { class: 'btn sec', onclick: () => go('visits') }, '\u2190 All visits'), title, h('span', { class: 'spacer' }),
+      v.plate ? h('button', { class: 'btn sec', onclick: () => go('vehicles', pkey(v.plate)) }, 'Car history') : '',
+      h('button', { class: 'btn', onclick: () => { reportState.visit = v.id; go('report'); } }, 'Client report'),
+      h('button', { class: 'btn danger', onclick: async () => { if (await uiConfirm('Delete visit ' + v.id + ' and all its stops, jobs, damage records and photos?\n\nThe number ' + v.id + ' will be used again for the next new visit.')) { deleteVisit(v.id); go('visits'); } } }, 'Delete visit')),
+    h('div', { class: 'detail' }, main, side));
+}
+function deleteVisit(id) {
+  S.damages.filter(d => d.visitId === id).forEach(d => photosOf(d).forEach(p => { deletedPhotos.add(p); delete P[p]; }));
+  const vv = visitById(id); if (vv) [...listOf(vv, 'pickupPhotos'), ...listOf(vv, 'returnPhotos')].forEach(p => { deletedPhotos.add(p); delete P[p]; });
+  S.expenses.forEach(e => { if (e.visitId === id) e.visitId = ''; });
+  S.visits = S.visits.filter(v => v.id !== id); S.stops = S.stops.filter(x => x.visitId !== id); S.services = S.services.filter(x => x.visitId !== id); S.damages = S.damages.filter(x => x.visitId !== id); save();
+}
+function renderSummary(v, el) {
+  const c = calcVisit(v);
+  el.replaceChildren(h('h2', {}, 'Live summary'),
+    h('div', { class: 'row', style: 'margin-bottom:8px' }, statusBadge(c.status), c.met == null ? '' : badge(c.met ? 'Within target' : 'Over target', c.met ? 'ok' : 'bad'), c.overdueN ? badge(c.overdueN + ' overdue service' + (c.overdueN > 1 ? 's' : ''), 'bad') : ''),
+    h('div', { style: 'font-size:13px;margin-bottom:10px' }, c.total != null ? ['Total turnaround: ', h('b', {}, f1(c.total) + ' h')] : c.open != null ? ['Open for: ', h('b', {}, f1(c.open) + ' h')] : 'Enter arrival and return times.',
+      c.target != null ? [' \u00B7 Target: ', h('b', {}, c.target + ' h' + (c.lane ? ' (' + c.lane + ')' : ''))] : ''),
+    h('h3', {}, 'Where the time went'));
+  const mx = Math.max(...c.stages.map(x => x || 0), 0.01);
+  c.stages.forEach((val, i) => el.append(h('div', { class: 'srow', title: 'Owner: ' + STAGE_OWNER[i] }, h('span', { style: i === c.big ? 'font-weight:700;color:#c0392b' : '' }, STAGE_SHORT[i]), h('div', { class: 'bar' }, h('i', { style: 'width:' + (val ? Math.max(2, val / mx * 100) : 0) + '%;' + (i === c.big ? 'background:#c0392b' : '') })), h('span', { style: 'text-align:right' }, f1(val)))));
+  if (c.big >= 0) el.append(h('div', { style: 'font-size:13px;margin:8px 0' }, 'Biggest delay: ', h('b', {}, c.bigName), ' (', c.owner, ')'));
+  el.append(h('h3', { style: 'margin-top:12px' }, 'Time at each vendor'));
+  const vn = S.settings.vendors; let any = false;
+  vn.forEach((n, i) => { if (n && c.perVendor[i] > 0) { any = true; el.append(h('div', { class: 'srow', style: 'grid-template-columns:1fr 60px' }, h('span', {}, n), h('span', { style: 'text-align:right' }, f1(c.perVendor[i]) + ' h'))); } });
+  if (!any) el.append(h('div', { style: 'color:#667085;font-size:13px' }, '\u2013'));
+  if (c.THV != null) el.append(h('div', { style: 'font-size:13px;margin-top:4px;border-top:1px solid #d9dee8;padding-top:4px' }, 'Total at vendors: ', h('b', {}, f1(c.THV) + ' h')));
+  const dmgN = S.damages.filter(d => d.visitId === v.id).length, newN = S.damages.filter(d => d.visitId === v.id && d.condition === 'New').length;
+  const pp = listOf(v, 'pickupPhotos').length, rp = listOf(v, 'returnPhotos').length;
+  el.append(h('div', { style: 'font-size:13px;margin-top:10px' }, 'Condition photos: ', h('b', { style: pp ? '' : 'color:#b7791f' }, pp + ' pickup'), ' \u00B7 ', h('b', { style: rp || !v.returned ? '' : 'color:#b7791f' }, rp + ' return')));
+  el.append(h('div', { style: 'font-size:13px;margin-top:4px' }, 'Damage records: ', h('b', {}, dmgN), newN ? [' (', h('b', { style: 'color:#c0392b' }, newN + ' new'), ')'] : ''));
+  if (c.check) el.append(h('div', { style: 'margin-top:8px' }, 'Data check: ', badge(c.check, c.check === 'OK' ? 'ok' : 'warn')));
+}
+function shrinkImage(file) {
+  return new Promise((res, rej) => {
+    const r = new FileReader();
+    r.onerror = rej;
+    r.onload = () => { const img = new Image(); img.onerror = rej; img.onload = () => {
+      const max = 1000, k = Math.min(1, max / Math.max(img.width, img.height)); const cv = document.createElement('canvas'); cv.width = Math.round(img.width * k); cv.height = Math.round(img.height * k);
+      cv.getContext('2d').drawImage(img, 0, 0, cv.width, cv.height); res(cv.toDataURL('image/jpeg', 0.72));
+    }; img.src = r.result; };
+    r.readAsDataURL(file);
+  });
+}
+
+/* ================= dashboard ================= */
+let dashRange = { from: '', to: '' };
+function dashboardView() {
+  const root = h('div'); const body = h('div');
+  const inRange = v => { const d = (v.arrived || '').slice(0, 10); if (!dashRange.from && !dashRange.to) return true; if (!d) return false; return (!dashRange.from || d >= dashRange.from) && (!dashRange.to || d <= dashRange.to); };
+  function fill() {
+    body.replaceChildren();
+    const vs = S.visits.filter(inRange), ids = new Set(vs.map(v => v.id)), cs = vs.map(v => ({ v, c: calcVisit(v) }));
+    const stops = S.stops.filter(s => ids.has(s.visitId)), svcs = S.services.filter(s => ids.has(s.visitId)), dmg = S.damages.filter(d => ids.has(d.visitId));
+    const closed = cs.filter(x => x.c.status === 'Closed'), judged = cs.filter(x => x.c.met != null);
+    const kpi = (b, s) => h('div', { class: 'kpi' }, h('b', {}, b), h('span', {}, s));
+    body.append(h('div', { class: 'cards' }, kpi(vs.length, 'Visits'), kpi(closed.length, 'Closed (back at LSA)'), kpi(cs.filter(x => x.c.status === 'In progress').length, 'In progress'), kpi(svcs.length, 'Jobs logged'), kpi(stops.length, 'Vendor stops'), kpi(money(sum(S.expenses.filter(e => (!dashRange.from || (e.date || '') >= dashRange.from) && (!dashRange.to || (e.date || '') <= dashRange.to)).map(e => num(e.amount)))), 'Petty cash (' + cur() + ')'),
+      kpi(f1(avg(cs.map(x => x.c.total))), 'Avg turnaround (hrs)'), kpi(judged.length ? Math.round(judged.filter(x => x.c.met).length / judged.length * 100) + '%' : '\u2013', 'Closed visits within target'), kpi(cs.filter(x => x.c.open > 24).length, 'Open visits older than 24 h')));
+    // stages
+    const avgs = STAGE_NAMES.map((_, i) => avg(cs.map(x => x.c.stages[i]))), tot = sum(avgs);
+    const stageTbl = h('table', {}, h('thead', {}, h('tr', {}, h('th', {}, 'Stage'), h('th', { class: 'n' }, 'Avg hrs'), h('th', {}, 'Share'), h('th', {}, 'Who controls it'))),
+      h('tbody', {}, STAGE_NAMES.map((n, i) => h('tr', {}, h('td', {}, n), h('td', { class: 'n' }, f1(avgs[i])), h('td', {}, h('div', { class: 'bar' }, h('i', { style: 'width:' + (tot && avgs[i] ? avgs[i] / tot * 100 : 0) + '%' }))), h('td', {}, STAGE_OWNER[i])))));
+    const own = ['Our team', 'Splendor', 'Vendor'].map(o => [o, closed.filter(x => x.c.owner === o).length]);
+    const ownTbl = h('table', {}, h('thead', {}, h('tr', {}, h('th', {}, 'Owner of the biggest delay'), h('th', { class: 'n' }, 'Closed visits'))), h('tbody', {}, own.map(([o, n]) => h('tr', {}, h('td', {}, o), h('td', { class: 'n' }, n)))));
+    body.append(h('div', { class: 'two' }, h('div', { class: 'card' }, h('h2', {}, 'Where does the time go? (average per visit)'), h('div', { class: 'tw' }, stageTbl)), h('div', { class: 'card' }, h('h2', {}, 'Biggest delay by owner'), ownTbl)));
+    // lanes
+    const laneTbl = h('table', {}, h('thead', {}, h('tr', {}, ['Lane', 'Target (hrs)', 'Closed visits', 'Avg turnaround (hrs)', '% within target'].map((t, i) => h('th', { class: i ? 'n' : '' }, t)))),
+      h('tbody', {}, S.settings.lanes.map(l => { const m = cs.filter(x => x.c.lane === l.name), cl = m.filter(x => x.c.status === 'Closed'), j = m.filter(x => x.c.met != null);
+        return h('tr', {}, h('td', {}, l.name), h('td', { class: 'n' }, l.target), h('td', { class: 'n' }, cl.length), h('td', { class: 'n' }, f1(avg(m.map(x => x.c.total)))), h('td', { class: 'n' }, j.length ? Math.round(j.filter(x => x.c.met).length / j.length * 100) + '%' : '\u2013')); })));
+    const venTbl = h('table', {}, h('thead', {}, h('tr', {}, ['Vendor', 'Stops', 'Jobs done', 'Avg time per stop (hrs)', 'Avg approval wait (hrs)', 'Avg net work (hrs)'].map((t, i) => h('th', { class: i ? 'n' : '' }, t)))),
+      h('tbody', {}, vendors().map(n => { const ss = stops.filter(s => s.vendor === n), inf = ss.map(stopInfo);
+        return h('tr', {}, h('td', {}, n), h('td', { class: 'n' }, ss.length), h('td', { class: 'n' }, svcs.filter(s => s.vendor === n).length), h('td', { class: 'n' }, f1(avg(inf.map(x => x.atVendor)))), h('td', { class: 'n' }, f1(avg(inf.map(x => x.appr)))), h('td', { class: 'n' }, f1(avg(inf.map(x => x.net)))));
+      })));
+    body.append(h('div', { class: 'two' }, h('div', { class: 'card' }, h('h2', {}, 'By lane (lane = slowest job on the visit)'), laneTbl), h('div', { class: 'card' }, h('h2', {}, 'By vendor'), h('div', { class: 'tw' }, venTbl))));
+    // categories + damage + due
+    const sinfo = svcs.map(svcInfo);
+    const catTbl = h('table', {}, h('thead', {}, h('tr', {}, h('th', {}, 'Category'), h('th', { class: 'n' }, 'Jobs'))), h('tbody', {}, S.settings.categories.map(cn => h('tr', {}, h('td', {}, cn), h('td', { class: 'n' }, sinfo.filter(x => x.category === cn).length)))));
+    const od = sinfo.filter(x => x.status === 'OVERDUE'), cmp = od.length + sinfo.filter(x => x.status === 'On time').length;
+    const kv = rows => h('table', {}, h('tbody', {}, rows.map(([a, b]) => h('tr', {}, h('td', {}, a), h('td', { class: 'n' }, h('b', {}, b))))));
+    body.append(h('div', { class: 'two' }, h('div', { class: 'card' }, h('h2', {}, 'Jobs by category'), catTbl),
+      h('div', {}, h('div', { class: 'card' }, h('h2', {}, 'Damage & inspections'), kv([['Damage records logged', dmg.length], ['\u2026of which NEW (found after pickup)', dmg.filter(d => d.condition === 'New').length],
+        ['Closed visits without a pickup inspection', closed.filter(x => !x.v.pins).length], ['Closed visits without a return inspection', closed.filter(x => !x.v.rins).length], ['Closed visits without pickup photos', closed.filter(x => !listOf(x.v, 'pickupPhotos').length).length], ['Closed visits without return photos', closed.filter(x => !listOf(x.v, 'returnPhotos').length).length], ['Closed visits with data problems', closed.filter(x => x.c.check && x.c.check !== 'OK').length]])),
+        h('div', { class: 'card' }, h('h2', {}, 'Service due compliance (odometer vs previous due km)'), kv([['Jobs with a previous due km to compare', cmp], ['\u2026came in OVERDUE', od.length], ['% overdue', cmp ? Math.round(od.length / cmp * 100) + '%' : '\u2013'],
+          ['Average km overdue', od.length ? fInt(Math.round(avg(od.map(x => x.kmOver)))) : '\u2013'], ['Worst km overdue', od.length ? fInt(Math.max(...od.map(x => x.kmOver))) : '\u2013'], ['Visits with an overdue job', cs.filter(x => x.c.overdueN > 0).length], ['Jobs missing an odometer reading', sinfo.filter(x => x.status === 'Odometer missing').length]])))));
+  }
+  const from = h('input', { type: 'date', value: dashRange.from, style: 'width:auto', onchange: e => { dashRange.from = e.target.value; fill(); } });
+  const to = h('input', { type: 'date', value: dashRange.to, style: 'width:auto', onchange: e => { dashRange.to = e.target.value; fill(); } });
+  root.append(h('h1', {}, 'Dashboard'), h('p', { class: 'sub' }, 'Hours are elapsed clock hours (24/7). Filter by the date the car arrived at LSA.'),
+    h('div', { class: 'row card' }, 'From', from, 'To', to, h('button', { class: 'btn sec sm', onclick: () => { dashRange = { from: '', to: '' }; draw(); } }, 'Clear'), h('span', { class: 'spacer' }), h('button', { class: 'btn', onclick: () => downloadPeriod(dashRange.from, dashRange.to, 'arrived') }, 'Download Excel for this period')), body);
+  fill(); return root;
+}
+
+/* ================= client report ================= */
+let reportState = { visit: null };
+function reportView() {
+  const root = h('div'); const paperBox = h('div');
+  if (!reportState.visit || !visitById(reportState.visit)) reportState.visit = S.visits.length ? [...S.visits].sort((a, b) => (b.created || 0) - (a.created || 0))[0].id : null;
+  const RO = S.settings.reportOpts;
+  const chk = (label, key) => h('label', { class: 'row', style: 'gap:5px' }, h('input', { type: 'checkbox', checked: RO[key], onchange: e => { RO[key] = e.target.checked; save(); fill(); } }), label);
+  const photoBox = h('div', { class: 'no-print' });
+  function fillPhotos() {
+    photoBox.replaceChildren(); const v = visitById(reportState.visit); if (!v) return;
+    const dm = S.damages.filter(d => d.visitId === v.id);
+    photoBox.append(h('div', { class: 'card' }, h('div', { class: 'row', style: 'margin-bottom:8px' }, h('h2', { style: 'margin:0' }, 'Damage photos for this report'), h('span', { class: 'spacer' }),
+      h('button', { class: 'btn sec sm', onclick: () => go('visits', v.id) }, dm.length ? 'Edit damage records' : '+ Add a damage record')),
+      dm.length ? dm.map(d => h('div', { class: 'dphoto' }, h('div', { class: 'hd' }, h('b', {}, d.id), ' \u00B7 ', [d.location, d.type, d.severity, d.condition, d.stage].filter(Boolean).join(' \u00B7 ') || 'details not filled in'),
+        photoEditor(d, () => { fill(); }))) : h('div', { class: 'empty' }, 'No damage recorded on this visit. Add a damage record first, then attach its photos here.')));
+  }
+  function fill() { paperBox.replaceChildren(reportState.visit ? reportPaper(visitById(reportState.visit)) : h('div', { class: 'empty card' }, 'No visits yet.')); fillPhotos(); }
+  root.append(h('div', { class: 'no-print' }, h('h1', {}, 'Client report'), h('p', { class: 'sub' }, 'Pick a visit, choose what to show, then Print / Save as PDF. Company and client names are on the Settings page.'),
+    h('div', { class: 'row card' }, sel([...S.visits].sort((a, b) => (b.created || 0) - (a.created || 0)).map(v => [v.id, v.id + ' \u00B7 ' + (v.plate || 'no plate') + ' \u00B7 ' + fmtD(v.arrived)]), reportState.visit, x => { reportState.visit = x; fill(); }, false),
+      chk('Show turnaround time', 'turnaround'), chk('Show time at each vendor', 'vendorTimes'), chk('Show overdue-service note', 'overdue'), chk('Show petty cash spent', 'petty'), chk('Show damage photos', 'photos'), chk('Include pickup / return photos (internal)', 'condPhotos'), h('span', { class: 'spacer' }),
+      h('button', { class: 'btn', onclick: () => printReport() }, 'Print / Save as PDF'))), photoBox, paperBox);
+  fill(); return root;
+}
+function tbl(heads, rows, empty) {
+  return h('div', { class: 'tblwrap' }, h('table', { class: 'noresp' }, h('thead', {}, h('tr', {}, heads.map(x => h('th', {}, x)))), h('tbody', {}, rows.length ? rows.map(r => h('tr', {}, r.map(c => h('td', {}, c == null ? '' : c)))) : h('tr', {}, h('td', { colspan: heads.length, style: 'color:#667085' }, empty || 'None')))));
+}
+function reportPaper(v) {
+  const c = calcVisit(v), st = S.settings, o = st.reportOpts;
+  const kv = (a, b) => h('div', {}, h('b', {}, a), h('span', {}, b == null || b === '' ? '\u2013' : b));
+  const dm = S.damages.filter(d => d.visitId === v.id);
+  const p = h('div', { class: 'paper' },
+    h('div', { class: 'meta' }, h('div', {}, h('h1', {}, 'Vehicle Service & Damage Report'), h('div', {}, st.company || ''), st.client ? h('div', {}, 'Prepared for: ' + st.client) : ''),
+      h('div', { style: 'text-align:right' }, h('div', {}, h('b', {}, 'Visit: '), v.id), h('div', {}, h('b', {}, 'Report date: '), fmtD(todayStr())))),
+    h('h2', {}, 'Vehicle & visit'),
+    h('div', { class: 'kv' }, kv('Car plate', v.plate), kv('Arrived at LSA', fmtDT(v.arrived)), kv('Make / model', v.make), kv('Picked up from LSA', fmtDT(v.picked)),
+      kv('Odometer at pickup', v.odo !== '' && v.odo != null ? fInt(v.odo) + ' km' : ''), kv('Returned to LSA', fmtDT(v.returned)),
+      kv('Handled by', v.tech), kv('Pickup inspection', v.pins ? 'Done' : 'Not recorded'),
+      kv('Return inspection', v.rins ? 'Done' : 'Not recorded'), o.turnaround ? '' : h('div'),
+      o.turnaround ? kv('Total turnaround', c.total != null ? f1(c.total) + ' hours' : '') : '',
+      o.turnaround ? kv('Target / result', c.target != null ? c.target + ' h \u2013 ' + (c.met == null ? 'in progress' : c.met ? 'within target' : 'over target') : '') : ''));
+  if (o.vendorTimes) {
+    const rows = c.stops.map((s, i) => { const x = c.si[i]; return [i + 1, s.vendor, fmtDT(s.arrived), fmtDT(s.left), f1(x.atVendor), f1(x.appr), f1(x.net)]; });
+    p.append(h('h2', {}, 'Time spent at each vendor'), tbl(['#', 'Vendor', 'Arrived', 'Left', 'Time at vendor (h)', 'Approval wait (h)', 'Net work (h)'], rows, 'No vendor stops recorded'));
+    if (c.THV != null) p.append(h('div', { style: 'margin-top:4px' }, h('b', {}, 'Total time at vendors: '), f1(c.THV) + ' h'));
+  }
+  p.append(h('h2', {}, 'Services carried out'), tbl(['#', 'Service', 'Vendor', 'Parts replaced', 'Odometer (km)', 'Next due (km)', 'Status at pickup'],
+    c.svcs.map((s, i) => { const x = c.sinfo[i]; return [i + 1, s.service, s.vendor, s.parts, fInt(x.odo), fInt(x.nextDue), x.status]; }), 'No services recorded'));
+  const od = c.svcs.map((s, i) => ({ s, x: c.sinfo[i] })).filter(a => a.x.status === 'OVERDUE');
+  if (o.overdue && od.length) p.append(h('div', { style: 'margin-top:8px;padding:6px 10px;border:1px solid #e0a39b;background:#fdf0ee' }, h('b', {}, 'Service interval note: '),
+    'the vehicle arrived past its previous due mileage for: ' + od.map(a => a.s.service + ' (' + fInt(a.x.kmOver) + ' km over)').join('; ') + '.'));
+  p.append(h('h2', {}, 'Damage inspection record'), tbl(['#', 'Ref', 'Location', 'Type', 'Severity', 'Condition', 'Stage', 'Recorded', 'Photos'],
+    dm.map((d, i) => [i + 1, d.id, d.location, d.type, d.severity, d.condition, d.stage, fmtDT(d.time), photosOf(d).length || '\u2013']), 'No damage recorded'));
+  const figs = []; dm.forEach(d => photosOf(d).forEach((id, k) => { figs.push(h('figure', {}, pimg(id), h('figcaption', {}, [d.id + (photosOf(d).length > 1 ? ' (' + (k + 1) + ')' : ''), d.location, d.type, d.condition].filter(Boolean).join(' \u00B7 ')))); }));
+  if (o.photos && figs.length) p.append(h('h2', {}, 'Damage photos'), h('div', { class: 'photos' }, figs));
+  if (o.condPhotos) {
+    const cf = []; [['pickupPhotos', 'Pickup'], ['returnPhotos', 'Return']].forEach(([k, lab]) => listOf(v, k).forEach((id, i) => { cf.push(h('figure', {}, pimg(id), h('figcaption', {}, lab + ' photo ' + (i + 1) + (lab === 'Pickup' && v.picked ? ' \u00B7 ' + fmtDT(v.picked) : lab === 'Return' && v.returned ? ' \u00B7 ' + fmtDT(v.returned) : '')))); }));
+    if (cf.length) p.append(h('h2', {}, 'Vehicle condition photos (pickup / return)'), h('div', { class: 'photos' }, cf));
+  }
+  if (o.petty) {
+    const ex = visitExpenses(v);
+    if (ex.length) {
+      const tot = sum(ex.map(e => num(e.amount)));
+      p.append(h('h2', {}, 'Petty cash spent'), tbl(['#', 'Date', 'Category', 'What for', 'Paid by', 'Amount (' + cur() + ')'],
+        ex.map((e, i) => [i + 1, fmtD(e.date), e.category, e.description, e.paidBy, money(num(e.amount))]), 'None'),
+        h('div', { style: 'margin-top:4px;text-align:right' }, h('b', {}, 'Total petty cash: '), money(tot) + ' ' + cur()));
+    }
+  }
+  if (v.notes) p.append(h('h2', {}, 'Notes'), h('div', {}, v.notes));
+  p.append(h('div', { class: 'sig' }, h('div', {}, 'Prepared by (' + (st.company || 'service provider') + ')'), h('div', {}, 'Acknowledged by client'), h('div', {}, 'Date')));
+  return p;
+}
+
+async function printReport() {
+  const v = visitById(reportState.visit); if (!v) return;
+  const o = S.settings.reportOpts, ids = [];
+  if (o.photos) S.damages.filter(d => d.visitId === v.id).forEach(d => ids.push(...photosOf(d)));
+  if (o.condPhotos) ids.push(...listOf(v, 'pickupPhotos'), ...listOf(v, 'returnPhotos'));
+  const w = window.open('', '_blank');
+  try { if (ids.length) { setSaved('Loading photos for printing\u2026'); await ensurePhotos(ids); setSaved('Ready to print'); } } catch (e) { }
+  const paper = reportPaper(v); paper.querySelectorAll('img[data-pid]').forEach(im => { const u = P[im.getAttribute('data-pid')]; if (u) im.src = u; });
+  if (!w) { window.print(); return; }
+  w.document.write('<!DOCTYPE html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>' + v.id + ' report</title><style>' + document.querySelector('style').textContent + '</style></head><body style="background:#fff"><main style="padding:12px">' + paper.outerHTML + '</main></body></html>');
+  w.document.close();
+  const go2 = () => { try { w.focus(); w.print(); } catch (e) { } };
+  setTimeout(go2, 600);
+}
+
+/* ================= catalog ================= */
+let catQ = '';
+function catalogView() {
+  const root = h('div'); const tbody = h('tbody');
+  function fill() {
+    tbody.replaceChildren();
+    const words = catQ.toLowerCase().split(/\s+/).filter(Boolean);
+    S.catalog.forEach(c => {
+      if (!words.every(w => (c.service + ' ' + c.category + ' ' + c.vendor).toLowerCase().includes(w))) return;
+      tbody.append(h('tr', {},
+        h('td', { style: 'min-width:300px' }, (() => { const old = { n: c.service }; const i = h('input', { type: 'text', value: c.service }); i.addEventListener('change', () => { const nn = i.value.trim(); if (!nn) { i.value = c.service; return; } S.services.forEach(s => { if (s.service === c.service) s.service = nn; }); c.service = nn; save(); }); return i; })()),
+        h('td', {}, sel(S.settings.categories, c.category, x => { c.category = x; save(); }, false)), h('td', {}, sel(S.settings.lanes.map(l => l.name), c.lane, x => { c.lane = x; save(); }, false)),
+        h('td', {}, sel(vendors(), c.vendor, x => { c.vendor = x; save(); })), h('td', { style: 'width:130px' }, numIn(c, 'interval', save, '0')),
+        h('td', {}, h('button', { class: 'btn danger sm', onclick: async () => { if (S.services.some(s => s.service === c.service) && !await uiConfirm('This service is used in existing jobs (they will keep the name but lose lane info). Delete anyway?')) return; S.catalog = S.catalog.filter(x => x !== c); save(); fill(); } }, 'Delete'))));
+    });
+  }
+  root.append(h('h1', {}, 'Service catalog'), h('p', { class: 'sub' }, 'Every service a car may need. Lane sets the turnaround target; \u201Cinterval (km)\u201D drives Next Due (km) = odometer + interval (leave 0 for repairs). The intervals are common defaults I assumed \u2013 confirm them against the Splendor / manufacturer schedule.'),
+    h('div', { class: 'row card' }, h('input', { type: 'search', placeholder: 'Search services or categories\u2026', style: 'max-width:320px', value: catQ, oninput: e => { catQ = e.target.value; fill(); } }), h('span', { class: 'spacer' }),
+      h('button', { class: 'btn', onclick: () => { catQ = ''; S.catalog.unshift({ service: 'New service', category: 'Other', lane: S.settings.lanes[1] ? S.settings.lanes[1].name : '', vendor: vendors()[0] || '', interval: 0 }); save(); draw(); } }, '+ Add service')),
+    h('div', { class: 'card tw', style: 'padding:0' }, h('table', {}, h('thead', {}, h('tr', {}, ['Service', 'Category', 'Lane', 'Suggested vendor', 'Interval (km)', ''].map(t => h('th', {}, t)))), tbody)));
+  fill(); return root;
+}
+
+/* ================= settings ================= */
+function settingsView() {
+  const st = S.settings, root = h('div');
+  function renameList(arr, idx, val, kind) {
+    const old = arr[idx]; arr[idx] = val;
+    if (old && val && old !== val) {
+      if (kind === 'vendor') { S.stops.forEach(x => { if (x.vendor === old) x.vendor = val; }); S.services.forEach(x => { if (x.vendor === old) x.vendor = val; }); S.catalog.forEach(x => { if (x.vendor === old) x.vendor = val; }); }
+      if (kind === 'staff') { S.visits.forEach(x => { if (x.tech === old) x.tech = val; }); S.damages.forEach(x => { if (x.by === old) x.by = val; }); }
+    }
+    save();
+  }
+  const listBox = (label, arr, kind, n) => h('div', { class: 'card' }, h('h2', {}, label), h('div', { class: 'grid' }, Array.from({ length: n }, (_, i) => fld('#' + (i + 1), (() => { const inp = h('input', { type: 'text', value: arr[i] || '' }); inp.addEventListener('change', () => renameList(arr, i, inp.value.trim(), kind)); return inp; })()))));
+  const area = (label, key) => h('div', { class: 'f' }, h('span', {}, label + ' (one per line)'), h('textarea', { style: 'min-height:130px', onchange: e => { st[key] = e.target.value.split('\n').map(x => x.trim()).filter(Boolean); save(); } }, st[key].join('\n')));
+  root.append(h('h1', {}, 'Settings'),
+    h('div', { class: 'card' }, h('h2', {}, 'Report header'), h('div', { class: 'grid' }, fld('Company name on report', txt(st, 'company', save)), fld('Client name on report (optional)', txt(st, 'client', save, { ph: 'e.g. client / site name' })), fld('Currency (petty cash)', txt(st, 'currency', save)))),
+    h('div', { class: 'card' }, h('h2', {}, 'Turnaround lanes'), h('p', { class: 'sub', style: 'margin-bottom:8px' }, 'Proposed targets \u2013 change to whatever you agree with the client. A visit takes the target of its slowest job.'),
+      h('div', { class: 'grid' }, st.lanes.map(l => h('div', { class: 'f' }, h('span', {}, l.name + ' \u2013 target (hours)'), numIn(l, 'target', save))))),
+    listBox('Vendors (up to 4 \u2013 renaming updates existing records)', st.vendors, 'vendor', 4), listBox('Staff (supervisor / technicians \u2013 renaming updates existing records)', st.staff, 'staff', 6),
+    h('div', { class: 'card' }, h('h2', {}, 'Dropdown lists'), h('div', { class: 'grid' }, area('Service categories', 'categories'), area('Damage locations', 'damageLocations'), area('Damage types', 'damageTypes'), area('Severities', 'severities'), area('Inspection stages', 'stages'), area('Job statuses', 'svcStatuses'), area('Petty cash categories', 'expenseCats'))));
+  return root;
+}
+
+/* ================= data & export ================= */
+async function importBackup(j) {
+  S = j.state; P = Object.assign({}, j.photos || {}); migrate();
+  const nowT = Date.now(); COLL.forEach(c => S[c].forEach(r => { r._u = nowT; })); S._su = S._cu = nowT; S.tomb = {}; initSnap();
+  COLL.forEach(c => S[c].forEach(r => dirty.add(c + ':' + r.id))); dirty.add('settings'); dirty.add('catalog');
+  Object.keys(P).forEach(k => dirtyPhotos.add(k));
+  rev = 0; setSaved('Uploading backup to Google Drive\u2026'); go('visits');
+  await sync();
+  uiAlert(online ? 'Backup imported into Google Drive (' + S.visits.length + ' visits, ' + Object.keys(j.photos || {}).length + ' photos).' : 'Imported on this phone, but it could not reach Google Drive yet. Keep the page open \u2013 it will keep retrying.');
+}
+function dataView() {
+  const root = h('div');
+  const nPhotos = allPhotoIds().length;
+  const info = h('div', { class: 'sub' }, `${S.visits.length} visits, ${S.services.length} jobs, ${S.stops.length} vendor stops, ${S.damages.length} damage records, ${S.expenses.length} petty cash entries, ${nPhotos} photos.`);
+  const lbT = LS.get('ft-lastbackup'), lb = lbT ? 'Last backup downloaded on this device: ' + fmtDT(lbT) : 'No backup downloaded on this device yet.';
+  const restore = h('input', { type: 'file', accept: '.json,application/json', style: 'display:none' });
+  restore.addEventListener('change', () => {
+    const f = restore.files[0]; if (!f) return; const r = new FileReader();
+    r.onload = async () => { let j; try { j = JSON.parse(r.result); if (!j || j.format !== 'fleet-tracker-backup' || !j.state) throw new Error('bad'); } catch (e) { uiAlert('That file is not a valid Fleet Tracker backup.'); return; }
+      if (!await uiConfirm('Import this backup (' + (j.state.visits || []).length + ' visits) into the shared Google Drive data?\n\nRecords in the backup overwrite the same records in the tracker. Other records already in the tracker are kept.')) return;
+      importBackup(j); };
+    r.readAsText(f); restore.value = '';
+  });
+  const dlDrive = LS.get('ft-dl-drive') === '1';
+  const scard = h('div', { class: 'card' }, h('h2', {}, 'Where your data is'),
+    h('p', { class: 'sub', style: 'margin-bottom:8px' }, online ? ['\u2705 Saved in your Google Drive, folder \u201C', serverInfo ? serverInfo.folder : 'FleetTracker Data', '\u201D', serverInfo && serverInfo.folderUrl ? [' (', h('a', { href: serverInfo.folderUrl, target: '_blank' }, 'open'), ')'] : '', '. A copy is kept automatically every day in its \u201Cbackups\u201D folder. Last saved: ', lastSync || '\u2013', '.'] : '\u26A0 Not connected to Google Drive right now \u2013 changes will save when the connection is back.'),
+    h('div', { class: 'row' }, h('button', { class: 'btn sec sm', onclick: () => sync() }, 'Save / refresh now'), h('span', { class: 'spacer' }),
+      h('span', { class: 'sub', style: 'margin:0' }, 'Your initials on this device: ', h('b', {}, device && device.initials ? device.initials : 'not set'), ' '),
+      h('button', { class: 'btn sec sm', onclick: async () => { await askInitials(true); draw(); } }, 'Change')),
+    h('label', { class: 'row', style: 'gap:6px;margin-top:10px' }, h('input', { type: 'checkbox', checked: dlDrive, onchange: e => { LS.set('ft-dl-drive', e.target.checked ? '1' : '0'); } }),
+      'Save downloads (Excel, backups) to Google Drive \u203A FleetTracker Data \u203A exports instead of this device \u2013 use this if downloads don\u2019t work on your phone.'));
+  root.append(h('h1', {}, 'Data & export'), info, periodCard(), scard,
+    h('div', { class: 'card' }, h('h2', {}, 'Export ALL data to Excel'), h('p', { class: 'sub' }, 'Every sheet: Vehicles, Visits (with all calculated times), Vendor Stops, Services, Damage Log, Petty Cash and Service Catalog. Values only. Photos are not included.'),
+      h('button', { class: 'btn sec', onclick: () => download(buildXlsx(exportSheets()), 'Fleet_Service_Tracker_ALL_' + todayStr() + '.xlsx') }, 'Download everything (.xlsx)')),
+    h('div', { class: 'card' }, h('h2', {}, 'Backup & import'), h('p', { class: 'sub' }, lb + ' Use \u201CImport backup\u201D once to bring in the data from your old laptop file (Data & Export \u203A Download backup there).'),
+      h('div', { class: 'row' },
+        h('button', { class: 'btn', onclick: async () => {
+          let photos = {};
+          if (nPhotos && await uiConfirm('Include the ' + nPhotos + ' photos in the backup file? (Slower and bigger. Photos are already stored in your Drive \u201Cphotos\u201D folder.)')) { setSaved('Collecting photos\u2026'); await ensurePhotos(allPhotoIds()); allPhotoIds().forEach(id => { if (P[id]) photos[id] = P[id]; }); }
+          download(new Blob([JSON.stringify({ format: 'fleet-tracker-backup', version: 2, exportedAt: nowISO(), state: S, photos })], { type: 'application/json' }), 'Fleet_Tracker_backup_' + todayStr() + '.json'); LS.set('ft-lastbackup', nowISO()); setTimeout(draw, 300);
+        } }, 'Download backup (.json)'),
+        h('button', { class: 'btn sec', onclick: () => restore.click() }, 'Import backup\u2026'), restore)),
+    h('div', { class: 'card' }, h('h2', {}, 'Other'), h('div', { class: 'row' },
+      h('button', { class: 'btn sec', onclick: async () => { if (!await uiConfirm('Add 4 sample visits (with stops, jobs and damage) so you can see how it works? The supervisor will see them too. You can delete them afterwards.')) return; loadSample(); go('visits'); } }, 'Load sample data'),
+      h('button', { class: 'btn danger', onclick: async () => { if (!await uiConfirm('Delete ALL visits, jobs, stops, damage, petty cash and photos \u2013 for BOTH of you? (Catalog and settings are kept.) Download a backup first!')) return; if (await uiPrompt('Type DELETE to confirm') !== 'DELETE') return; allPhotoIds().forEach(k => deletedPhotos.add(k)); P = {}; S.visits = []; S.stops = []; S.services = []; S.damages = []; S.expenses = []; save(); go('visits'); } }, 'Erase all data'))));
+  return root;
+}
+let xr = null;
+function periodPreset(k) {
+  const d = new Date(), iso = x => x.getFullYear() + '-' + pad2(x.getMonth() + 1) + '-' + pad2(x.getDate()), back = n => { const x = new Date(); x.setDate(x.getDate() - n); return iso(x); };
+  if (k === 'today') return [iso(d), iso(d)];
+  if (k === '7') return [back(6), iso(d)];
+  if (k === '30') return [back(29), iso(d)];
+  if (k === 'month') return [iso(new Date(d.getFullYear(), d.getMonth(), 1)), iso(d)];
+  if (k === 'lastmonth') return [iso(new Date(d.getFullYear(), d.getMonth() - 1, 1)), iso(new Date(d.getFullYear(), d.getMonth(), 0))];
+}
+function downloadPeriod(from, to, basis) {
+  const vs = S.visits.filter(v => inPeriod(v, from, to, basis));
+  if (!vs.length) { uiAlert('No visits in that period.'); return; }
+  download(buildXlsx(exportSheets({ visits: vs, period: { from, to, basis }, hideTiming: !S.settings.excelTiming, petty: S.settings.excelPetty, vehicles: S.settings.excelVehicles })), 'Service_Report_' + (from || 'start') + '_to_' + (to || todayStr()) + '.xlsx');
+}
+function periodCard() {
+  if (!xr) { const [f, t] = periodPreset('month'); xr = { from: f, to: t, basis: 'arrived' }; }
+  const count = h('span', { class: 'sub', style: 'margin:0' });
+  const upd = () => { const n = S.visits.filter(v => inPeriod(v, xr.from, xr.to, xr.basis)).length; count.replaceChildren(h('b', {}, n), ' visit' + (n === 1 ? '' : 's') + ' in this period'); };
+  const from = h('input', { type: 'date', value: xr.from, style: 'width:auto', onchange: e => { xr.from = e.target.value; upd(); } });
+  const to = h('input', { type: 'date', value: xr.to, style: 'width:auto', onchange: e => { xr.to = e.target.value; upd(); } });
+  const preset = (label, k) => h('button', { class: 'btn sec sm', onclick: () => { [xr.from, xr.to] = periodPreset(k); from.value = xr.from; to.value = xr.to; upd(); } }, label);
+  const card = h('div', { class: 'card' }, h('h2', {}, 'Excel service report for a date range'),
+    h('p', { class: 'sub', style: 'margin-bottom:10px' }, 'Only the visits in the chosen period (with their jobs, vendor stops and damage), plus a Summary sheet with the period totals.'),
+    h('div', { class: 'row', style: 'margin-bottom:10px' }, preset('Today', 'today'), preset('Last 7 days', '7'), preset('Last 30 days', '30'), preset('This month', 'month'), preset('Last month', 'lastmonth')),
+    h('div', { class: 'row' }, 'From', from, 'To', to, 'by', sel(Object.entries(BASIS).map(([k, l]) => [k, l + ' date']), xr.basis, x => { xr.basis = x; upd(); }, false), count, h('span', { class: 'spacer' }),
+      h('button', { class: 'btn', onclick: () => downloadPeriod(xr.from, xr.to, xr.basis) }, 'Download Excel for this period')),
+    h('label', { class: 'row', style: 'gap:6px;margin-top:10px' }, h('input', { type: 'checkbox', checked: S.settings.excelTiming, onchange: e => { S.settings.excelTiming = e.target.checked; save(); } }),
+      'Include turnaround & timing figures (turnaround, targets, hours per stage, time at vendors). Untick for a report without them.'),
+    h('label', { class: 'row', style: 'gap:6px;margin-top:6px' }, h('input', { type: 'checkbox', checked: S.settings.excelVehicles, onchange: e => { S.settings.excelVehicles = e.target.checked; save(); } }),
+      'Include a Vehicles sheet (each car in the period: times serviced, jobs, last odometer).'),
+    h('label', { class: 'row', style: 'gap:6px;margin-top:6px' }, h('input', { type: 'checkbox', checked: S.settings.excelPetty, onchange: e => { S.settings.excelPetty = e.target.checked; save(); } }),
+      'Include petty cash (internal) \u2013 a Petty Cash sheet for expenses dated in the period, plus totals on the Summary. Leave unticked for client copies.'));
+  upd(); return card;
+}
+function loadSample() {
+  if (!ensureDevice()) return;
+  const V = (plate, make, tech, odo, a, p, r, pins, rins) => { const id = nextId('V', 'visits'); S.visits.push({ id, created: Date.now() + S.visits.length, pickupPhotos: [], returnPhotos: [], plate, make, tech, odo, arrived: a, picked: p, returned: r, pins, rins, notes: 'SAMPLE' }); return id; };
+  const ST = (vid, vendor, arrived, apprReq, apprRec, left) => S.stops.push({ id: uid(), visitId: vid, vendor, arrived, apprReq: apprReq || '', apprRec: apprRec || '', left, notes: '' });
+  const SV = (vid, service, vendor, appr, parts) => S.services.push({ id: uid(), visitId: vid, service, vendor, apprNeeded: appr, status: 'Done', parts: parts || '', nextOverride: '', nextDate: '', notes: '' });
+  const DG = (vid, time, stage, location, type, severity, condition, ref, by, notified) => S.damages.push({ id: nextId('D', 'damages'), visitId: vid, time, stage, location, type, severity, condition, photoRef: ref, photos: [], by, notified, notes: '' });
+  const a = V('ABC 1234', 'Toyota Camry', 'Technician 1', 48200, '2026-10-05T08:00', '2026-10-05T11:00', '2026-10-05T17:00', true, true);
+  ST(a, 'Petromin', '2026-10-05T11:30', '2026-10-05T11:35', '2026-10-05T13:35', '2026-10-05T15:00'); ST(a, 'Tyre Vendor', '2026-10-05T15:20', '', '', '2026-10-05T16:20');
+  SV(a, 'Oil change - engine oil & filter', 'Petromin', 'Yes', 'Engine oil 5W-30, oil filter'); SV(a, 'Battery replacement', 'Petromin', 'Yes', 'Battery 70Ah'); SV(a, 'Wheel alignment', 'Tyre Vendor', 'No');
+  const b = V('XYZ 5678', 'Toyota Hilux', 'Technician 2', 91500, '2026-10-06T09:00', '2026-10-06T15:00', '2026-10-07T15:00', true, true);
+  ST(b, 'Local Mechanic', '2026-10-06T15:30', '', '', '2026-10-07T11:00'); SV(b, 'Axle repair (general)', 'Local Mechanic', 'No', 'CV axle (left)'); SV(b, 'Brake pads - front', 'Local Mechanic', 'No', 'Front pad set');
+  DG(b, '2026-10-06T09:10', 'Pickup inspection', 'Rear bumper', 'Scratch', 'Minor', 'Pre-existing', 'sample_rear_bumper.jpg', 'Technician 2', 'Yes');
+  const c = V('DEF 9012', 'Hyundai Accent', 'Technician 1', 33100, '2026-10-07T08:00', '2026-10-07T09:00', '2026-10-08T10:00', true, false);
+  ST(c, 'Tyre Vendor', '2026-10-07T09:30', '', '', '2026-10-07T15:00'); SV(c, 'Tyre replacement - set of 4', 'Tyre Vendor', 'No', '4 tyres'); SV(c, 'Wheel balancing', 'Tyre Vendor', 'No');
+  DG(c, '2026-10-08T10:05', 'Return inspection', 'Left front door', 'Dent', 'Moderate', 'New', 'sample_left_door.jpg', 'Technician 1', 'No');
+  const d = V('ABC 1234', 'Toyota Camry', 'Technician 2', 54800, '2026-10-09T08:00', '2026-10-09T09:00', '2026-10-09T14:00', true, true);
+  ST(d, 'Petromin', '2026-10-09T09:30', '2026-10-09T09:35', '2026-10-09T10:05', '2026-10-09T12:00'); SV(d, 'Oil change - engine oil & filter', 'Petromin', 'Yes', 'Engine oil 5W-30, oil filter');
+  save();
+}
+
+/* ================= vehicles (lookup by plate) ================= */
+const pkey = s => String(s || '').toUpperCase().replace(/[\s\-_.]/g, '');
+const money = n => (n == null || isNaN(n)) ? '\u2013' : Number(n).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+const cur = () => S.settings.currency || 'SAR';
+function vehicleIndex(VS, EX) {
+  VS = VS || S.visits; EX = EX || S.expenses;
+  const m = new Map(), get = (k, plate) => { if (!m.has(k)) m.set(k, { key: k, plate, make: '', visits: [], expenses: [] }); return m.get(k); };
+  [...VS].sort((a, b) => (a.created || 0) - (b.created || 0)).forEach(v => { const k = pkey(v.plate); if (!k) return; const x = get(k, v.plate); x.visits.push(v); x.plate = v.plate; if (v.make) x.make = v.make; });
+  EX.forEach(e => { const k = pkey(e.plate); if (!k) return; get(k, e.plate).expenses.push(e); });
+  return [...m.values()].map(x => {
+    const ids = new Set(x.visits.map(v => v.id)), odos = x.visits.map(v => num(v.odo)).filter(n => n != null);
+    const dates = x.visits.map(v => v.arrived || '').filter(Boolean).sort();
+    const svcs = S.services.filter(s => ids.has(s.visitId));
+    return Object.assign(x, { closed: x.visits.filter(v => v.returned).length, open: x.visits.filter(v => v.arrived && !v.returned).length, jobs: svcs.length,
+      lastVisit: dates.length ? dates[dates.length - 1] : '', lastOdo: odos.length ? Math.max(...odos) : null,
+      damages: S.damages.filter(d => ids.has(d.visitId)).length, overdue: svcs.filter(s => svcInfo(s).status === 'OVERDUE').length,
+      cash: sum(x.expenses.map(e => num(e.amount))) });
+  });
+}
+let vehQ = '';
+function vehicleList() {
+  const root = h('div'), tbody = h('tbody');
+  function fill() {
+    tbody.replaceChildren(); const q = pkey(vehQ);
+    const rows = vehicleIndex().filter(x => !q || x.key.includes(q) || (x.make || '').toUpperCase().includes(vehQ.trim().toUpperCase())).sort((a, b) => (b.lastVisit || '').localeCompare(a.lastVisit || ''));
+    if (!rows.length) tbody.append(h('tr', {}, h('td', { colspan: 10, class: 'empty' }, S.visits.length ? 'No car matches that plate.' : 'Cars appear here automatically once visits have a plate number.')));
+    rows.forEach(x => tbody.append(h('tr', { class: 'click', onclick: () => go('vehicles', x.key) },
+      h('td', {}, h('b', {}, x.plate)), h('td', {}, x.make), h('td', { class: 'n' }, h('b', {}, x.visits.length)), h('td', { class: 'n' }, x.jobs), h('td', {}, fmtDT(x.lastVisit) || '\u2013'),
+      h('td', { class: 'n' }, x.lastOdo != null ? fInt(x.lastOdo) : '\u2013'), h('td', {}, x.open ? badge('In service now', 'blue') : ''), h('td', {}, x.overdue ? badge(x.overdue + ' overdue', 'bad') : ''),
+      h('td', { class: 'n' }, x.damages), h('td', { class: 'n' }, x.expenses.length ? money(x.cash) : '\u2013'))));
+  }
+  root.append(h('h1', {}, 'Vehicles'), h('p', { class: 'sub' }, 'Every car you have handled, built from the plate numbers on your visits. Search by plate (spaces don\u2019t matter) and click a car for its full history and petty cash.'),
+    h('div', { class: 'row card' }, h('input', { type: 'search', placeholder: 'Search plate number, e.g. ABC1234\u2026', style: 'max-width:320px', value: vehQ, oninput: e => { vehQ = e.target.value; fill(); } })),
+    h('div', { class: 'card tw', style: 'padding:0' }, h('table', {}, h('thead', {}, h('tr', {}, ['Plate', 'Make / model', 'Times serviced (visits)', 'Jobs done', 'Last visit', 'Last odometer (km)', '', 'Due status', 'Damage records', 'Petty cash (' + cur() + ')'].map((t, i) => h('th', { class: [2, 3, 5, 8, 9].includes(i) ? 'n' : '' }, t)))), tbody)));
+  fill(); return root;
+}
+function vehicleDetail(key) {
+  const x = vehicleIndex().find(y => y.key === key);
+  if (!x) { route.visit = null; return vehicleList(); }
+  const root = h('div'), ids = new Set(x.visits.map(v => v.id));
+  const kpi = (b, s) => h('div', { class: 'kpi' }, h('b', {}, b), h('span', {}, s));
+  root.append(h('div', { class: 'row', style: 'margin-bottom:12px' }, h('button', { class: 'btn sec', onclick: () => go('vehicles') }, '\u2190 All vehicles'), h('h1', { style: 'margin:0' }, x.plate + (x.make ? ' \u00B7 ' + x.make : ''))),
+    h('div', { class: 'cards' }, kpi(x.visits.length, 'Times serviced (visits)'), kpi(x.closed, 'Completed visits'), kpi(x.jobs, 'Jobs done'), kpi(fmtD(x.lastVisit) || '\u2013', 'Last visit'),
+      kpi(x.lastOdo != null ? fInt(x.lastOdo) : '\u2013', 'Last odometer (km)'), kpi(x.damages, 'Damage records'), kpi(money(x.cash), 'Petty cash spent (' + cur() + ')')));
+  // visits
+  const vrows = [...x.visits].sort((a, b) => (b.created || 0) - (a.created || 0)).map(v => { const c = calcVisit(v);
+    return h('tr', { class: 'click', onclick: () => go('visits', v.id) }, h('td', {}, h('b', {}, v.id)), h('td', {}, fmtDT(v.arrived) || '\u2013'), h('td', {}, fmtDT(v.returned) || '\u2013'), h('td', { class: 'n' }, v.odo !== '' && v.odo != null ? fInt(v.odo) : '\u2013'),
+      h('td', { style: 'white-space:normal' }, c.svcs.map(s => s.service).filter(Boolean).join(', ') || '\u2013'), h('td', {}, statusBadge(c.status))); });
+  root.append(h('div', { class: 'card' }, h('h2', {}, 'Visits'), h('div', { class: 'tw' }, h('table', {}, h('thead', {}, h('tr', {}, ['Visit', 'Arrived at LSA', 'Returned', 'Odometer', 'Jobs', 'Status'].map((t, i) => h('th', { class: i === 3 ? 'n' : '' }, t)))), h('tbody', {}, vrows)))));
+  // what's due next
+  const latest = new Map();
+  S.services.filter(s => ids.has(s.visitId) && s.service).forEach(s => { const i = svcInfo(s); if (i.nextDue == null) return; const p = latest.get(s.service); if (!p || (i.odo || 0) >= (p.i.odo || 0)) latest.set(s.service, { s, i }); });
+  const due = [...latest.values()].map(({ s, i }) => ({ name: s.service, done: i.odo, next: i.nextDue, left: x.lastOdo != null ? i.nextDue - x.lastOdo : null })).sort((a, b) => (a.left ?? 1e12) - (b.left ?? 1e12));
+  root.append(h('div', { class: 'card' }, h('h2', {}, 'Next services due (based on the last odometer reading)'), due.length ? h('div', { class: 'tw' }, h('table', {}, h('thead', {}, h('tr', {}, ['Service', 'Last done at (km)', 'Next due at (km)', 'Km remaining', ''].map((t, i) => h('th', { class: i && i < 4 ? 'n' : '' }, t)))),
+    h('tbody', {}, due.map(d => h('tr', {}, h('td', {}, d.name), h('td', { class: 'n' }, fInt(d.done)), h('td', { class: 'n' }, fInt(d.next)), h('td', { class: 'n' }, d.left == null ? '\u2013' : fInt(d.left)),
+      h('td', {}, d.left == null ? '' : d.left < 0 ? badge('OVERDUE', 'bad') : d.left <= 1000 ? badge('Due soon', 'warn') : badge('OK', 'ok')))))))
+    : h('div', { class: 'empty' }, 'No services with a next-due km yet.')));
+  // service history
+  const hist = S.services.filter(s => ids.has(s.visitId)).map(s => ({ s, v: visitById(s.visitId), i: svcInfo(s) })).sort((a, b) => (b.v.arrived || '').localeCompare(a.v.arrived || ''));
+  root.append(h('div', { class: 'card' }, h('h2', {}, 'Service history'), hist.length ? h('div', { class: 'tw' }, h('table', {}, h('thead', {}, h('tr', {}, ['Date', 'Visit', 'Service', 'Vendor', 'Odometer', 'Next due (km)', 'Status at pickup'].map(t => h('th', {}, t)))),
+    h('tbody', {}, hist.map(({ s, v, i }) => h('tr', {}, h('td', {}, fmtD(v.arrived) || '\u2013'), h('td', {}, v.id), h('td', {}, s.service || '\u2013'), h('td', {}, s.vendor || '\u2013'), h('td', {}, fInt(i.odo)), h('td', {}, fInt(i.nextDue)), h('td', {}, dueBadge(i.status)))))))
+    : h('div', { class: 'empty' }, 'No jobs recorded yet.')));
+  // damage history
+  const dm = S.damages.filter(d => ids.has(d.visitId));
+  root.append(h('div', { class: 'card' }, h('h2', {}, 'Damage history'), dm.length ? h('div', { class: 'tw' }, h('table', {}, h('thead', {}, h('tr', {}, ['Ref', 'Visit', 'Recorded', 'Location', 'Type', 'Severity', 'Condition', 'Photos'].map(t => h('th', {}, t)))),
+    h('tbody', {}, dm.map(d => h('tr', { class: 'click', onclick: () => go('visits', d.visitId) }, h('td', {}, d.id), h('td', {}, d.visitId), h('td', {}, fmtDT(d.time)), h('td', {}, d.location || '\u2013'), h('td', {}, d.type || '\u2013'), h('td', {}, d.severity || '\u2013'), h('td', {}, d.condition || '\u2013'), h('td', {}, photosOf(d).length))))))
+    : h('div', { class: 'empty' }, 'No damage recorded on this car.')));
+  // petty cash
+  root.append(expenseSection({ plate: x.plate }, 'Petty cash spent on this car'));
+  return root;
+}
+
+/* ================= petty cash ================= */
+/* petty cash that belongs on a visit's report: entries linked to the visit, plus unlinked entries for the same car dated within the visit */
+function visitExpenses(v) {
+  const from = (v.arrived || '').slice(0, 10), to = (v.returned || v.arrived || '').slice(0, 10);
+  return S.expenses.filter(e => e.visitId === v.id || (!e.visitId && pkey(e.plate) && pkey(e.plate) === pkey(v.plate) && from && (e.date || '') >= from && (e.date || '') <= (to || from)))
+    .sort((a, b) => (a.date || '').localeCompare(b.date || '') || (a.created || 0) - (b.created || 0));
+}
+function newExpense(pre) {
+  if (!ensureDevice()) return null;
+  const e = Object.assign({ id: nextId('E', 'expenses'), created: Date.now(), date: todayStr(), plate: '', visitId: '', category: '', description: '', amount: '', paidBy: S.settings.staff.includes('Supervisor') ? 'Supervisor' : (S.settings.staff[0] || ''), receipts: [], notes: '' }, pre || {});
+  S.expenses.push(e); save(); return e;
+}
+function deleteExpense(e) { listOf(e, 'receipts').forEach(id => { deletedPhotos.add(id); delete P[id]; }); S.expenses = S.expenses.filter(x => x !== e); save(); }
+function expenseEditor(e, after, opts) {
+  opts = opts || {};
+  const box = h('div', { class: 'line' });
+  function render() {
+    const plates = [...new Set(S.visits.map(v => v.plate).filter(Boolean))];
+    const dl = h('datalist', { id: 'pl-' + e.id }, plates.map(p => h('option', { value: p })));
+    const plate = h('input', { type: 'text', value: e.plate || '', list: 'pl-' + e.id, placeholder: 'e.g. ABC 1234' });
+    plate.addEventListener('change', () => { e.plate = plate.value.toUpperCase().trim(); if (e.visitId && pkey((visitById(e.visitId) || {}).plate) !== pkey(e.plate)) e.visitId = ''; save(); render(); after && after(); });
+    const visitsOfCar = S.visits.filter(v => pkey(v.plate) && pkey(v.plate) === pkey(e.plate)).sort((a, b) => (b.created || 0) - (a.created || 0));
+    const date = h('input', { type: 'date', value: e.date || '' }); date.addEventListener('change', () => { e.date = date.value; save(); after && after(); });
+    box.replaceChildren(
+      h('div', { class: 'hd' }, h('b', {}, e.id), h('span', { style: 'color:#667085;font-size:13px' }, (e.amount !== '' && e.amount != null ? money(num(e.amount)) + ' ' + cur() : 'no amount yet') + (listOf(e, 'receipts').length ? ' \u00B7 ' + listOf(e, 'receipts').length + ' receipt photo(s)' : '')),
+        h('span', { class: 'spacer' }), h('button', { class: 'btn danger sm', onclick: async () => { if (await uiConfirm('Delete petty cash entry ' + e.id + '?')) { deleteExpense(e); after && after(true); } } }, 'Delete')),
+      h('div', { class: 'grid' },
+        fld('Date', date), opts.lockPlate ? fld('Car plate', h('input', { type: 'text', value: e.plate, disabled: true })) : fld('Car plate', h('div', {}, plate, dl)),
+        fld('Linked visit (optional)', sel(visitsOfCar.map(v => [v.id, v.id + ' \u00B7 ' + fmtD(v.arrived)]), e.visitId, x => { e.visitId = x; save(); after && after(); })),
+        fld('Category', sel(S.settings.expenseCats, e.category, x => { e.category = x; save(); after && after(); })),
+        fld('Amount (' + cur() + ')', numIn(e, 'amount', () => { save(); after && after(); })),
+        fld('Paid by', sel(S.settings.staff.filter(Boolean), e.paidBy, x => { e.paidBy = x; save(); after && after(); })),
+        fld('What was it for?', txt(e, 'description', () => { save(); }, { ph: 'e.g. engine oil top-up at station' }), 'w2'),
+        fld('Notes', txt(e, 'notes', save), 'w2')),
+      h('div', { style: 'margin-top:10px' }, photoEditor(e, () => { render(); after && after(); }, 'receipts', '\uD83E\uDDFE Add receipt photo', 'Photo of the receipt / bill (optional)')));
+  }
+  render(); return box;
+}
+function expenseSection(pre, title) {
+  const card = h('div', { class: 'card' }), list = h('div'), total = h('span', { class: 'sub', style: 'margin:0' });
+  const match = e => pre.visitId ? e.visitId === pre.visitId : pkey(e.plate) === pkey(pre.plate);
+  function fill() {
+    const ex = S.expenses.filter(match).sort((a, b) => (b.date || '').localeCompare(a.date || '') || (b.created || 0) - (a.created || 0));
+    total.replaceChildren(ex.length + ' entr' + (ex.length === 1 ? 'y' : 'ies') + ' \u00B7 total ', h('b', {}, money(sum(ex.map(e => num(e.amount)))) + ' ' + cur()));
+    list.replaceChildren(...(ex.length ? ex.map(e => expenseEditor(e, (removed) => { if (removed) fill(); else updTotal(); }, { lockPlate: true })) : [h('div', { class: 'empty' }, 'No petty cash recorded.')]));
+  }
+  function updTotal() { const ex = S.expenses.filter(match); total.replaceChildren(ex.length + ' entr' + (ex.length === 1 ? 'y' : 'ies') + ' \u00B7 total ', h('b', {}, money(sum(ex.map(e => num(e.amount)))) + ' ' + cur())); }
+  card.append(h('div', { class: 'row', style: 'margin-bottom:10px' }, h('h2', { style: 'margin:0' }, title), total, h('span', { class: 'spacer' }),
+    h('button', { class: 'btn sm', onclick: () => { if (!pre.plate) { uiAlert('Enter the car plate on this visit first.'); return; } if (newExpense({ plate: String(pre.plate).toUpperCase(), visitId: pre.visitId || '' })) fill(); } }, '+ Add petty cash')), list);
+  fill(); return card;
+}
+let pcF = null, pcSel = null;
+function pettyCashView() {
+  if (!pcF) { const [f, t] = periodPreset('month'); pcF = { from: f, to: t, q: '', by: '' }; }
+  const root = h('div'), body = h('div'), editBox = h('div');
+  const rowsNow = () => S.expenses.filter(e => (!pcF.from || (e.date || '') >= pcF.from) && (!pcF.to || (e.date || '') <= pcF.to) && (!pcF.q || pkey(e.plate).includes(pkey(pcF.q))) && (!pcF.by || e.paidBy === pcF.by))
+    .sort((a, b) => (b.date || '').localeCompare(a.date || '') || (b.created || 0) - (a.created || 0));
+  function fill() {
+    const ex = rowsNow(), tot = sum(ex.map(e => num(e.amount)));
+    const byCat = {}; ex.forEach(e => { const k = e.category || '(no category)'; byCat[k] = (byCat[k] || 0) + (num(e.amount) || 0); });
+    body.replaceChildren(
+      h('div', { class: 'cards' }, h('div', { class: 'kpi' }, h('b', {}, money(tot)), h('span', {}, 'Total ' + cur() + ' in this view')), h('div', { class: 'kpi' }, h('b', {}, ex.length), h('span', {}, 'Entries')),
+        h('div', { class: 'kpi' }, h('b', {}, new Set(ex.map(e => pkey(e.plate)).filter(Boolean)).size), h('span', {}, 'Cars')),
+        ...Object.entries(byCat).sort((a, b) => b[1] - a[1]).slice(0, 4).map(([k, v]) => h('div', { class: 'kpi' }, h('b', {}, money(v)), h('span', {}, k)))),
+      h('div', { class: 'card tw', style: 'padding:0' }, h('table', {}, h('thead', {}, h('tr', {}, ['Date', 'Ref', 'Plate', 'Visit', 'Category', 'What for', 'Paid by', 'Amount (' + cur() + ')', 'Receipts'].map((t, i) => h('th', { class: i === 7 ? 'n' : '' }, t)))),
+        h('tbody', {}, ex.length ? ex.map(e => h('tr', { class: 'click', style: pcSel === e.id ? 'background:#eaf3fc' : '', onclick: () => { pcSel = e.id; fill(); } },
+          h('td', {}, fmtD(e.date) || '\u2013'), h('td', {}, e.id), h('td', {}, h('b', {}, e.plate || '\u2013')), h('td', {}, e.visitId || ''), h('td', {}, e.category || ''), h('td', { style: 'white-space:normal' }, e.description || ''),
+          h('td', {}, e.paidBy || ''), h('td', { class: 'n' }, money(num(e.amount))), h('td', {}, listOf(e, 'receipts').length || ''))) : h('tr', {}, h('td', { colspan: 9, class: 'empty' }, 'No petty cash entries in this view.'))))));
+    const sel1 = S.expenses.find(e => e.id === pcSel);
+    editBox.replaceChildren(sel1 ? h('div', { class: 'card' }, h('h2', {}, 'Edit ' + sel1.id), expenseEditor(sel1, removed => { if (removed) pcSel = null; fill(); })) : '');
+  }
+  const from = h('input', { type: 'date', value: pcF.from, style: 'width:auto', onchange: e => { pcF.from = e.target.value; fill(); } });
+  const to = h('input', { type: 'date', value: pcF.to, style: 'width:auto', onchange: e => { pcF.to = e.target.value; fill(); } });
+  root.append(h('h1', {}, 'Petty cash'), h('p', { class: 'sub' }, 'Cash spent on cars (fuel, top-ups, small parts, towing\u2026). Shown on the client report for its visit unless you untick \u201CShow petty cash spent\u201D there. Click a row to edit it.'),
+    h('div', { class: 'row card' }, 'From', from, 'To', to, h('input', { type: 'search', placeholder: 'Plate\u2026', style: 'max-width:160px', value: pcF.q, oninput: e => { pcF.q = e.target.value; fill(); } }),
+      sel(S.settings.staff.filter(Boolean), pcF.by, x => { pcF.by = x; fill(); }, 'Paid by anyone'), h('button', { class: 'btn sec sm', onclick: () => { pcF.from = ''; pcF.to = ''; pcF.q = ''; pcF.by = ''; draw(); } }, 'Show all'),
+      h('span', { class: 'spacer' }), h('button', { class: 'btn sec', onclick: () => { const ex = rowsNow(); if (!ex.length) { uiAlert('Nothing to export in this view.'); return; } download(buildXlsx([pettySheet(ex)]), 'Petty_Cash_' + (pcF.from || 'start') + '_to_' + (pcF.to || todayStr()) + '.xlsx'); } }, 'Download Excel'),
+      h('button', { class: 'btn', onclick: () => { const e = newExpense(); if (e) { pcSel = e.id; if (pcF.to && e.date > pcF.to) pcF.to = e.date; fill(); } } }, '+ Add petty cash')),
+    editBox, body);
+  fill(); return root;
+}
+function pettySheet(ex) {
+  const rows = ex.map(e => [e.date, e.id, e.plate, e.visitId, e.category, e.description, e.paidBy, num(e.amount), listOf(e, 'receipts').length, e.notes]);
+  rows.push(['', '', '', '', '', '', 'TOTAL', Math.round(sum(ex.map(e => num(e.amount))) * 100) / 100, '', '']);
+  return { name: 'Petty Cash', cols: [{ h: 'Date', w: 12, t: 'date' }, { h: 'Ref', w: 10 }, { h: 'Car Plate', w: 12 }, { h: 'Visit', w: 10 }, { h: 'Category', w: 18 }, { h: 'What for', w: 34 }, { h: 'Paid by', w: 14 }, { h: 'Amount (' + cur() + ')', w: 13, t: 'money' }, { h: 'Receipt photos', w: 9 }, { h: 'Notes', w: 26 }], rows };
+}
+function vehiclesSheet(VS, EX) {
+  return { name: 'Vehicles', cols: [{ h: 'Car Plate', w: 12 }, { h: 'Make / Model', w: 16 }, { h: 'Times Serviced (visits)', w: 11 }, { h: 'Completed Visits', w: 10 }, { h: 'Jobs Done', w: 9 }, { h: 'Last Visit', w: 16, t: 'dt' }, { h: 'Last Odometer (km)', w: 12, t: 'int' }, { h: 'Jobs Overdue at Pickup (all time)', w: 12 }, { h: 'Damage Records', w: 10 }, { h: 'Petty Cash (' + cur() + ')', w: 13, t: 'money' }],
+    rows: vehicleIndex(VS, EX).sort((a, b) => a.key.localeCompare(b.key)).map(x => [x.plate, x.make, x.visits.length, x.closed, x.jobs, x.lastVisit, x.lastOdo, x.overdue, x.damages, Math.round(x.cash * 100) / 100]) };
+}
+
+/* ================= boot ================= */
+function migrate() {
+  const base = freshState();
+  S.settings = Object.assign(defaultSettings(), S.settings || {});
+  ['catalog', 'visits', 'stops', 'services', 'damages', 'expenses'].forEach(k => { if (!Array.isArray(S[k])) S[k] = base[k]; });
+  while (S.settings.vendors.length < 4) S.settings.vendors.push('');
+  if (!Array.isArray(S.settings.expenseCats) || !S.settings.expenseCats.length) S.settings.expenseCats = defaultSettings().expenseCats;
+  if (!S.settings.currency) S.settings.currency = 'SAR';
+  S.settings.reportOpts = Object.assign({ turnaround: true, vendorTimes: true, photos: true, overdue: true, condPhotos: false, petty: true }, S.settings.reportOpts || {});
+  ['excelTiming', 'excelVehicles'].forEach(k => { if (typeof S.settings[k] !== 'boolean') S.settings[k] = true; });
+  if (typeof S.settings.excelPetty !== 'boolean') S.settings.excelPetty = false;
+  if (!S.tomb || typeof S.tomb !== 'object') S.tomb = {}; S._su = S._su || 0; S._cu = S._cu || 0;
+  S.visits.forEach((v, i) => { if (!v.created) v.created = i + 1; if (!Array.isArray(v.pickupPhotos)) v.pickupPhotos = []; if (!Array.isArray(v.returnPhotos)) v.returnPhotos = []; });
+  S.damages.forEach(d => { if (!Array.isArray(d.photos)) { d.photos = d.photo ? [d.photo] : []; delete d.photo; } });
+}
+/* phone layout: give every table cell its column name so rows can show as cards */
+function labelTables(root) {
+  root.querySelectorAll('table:not(.noresp)').forEach(t => {
+    t.classList.add('resp');
+    const ths = [...t.querySelectorAll('thead th')], heads = ths.map(th => th.textContent.trim()), mh = ths.map(th => th.classList.contains('mh'));
+    t.querySelectorAll('tbody tr').forEach(tr => [...tr.children].forEach((td, i) => { if (!td.hasAttribute('data-label')) { td.setAttribute('data-label', td.hasAttribute('colspan') ? '' : (heads[i] || '')); if (mh[i]) td.classList.add('mh'); } }));
+  });
+}
+function screen(msg, btn) { $('#view').replaceChildren(h('div', { class: 'card', style: 'max-width:520px;margin:40px auto;text-align:center' }, h('p', {}, msg), btn || '')); }
+async function boot() {
+  window.__ftAlive = true;
+  loadDevice();
+  S = freshState(); P = {}; migrate(); initSnap();
+  new MutationObserver(() => labelTables($('#view'))).observe($('#view'), { childList: true, subtree: true });
+  if (!hasServer()) { screen('This is the Fleet Tracker app file. Open it from its Google web-app link (the link you got when you deployed it), not as a file.'); return; }
+  if (!accessCode && !(await askCode(false))) { screen('An access code is needed.', h('button', { class: 'btn', onclick: () => location.reload() }, 'Try again')); return; }
+  screen('Loading your data from Google Drive\u2026');
+  let R = null;
+  for (let tries = 0; tries < 3 && !R; tries++) {
+    try { serverInfo = await call('api_hello'); R = await call('api_pull', 0); }
+    catch (e) { if (/ACCESS_DENIED/.test(e.message)) { if (!(await askCode(true))) break; } else { screen('Could not reach Google Drive: ' + e.message, h('button', { class: 'btn', onclick: () => location.reload() }, 'Try again')); return; } }
+  }
+  if (!R) { screen('Wrong access code.', h('button', { class: 'btn', onclick: () => { LS.del('ft-code'); location.reload(); } }, 'Enter it again')); return; }
+  const fresh = !R.settings;
+  mergeRemote(R); rev = R.rev; migrate(); initSnap();
+  if (fresh) { S._su = S._cu = 1; dirty.add('settings'); dirty.add('catalog'); }
+  try { const p = JSON.parse(LS.get('ft-pending') || 'null'); if (p) { mergeRemote(p); COLL.forEach(c => (p[c] || []).forEach(r => dirty.add(c + ':' + r.id))); Object.keys(p.tomb || {}).forEach(k => dirty.add(k)); if (p.settings) dirty.add('settings'); if (p.catalog) dirty.add('catalog'); initSnap(); } } catch (e) { }
+  if (!device || !device.initials) await askInitials(false);
+  booted = true; online = true; lastSync = nowISO().slice(11);
+  draw(); startPoll();
+  setSaved('Saved to Google Drive ' + lastSync + ' \u2713');
+  if (dirty.size) scheduleSync(50);
+}
+window.FleetTracker = { get S() { return S; }, get P() { return P; }, set shrinker(f) { imgShrinker = f; }, set device(x) { device = x; saveDevice(); }, askInitials, get device() { return device; },
+  calcVisit, svcInfo, buildXlsx, exportSheets, loadSample, go, draw, newVisit, newExpense, addPhotos, photosOf, vehicleIndex, downloadPeriod, sync, stamp, get rev() { return rev; }, get dirty() { return dirty; }, importBackup, get online() { return online; } };
+boot();
+
+</script>
+</body></html>

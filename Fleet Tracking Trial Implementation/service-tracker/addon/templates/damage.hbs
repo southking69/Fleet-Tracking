@@ -1,0 +1,60 @@
+<div class="mb-3">
+  <h1 class="text-xl font-bold">{{t "service-tracker.damage.title"}}</h1>
+  <p class="text-sm text-gray-500">{{t "service-tracker.damage.subtitle"}}</p>
+</div>
+<div class="mb-3 flex flex-wrap items-center gap-2 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-3">
+  <input type="search" class="w-40 rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 px-2 py-1.5 text-sm" placeholder={{t "service-tracker.petty.plate-filter"}} value={{this.q}} {{on "input" this.searchPlate}} />
+  <div class="w-44"><SelectField @value={{this.stage}} @options={{this.settings.stages}} @blank={{t "service-tracker.damage.all-stages"}} @onChange={{fn this.setFilter "stage"}} /></div>
+  <div class="w-40"><SelectField @value={{this.severity}} @options={{this.settings.severities}} @blank={{t "service-tracker.damage.all-severities"}} @onChange={{fn this.setFilter "severity"}} /></div>
+  <div class="w-44"><SelectField @value={{this.condition}} @options={{this.conditions}} @blank={{t "service-tracker.damage.all-conditions"}} @onChange={{fn this.setFilter "condition"}} /></div>
+</div>
+
+{{#if this.selected}}
+  <section class="mb-4 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-4">
+    <div class="mb-2 flex items-center gap-2">
+      <h2 class="text-base font-bold">{{t "service-tracker.damage.edit" id=this.selected.public_id}}</h2>
+      <span class="flex-1"></span>
+      <button type="button" class="rounded border border-gray-300 dark:border-gray-600 px-2.5 py-1 text-xs" {{on "click" (fn this.openVisit this.selected)}}>{{t "service-tracker.damage.open-visit"}}</button>
+    </div>
+    <DamageEditor @record={{this.selected}} @settings={{this.settings}} @userOptions={{this.lookups.userOptions}} @onDelete={{this.remove}} />
+  </section>
+{{/if}}
+
+<div class="overflow-x-auto rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800">
+  <table class="w-full text-sm">
+    <thead class="bg-gray-50 dark:bg-gray-900 text-left text-xs uppercase text-gray-500">
+      <tr>
+        <th class="px-3 py-2">{{t "service-tracker.damage.ref"}}</th>
+        <th class="px-3 py-2">{{t "service-tracker.visits.col.visit"}}</th>
+        <th class="px-3 py-2">{{t "service-tracker.common.plate"}}</th>
+        <th class="px-3 py-2">{{t "service-tracker.damage.occurred-at"}}</th>
+        <th class="px-3 py-2">{{t "service-tracker.damage.stage"}}</th>
+        <th class="px-3 py-2">{{t "service-tracker.damage.location"}}</th>
+        <th class="px-3 py-2">{{t "service-tracker.damage.type"}}</th>
+        <th class="px-3 py-2">{{t "service-tracker.damage.severity"}}</th>
+        <th class="px-3 py-2">{{t "service-tracker.damage.condition"}}</th>
+        <th class="px-3 py-2">{{t "service-tracker.damage.client-notified"}}</th>
+        <th class="px-3 py-2 text-right">{{t "service-tracker.damage.photos"}}</th>
+      </tr>
+    </thead>
+    <tbody>
+      {{#each @model as |d|}}
+        <tr class="cursor-pointer border-t border-gray-100 dark:border-gray-700 hover:bg-blue-50 dark:hover:bg-gray-700 {{if (st-eq d.id this.selectedId) "bg-blue-50 dark:bg-gray-700"}}" {{on "click" (fn this.select d)}}>
+          <td class="px-3 py-2 font-bold">{{d.public_id}}</td>
+          <td class="px-3 py-2">{{d.service_visit_public_id}}</td>
+          <td class="px-3 py-2">{{d.plate}}</td>
+          <td class="px-3 py-2">{{fmt-datetime d.occurred_at}}</td>
+          <td class="px-3 py-2">{{d.stage}}</td>
+          <td class="px-3 py-2">{{d.location}}</td>
+          <td class="px-3 py-2">{{d.damage_type}}</td>
+          <td class="px-3 py-2">{{#if d.severity}}<StatusBadge @status={{d.severity}} />{{/if}}</td>
+          <td class="px-3 py-2">{{#if d.condition}}<StatusBadge @status={{d.condition}} />{{/if}}</td>
+          <td class="px-3 py-2">{{d.client_notified}}</td>
+          <td class="px-3 py-2 text-right">{{st-photo-count d.photos}}</td>
+        </tr>
+      {{else}}
+        <tr><td colspan="11" class="px-3 py-8 text-center text-gray-500">{{t "service-tracker.damage.empty"}}</td></tr>
+      {{/each}}
+    </tbody>
+  </table>
+</div>

@@ -1,0 +1,64 @@
+<div class="mb-3">
+  <h1 class="text-xl font-bold">{{t "service-tracker.petty.title"}}</h1>
+  <p class="text-sm text-gray-500">{{t "service-tracker.petty.subtitle"}}</p>
+</div>
+<div class="mb-3 flex flex-wrap items-center gap-2 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-3">
+  <PeriodPicker @from={{this.from}} @to={{this.to}} @onChange={{this.setPeriod}} />
+  <input type="search" class="w-36 rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 px-2 py-1.5 text-sm" placeholder={{t "service-tracker.petty.plate-filter"}} value={{this.q}} {{on "input" this.searchPlate}} />
+  <div class="w-44"><SelectField @value={{this.paid_by}} @options={{this.paidByOptions}} @blank={{t "service-tracker.petty.paid-by-anyone"}} @onChange={{this.setPaidBy}} /></div>
+  <button type="button" class="rounded border border-gray-300 dark:border-gray-600 px-2.5 py-1 text-xs" {{on "click" this.showAll}}>{{t "service-tracker.petty.show-all"}}</button>
+  <span class="flex-1"></span>
+  <button type="button" class="rounded border border-gray-300 dark:border-gray-600 px-3 py-1.5 text-sm" {{on "click" this.download}}>{{t "service-tracker.petty.download"}}</button>
+  <button type="button" class="rounded bg-blue-600 px-3 py-1.5 text-sm font-semibold text-white hover:bg-blue-700" {{on "click" this.add}}>{{t "service-tracker.petty.add"}}</button>
+</div>
+
+{{#if this.selected}}
+  <section class="mb-4 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-4">
+    <h2 class="mb-2 text-base font-bold">{{t "service-tracker.petty.edit" id=this.selected.public_id}}</h2>
+    <PettyEditor @record={{this.selected}} @settings={{this.settings}} @onDelete={{this.remove}} />
+  </section>
+{{/if}}
+
+<div class="mb-3 grid grid-cols-2 gap-3 sm:grid-cols-4 lg:grid-cols-7">
+  <KpiCard @value={{fmt-money this.summary.total}} @label={{t "service-tracker.petty.kpi-total" currency=this.settings.currency}} />
+  <KpiCard @value={{this.summary.count}} @label={{t "service-tracker.petty.kpi-entries"}} />
+  <KpiCard @value={{this.summary.cars}} @label={{t "service-tracker.petty.kpi-cars"}} />
+  {{#each this.topCategories as |c|}}
+    <KpiCard @value={{fmt-money c.total}} @label={{c.name}} />
+  {{/each}}
+</div>
+
+<div class="overflow-x-auto rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800">
+  <table class="w-full text-sm">
+    <thead class="bg-gray-50 dark:bg-gray-900 text-left text-xs uppercase text-gray-500">
+      <tr>
+        <th class="px-3 py-2">{{t "service-tracker.common.date"}}</th>
+        <th class="px-3 py-2">{{t "service-tracker.petty.ref"}}</th>
+        <th class="px-3 py-2">{{t "service-tracker.common.plate"}}</th>
+        <th class="px-3 py-2">{{t "service-tracker.petty.visit"}}</th>
+        <th class="px-3 py-2">{{t "service-tracker.petty.category"}}</th>
+        <th class="px-3 py-2">{{t "service-tracker.petty.what-for"}}</th>
+        <th class="px-3 py-2">{{t "service-tracker.petty.paid-by"}}</th>
+        <th class="px-3 py-2 text-right">{{t "service-tracker.petty.amount" currency=this.settings.currency}}</th>
+        <th class="px-3 py-2 text-right">{{t "service-tracker.petty.receipts"}}</th>
+      </tr>
+    </thead>
+    <tbody>
+      {{#each @model as |e|}}
+        <tr class="cursor-pointer border-t border-gray-100 dark:border-gray-700 hover:bg-blue-50 dark:hover:bg-gray-700 {{if (st-eq e.id this.selectedId) "bg-blue-50 dark:bg-gray-700"}}" {{on "click" (fn this.select e)}}>
+          <td class="px-3 py-2">{{fmt-date e.entry_date}}</td>
+          <td class="px-3 py-2">{{e.public_id}}</td>
+          <td class="px-3 py-2 font-bold">{{if e.plate e.plate "–"}}</td>
+          <td class="px-3 py-2">{{e.service_visit_public_id}}</td>
+          <td class="px-3 py-2">{{e.category}}</td>
+          <td class="px-3 py-2">{{e.description}}</td>
+          <td class="px-3 py-2">{{e.paid_by}}</td>
+          <td class="px-3 py-2 text-right tabular-nums">{{fmt-money e.amount}}</td>
+          <td class="px-3 py-2 text-right">{{st-photo-count e.receipts}}</td>
+        </tr>
+      {{else}}
+        <tr><td colspan="9" class="px-3 py-8 text-center text-gray-500">{{t "service-tracker.petty.empty"}}</td></tr>
+      {{/each}}
+    </tbody>
+  </table>
+</div>

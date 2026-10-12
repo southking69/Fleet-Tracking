@@ -1,0 +1,24 @@
+<div class="mb-3">
+  <h1 class="text-xl font-bold">{{t "service-tracker.export.title"}}</h1>
+</div>
+<div class="space-y-4">
+  <section class="rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-4">
+    <h2 class="mb-1 text-base font-bold">{{t "service-tracker.export.period-title"}}</h2>
+    <p class="mb-3 text-xs text-gray-500">{{t "service-tracker.export.period-help"}}</p>
+    <div class="mb-3 flex flex-wrap items-center gap-2">
+      <PeriodPicker @from={{this.from}} @to={{this.to}} @onChange={{this.setPeriod}} />
+      <span class="text-xs text-gray-500">{{t "service-tracker.export.by"}}</span>
+      <div class="w-48"><SelectField @value={{this.basis}} @options={{this.basisOptions}} @blank={{false}} @onChange={{this.setBasis}} /></div>
+      <span class="flex-1"></span>
+      <button type="button" class="rounded bg-blue-600 px-3 py-1.5 text-sm font-semibold text-white hover:bg-blue-700 disabled:opacity-50" disabled={{this.busy}} {{on "click" this.downloadPeriod}}>{{t "service-tracker.dashboard.download"}}</button>
+    </div>
+    <label class="mb-1.5 flex items-start gap-2 text-sm"><input type="checkbox" class="mt-1" checked={{this.settings.excelTiming}} {{on "change" (fn this.setFlag "excelTiming")}} /> {{t "service-tracker.export.include-timing"}}</label>
+    <label class="mb-1.5 flex items-start gap-2 text-sm"><input type="checkbox" class="mt-1" checked={{this.settings.excelVehicles}} {{on "change" (fn this.setFlag "excelVehicles")}} /> {{t "service-tracker.export.include-vehicles"}}</label>
+    <label class="flex items-start gap-2 text-sm"><input type="checkbox" class="mt-1" checked={{this.settings.excelPetty}} {{on "change" (fn this.setFlag "excelPetty")}} /> {{t "service-tracker.export.include-petty"}}</label>
+  </section>
+  <section class="rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-4">
+    <h2 class="mb-1 text-base font-bold">{{t "service-tracker.export.all-title"}}</h2>
+    <p class="mb-3 text-xs text-gray-500">{{t "service-tracker.export.all-help"}}</p>
+    <button type="button" class="rounded border border-gray-300 dark:border-gray-600 px-3 py-1.5 text-sm disabled:opacity-50" disabled={{this.busy}} {{on "click" this.downloadFull}}>{{t "service-tracker.export.all-download"}}</button>
+  </section>
+</div>

@@ -1,0 +1,32 @@
+<div class="mb-3 rounded-lg border border-gray-200 dark:border-gray-700 p-3" ...attributes>
+  <div class="mb-2 flex items-center gap-2">
+    <b>{{t "service-tracker.visit.stop" n=(st-inc @index)}}</b>
+    <span class="flex-1"></span>
+    <button type="button" class="rounded bg-red-600 px-2 py-1 text-xs font-semibold text-white hover:bg-red-700" {{on "click" (fn @onDelete @stop)}}>{{t "service-tracker.common.delete"}}</button>
+  </div>
+  <div class="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
+    <label class="block text-xs font-medium text-gray-600 dark:text-gray-300">{{t "service-tracker.visit.vendor"}}
+      <SelectField @value={{@stop.vendor_uuid}} @options={{@vendorOptions}} @onChange={{this.setVendor}} class="mt-1" />
+    </label>
+    <label class="block text-xs font-medium text-gray-600 dark:text-gray-300">{{t "service-tracker.visit.arrived-vendor"}}
+      <DatetimeNowField @value={{@stop.arrived_at}} @onChange={{fn this.update "arrived_at"}} class="mt-1" />
+    </label>
+    <label class="block text-xs font-medium text-gray-600 dark:text-gray-300">{{t "service-tracker.visit.approval-requested"}}
+      <DatetimeNowField @value={{@stop.approval_requested_at}} @onChange={{fn this.update "approval_requested_at"}} class="mt-1" />
+    </label>
+    <label class="block text-xs font-medium text-gray-600 dark:text-gray-300">{{t "service-tracker.visit.approval-received"}}
+      <DatetimeNowField @value={{@stop.approval_received_at}} @onChange={{fn this.update "approval_received_at"}} class="mt-1" />
+    </label>
+    <label class="block text-xs font-medium text-gray-600 dark:text-gray-300">{{t "service-tracker.visit.left-vendor"}}
+      <DatetimeNowField @value={{@stop.left_at}} @onChange={{fn this.update "left_at"}} class="mt-1" />
+    </label>
+    <label class="block text-xs font-medium text-gray-600 dark:text-gray-300">{{t "service-tracker.common.notes"}}
+      <input type="text" class="mt-1 w-full rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 px-2 py-1.5 text-sm" value={{@stop.notes}} {{on "change" (fn this.setText "notes")}} />
+    </label>
+  </div>
+  <div class="mt-2 text-xs text-gray-600 dark:text-gray-300">
+    {{t "service-tracker.visit.time-at-vendor"}}: <b>{{fmt-hours @info.atVendor}} h</b>
+    · {{t "service-tracker.visit.approval-wait"}}: <b>{{fmt-hours @info.appr}} h</b>
+    · {{t "service-tracker.visit.net-work"}}: <b>{{fmt-hours @info.net}} h</b>
+  </div>
+</div>

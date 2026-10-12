@@ -1,0 +1,62 @@
+{
+  "name": "@jalal/service-tracker-engine",
+  "version": "0.1.0",
+  "description": "Fleet Service Tracker for Fleetbase: service visits, vendor turnaround, damage log, petty cash, vehicle due list, dashboard and client PDF report.",
+  "keywords": [
+    "fleetbase-extension",
+    "fleetbase-console",
+    "ember-addon",
+    "ember-engine",
+    "fleet-service",
+    "service-tracker"
+  ],
+  "license": "MIT",
+  "author": "Jalal Holding <abdul.rehman@jalalholding.com>",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/jalal-holding/service-tracker"
+  },
+  "scripts": {
+    "build": "ember build --environment=production",
+    "lint": "concurrently \"npm:lint:*(!fix)\" --names \"lint:\"",
+    "lint:hbs": "ember-template-lint .",
+    "lint:js": "eslint . --cache",
+    "lint:fix": "concurrently \"npm:lint:*:fix\" --names \"fix:\"",
+    "lint:hbs:fix": "ember-template-lint . --fix",
+    "lint:js:fix": "eslint . --fix",
+    "start": "ember serve",
+    "test": "ember test"
+  },
+  "dependencies": {
+    "@babel/core": "^7.23.2",
+    "@fleetbase/ember-core": "latest",
+    "@fleetbase/ember-ui": "latest",
+    "ember-auto-import": "^2.7.2",
+    "ember-cli-babel": "^8.2.0",
+    "ember-cli-htmlbars": "^6.3.0",
+    "ember-concurrency": "^3.1.1",
+    "ember-engines": "^0.9.0",
+    "ember-intl": "^6.1.0"
+  },
+  "devDependencies": {
+    "@babel/eslint-parser": "^7.22.15",
+    "@babel/plugin-proposal-decorators": "^7.23.2",
+    "broccoli-asset-rev": "^3.0.0",
+    "ember-cli": "~5.4.1",
+    "ember-source": "~5.4.0",
+    "ember-template-lint": "^5.11.2",
+    "eslint": "^8.51.0",
+    "eslint-plugin-ember": "^11.11.1",
+    "eslint-plugin-n": "^16.2.0",
+    "concurrently": "^8.2.2"
+  },
+  "engines": {
+    "node": ">= 18"
+  },
+  "ember": {
+    "edition": "octane"
+  },
+  "fleetbase": {
+    "route": "service-tracker"
+  }
+}

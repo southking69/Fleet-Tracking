@@ -1,0 +1,151 @@
+<div class="mb-3">
+  <h1 class="text-xl font-bold">{{t "service-tracker.dashboard.title"}}</h1>
+  <p class="text-sm text-gray-500">{{t "service-tracker.dashboard.subtitle"}}</p>
+</div>
+<div class="mb-4 flex flex-wrap items-center gap-2 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-3">
+  <PeriodPicker @from={{this.from}} @to={{this.to}} @onChange={{this.setPeriod}} />
+  <span class="flex-1"></span>
+  <button type="button" class="rounded bg-blue-600 px-3 py-1.5 text-sm font-semibold text-white hover:bg-blue-700" {{on "click" this.download}}>{{t "service-tracker.dashboard.download"}}</button>
+</div>
+
+<div class="mb-4 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
+  <KpiCard @value={{this.kpis.visits}} @label={{t "service-tracker.dashboard.kpi.visits"}} />
+  <KpiCard @value={{this.kpis.closed}} @label={{t "service-tracker.dashboard.kpi.closed"}} />
+  <KpiCard @value={{this.kpis.inProgress}} @label={{t "service-tracker.dashboard.kpi.in-progress"}} />
+  <KpiCard @value={{this.kpis.jobs}} @label={{t "service-tracker.dashboard.kpi.jobs"}} />
+  <KpiCard @value={{this.kpis.stops}} @label={{t "service-tracker.dashboard.kpi.stops"}} />
+  <KpiCard @value={{fmt-money this.kpis.pettyCashTotalMinor}} @label={{t "service-tracker.dashboard.kpi.petty" currency=this.settings.currency}} />
+  <KpiCard @value={{fmt-hours this.kpis.avgTurnaroundHours}} @label={{t "service-tracker.dashboard.kpi.avg-turnaround"}} />
+  <KpiCard @value={{st-pct this.kpis.pctWithinTarget}} @label={{t "service-tracker.dashboard.kpi.within-target"}} />
+  <KpiCard @value={{this.kpis.openOver24h}} @label={{t "service-tracker.dashboard.kpi.open-24"}} />
+</div>
+
+<div class="mb-4 grid grid-cols-1 gap-4 lg:grid-cols-2">
+  <section class="rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-4">
+    <h2 class="mb-2 text-base font-bold">{{t "service-tracker.dashboard.where-time-goes"}}</h2>
+    <table class="w-full text-sm">
+      <thead class="text-left text-xs uppercase text-gray-500">
+        <tr>
+          <th class="py-1">{{t "service-tracker.dashboard.stage"}}</th>
+          <th class="py-1 text-right">{{t "service-tracker.dashboard.avg-hrs"}}</th>
+          <th class="px-2 py-1">{{t "service-tracker.dashboard.share"}}</th>
+          <th class="py-1">{{t "service-tracker.dashboard.who"}}</th>
+        </tr>
+      </thead>
+      <tbody>
+        {{#each this.stageRows as |s|}}
+          <tr class="border-t border-gray-100 dark:border-gray-700">
+            <td class="py-1.5">{{s.label}}</td>
+            <td class="py-1.5 text-right tabular-nums">{{fmt-hours s.avg}}</td>
+            <td class="px-2 py-1.5"><div class="h-2.5 w-full overflow-hidden rounded bg-gray-200 dark:bg-gray-700"><i class="block h-full rounded bg-blue-500" style={{st-bar-width s.share 100}}></i></div></td>
+            <td class="py-1.5">{{s.owner}}</td>
+          </tr>
+        {{/each}}
+      </tbody>
+    </table>
+  </section>
+  <section class="rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-4">
+    <h2 class="mb-2 text-base font-bold">{{t "service-tracker.dashboard.delay-owner"}}</h2>
+    <table class="w-full text-sm">
+      <thead class="text-left text-xs uppercase text-gray-500">
+        <tr><th class="py-1">{{t "service-tracker.dashboard.owner"}}</th><th class="py-1 text-right">{{t "service-tracker.dashboard.closed-visits"}}</th></tr>
+      </thead>
+      <tbody>
+        {{#each this.ownerRows as |o|}}
+          <tr class="border-t border-gray-100 dark:border-gray-700"><td class="py-1.5">{{o.owner}}</td><td class="py-1.5 text-right tabular-nums">{{o.closed}}</td></tr>
+        {{/each}}
+      </tbody>
+    </table>
+  </section>
+</div>
+
+<div class="mb-4 grid grid-cols-1 gap-4 lg:grid-cols-2">
+  <section class="rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-4">
+    <h2 class="mb-2 text-base font-bold">{{t "service-tracker.dashboard.by-lane"}}</h2>
+    <table class="w-full text-sm">
+      <thead class="text-left text-xs uppercase text-gray-500">
+        <tr>
+          <th class="py-1">{{t "service-tracker.dashboard.lane"}}</th>
+          <th class="py-1 text-right">{{t "service-tracker.dashboard.target"}}</th>
+          <th class="py-1 text-right">{{t "service-tracker.dashboard.closed-visits"}}</th>
+          <th class="py-1 text-right">{{t "service-tracker.dashboard.avg-turnaround"}}</th>
+          <th class="py-1 text-right">{{t "service-tracker.dashboard.pct-within"}}</th>
+        </tr>
+      </thead>
+      <tbody>
+        {{#each this.laneRows as |l|}}
+          <tr class="border-t border-gray-100 dark:border-gray-700">
+            <td class="py-1.5">{{l.name}}</td>
+            <td class="py-1.5 text-right tabular-nums">{{l.target}}</td>
+            <td class="py-1.5 text-right tabular-nums">{{l.closed}}</td>
+            <td class="py-1.5 text-right tabular-nums">{{fmt-hours l.avg}}</td>
+            <td class="py-1.5 text-right tabular-nums">{{st-pct l.pctWithin}}</td>
+          </tr>
+        {{/each}}
+      </tbody>
+    </table>
+  </section>
+  <section class="rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-4">
+    <h2 class="mb-2 text-base font-bold">{{t "service-tracker.dashboard.by-vendor"}}</h2>
+    <div class="overflow-x-auto">
+      <table class="w-full text-sm">
+        <thead class="text-left text-xs uppercase text-gray-500">
+          <tr>
+            <th class="py-1">{{t "service-tracker.visit.vendor"}}</th>
+            <th class="py-1 text-right">{{t "service-tracker.dashboard.stops"}}</th>
+            <th class="py-1 text-right">{{t "service-tracker.dashboard.jobs-done"}}</th>
+            <th class="py-1 text-right">{{t "service-tracker.dashboard.avg-per-stop"}}</th>
+            <th class="py-1 text-right">{{t "service-tracker.dashboard.avg-approval"}}</th>
+            <th class="py-1 text-right">{{t "service-tracker.dashboard.avg-net"}}</th>
+          </tr>
+        </thead>
+        <tbody>
+          {{#each this.vendorRows as |v|}}
+            <tr class="border-t border-gray-100 dark:border-gray-700">
+              <td class="py-1.5">{{v.name}}</td>
+              <td class="py-1.5 text-right tabular-nums">{{v.stops}}</td>
+              <td class="py-1.5 text-right tabular-nums">{{v.jobsDone}}</td>
+              <td class="py-1.5 text-right tabular-nums">{{fmt-hours v.avgPerStop}}</td>
+              <td class="py-1.5 text-right tabular-nums">{{fmt-hours v.avgApproval}}</td>
+              <td class="py-1.5 text-right tabular-nums">{{fmt-hours v.avgNet}}</td>
+            </tr>
+          {{/each}}
+        </tbody>
+      </table>
+    </div>
+  </section>
+</div>
+
+<div class="grid grid-cols-1 gap-4 lg:grid-cols-2">
+  <section class="rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-4">
+    <h2 class="mb-2 text-base font-bold">{{t "service-tracker.dashboard.by-category"}}</h2>
+    <table class="w-full text-sm">
+      <thead class="text-left text-xs uppercase text-gray-500">
+        <tr><th class="py-1">{{t "service-tracker.petty.category"}}</th><th class="py-1 text-right">{{t "service-tracker.dashboard.kpi.jobs"}}</th></tr>
+      </thead>
+      <tbody>
+        {{#each this.categoryRows as |c|}}
+          <tr class="border-t border-gray-100 dark:border-gray-700"><td class="py-1.5">{{c.category}}</td><td class="py-1.5 text-right tabular-nums">{{c.jobs}}</td></tr>
+        {{/each}}
+      </tbody>
+    </table>
+  </section>
+  <div class="space-y-4">
+    <section class="rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-4">
+      <h2 class="mb-2 text-base font-bold">{{t "service-tracker.dashboard.damage-inspections"}}</h2>
+      <table class="w-full text-sm"><tbody>
+        {{#each this.damageRows as |r|}}
+          <tr class="border-t border-gray-100 dark:border-gray-700 first:border-0"><td class="py-1.5">{{r.label}}</td><td class="py-1.5 text-right font-bold tabular-nums">{{r.value}}</td></tr>
+        {{/each}}
+      </tbody></table>
+    </section>
+    <section class="rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-4">
+      <h2 class="mb-2 text-base font-bold">{{t "service-tracker.dashboard.due-compliance"}}</h2>
+      <table class="w-full text-sm"><tbody>
+        {{#each this.complianceRows as |r|}}
+          <tr class="border-t border-gray-100 dark:border-gray-700 first:border-0"><td class="py-1.5">{{r.label}}</td><td class="py-1.5 text-right font-bold tabular-nums">{{r.value}}</td></tr>
+        {{/each}}
+      </tbody></table>
+    </section>
+  </div>
+</div>

@@ -1,0 +1,377 @@
+service-tracker:
+  title: Service Tracker
+  nav:
+    visits: Visits
+    vehicles: Vehicles
+    petty-cash: Petty Cash
+    damage: Damage Log
+    dashboard: Dashboard
+    report: Client Report
+    catalog: Service Catalog
+    settings: Settings
+    export: Data & Export
+  common:
+    now: Now
+    now-title: Set to the current time
+    delete: Delete
+    notes: Notes
+    status: Status
+    plate: Car plate
+    date: Date
+    from: From
+    to: To
+    clear: Clear
+    'yes': 'Yes'
+    'no': 'No'
+    auto: auto
+    prev: Previous
+    next: Next
+  period:
+    today: Today
+    last7: Last 7 days
+    last30: Last 30 days
+    thisMonth: This month
+    lastMonth: Last month
+  stages:
+    pickupWait: Pickup wait
+    transitFirst: Transit to 1st vendor
+    approvalWait: Approval wait
+    vendorWork: Vendor work
+    betweenVendors: Between vendors
+    returnTransit: Return transit
+  status:
+    closed: Closed
+    in-progress: In progress
+    not-started: Not started
+    overdue: OVERDUE
+    on-time: On time
+    odometer-missing: Odometer missing
+    no-previous-due: No previous due
+    due-soon: Due soon
+    pending: Pending
+    done: Done
+    minor: Minor
+    moderate: Moderate
+    major: Major
+    new: New
+    pre-existing: Pre-existing
+  photos:
+    add: Add photos
+    hint: Click to choose · drag & drop · or click here and paste (Ctrl+V)
+    save-first: Save the record first
+    zone-title: Click to choose photos, drag them here, or press Ctrl+V to paste
+    camera: Take photo
+    alt: photo
+    remove: Remove photo
+    confirm-remove: Remove this photo?
+    uploading: '{count, plural, one {Uploading 1 photo…} other {Uploading # photos…}}'
+    unreadable: Could not read "{name}". If it is a HEIC photo, export it as JPEG first.
+    upload-failed: Photo upload failed
+  catalog-picker:
+    placeholder: Search service… e.g. brake, oil, tyre
+    add-new: + Add "{name}" as a new service (set its lane on the Catalog page)
+  summary:
+    title: Live summary
+    within-target: Within target
+    over-target: Over target
+    overdue-n: '{count, plural, one {# overdue service} other {# overdue services}}'
+    overdue-n-plural: '{count, plural, one {# overdue service} other {# overdue services}}'
+    total: Total turnaround
+    open-for: Open for
+    enter-times: Enter arrival and return times.
+    target: Target
+    where-time-went: Where the time went
+    biggest-delay: Biggest delay
+    time-per-vendor: Time at each vendor
+    total-at-vendors: Total at vendors
+    condition-photos: Condition photos
+    n-pickup: '{count} pickup'
+    n-return: '{count} return'
+    damage-records: Damage records
+    n-new: '{count} new'
+    data-check: Data check
+  visits:
+    title: Visits
+    subtitle: One visit = one trip of a car from LSA to its vendor(s) and back. Click a visit to enter its services, vendor stops and damage.
+    search-placeholder: Search plate, visit ID, make…
+    all-statuses: All statuses
+    new: + New visit
+    empty: No visits yet. Click “+ New visit” when a car is picked up from LSA.
+    open: open
+    col:
+      visit: Visit
+      make: Make / model
+      arrived: Arrived at LSA
+      total: Total / open (hrs)
+      target: Target (hrs)
+      met: Met target?
+      jobs: Jobs
+      stops: Vendor stops
+      overdue: Overdue
+      check: Data check
+  visit:
+    title: Visit {id}
+    all-visits: All visits
+    car-history: Car history
+    client-report: Client report
+    delete: Delete visit
+    details: Visit details
+    plate: Car plate
+    technician: Technician
+    odometer: Odometer at pickup (km)
+    arrived-lsa: Arrived at LSA (clock starts)
+    picked-up: Picked up from LSA
+    returned-lsa: Returned to LSA (clock stops)
+    pickup-inspected: Pickup inspection done
+    return-inspected: Return inspection done
+    condition-photos: Vehicle condition photos (internal)
+    condition-photos-help: Your own record of the car’s condition when it leaves and comes back to LSA. Not shown on the client report unless you switch it on there.
+    at-pickup: At pickup from LSA ({count})
+    at-return: At return to LSA ({count})
+    add-pickup-photos: Add pickup photos
+    add-return-photos: Add return photos
+    pickup-hint: 'Suggested: front, rear, left side, right side, odometer/dashboard, fuel gauge, interior, tyres'
+    return-hint: Same angles as pickup, so you can compare before / after
+    stops-title: Vendor stops – time at each vendor
+    add-stop: + Add vendor stop
+    no-stops: No vendor stops yet. Add one each time the car arrives at a vendor.
+    stop: Stop {n}
+    vendor: Vendor
+    arrived-vendor: Arrived at vendor
+    approval-requested: Approval requested
+    approval-received: Approval received
+    left-vendor: Left vendor (work done)
+    time-at-vendor: Time at vendor
+    approval-wait: Approval wait
+    net-work: Net work
+    jobs-title: Jobs / services on this car
+    add-job: + Add job
+    no-jobs: No jobs yet. Add every job the car needs (oil change, brake pads, tyres…).
+    job: Job {n}
+    service-search: Service (type to search)
+    vendor-used: Vendor used
+    approval-needed: Approval needed?
+    parts-replaced: Parts replaced
+    next-due-override: Next due override (km)
+    next-due-date: Next due (date)
+    lane: Lane
+    next-due: Next due
+    previous-due: Previous due
+    petty-title: Petty cash on this visit
+    damage-title: Damage records
+    add-damage: + Add damage
+    no-damage: No damage recorded for this visit. Click “+ Add damage”, then add photos.
+    plate-first: Enter the car plate on this visit first.
+    confirm-delete: Delete visit {id} and all its stops, jobs, damage records and photos?
+    confirm-delete-stop: Delete this vendor stop?
+    confirm-delete-job: Delete this job?
+    confirm-delete-damage: Delete this damage record and its photos?
+  vehicles:
+    title: Vehicles
+    subtitle: Every car you have handled, with what is due next. Search by plate (spaces don’t matter) and click a car for its full history and petty cash.
+    search-placeholder: Search plate number, e.g. ABC1234…
+    empty: Cars appear here automatically once visits have a plate number.
+    in-service: In service now
+    col:
+      visits: Times serviced (visits)
+      jobs: Jobs done
+      last-visit: Last visit
+      last-odo: Last odometer (km)
+      due-status: Due status
+      damages: Damage records
+      petty: Petty cash ({currency})
+    all: All vehicles
+    kpi:
+      visits: Times serviced (visits)
+      completed: Completed visits
+      jobs: Jobs done
+      last-visit: Last visit
+      last-odo: Last odometer (km)
+      damages: Damage records
+      petty: Petty cash spent ({currency})
+    visits: Visits
+    no-visits: No visits for this car.
+    odometer: Odometer
+    due-title: Next services due (based on the last odometer reading)
+    service: Service
+    last-done: Last done at (km)
+    next-due-at: Next due at (km)
+    km-remaining: Km remaining
+    no-due: No services with a next-due km yet.
+    history-title: Service history
+    status-pickup: Status at pickup
+    no-history: No jobs recorded yet.
+    damage-history: Damage history
+    no-damage: No damage recorded on this car.
+    petty-title: Petty cash spent on this car
+  petty:
+    title: Petty cash
+    subtitle: Cash spent on cars (fuel, top-ups, small parts, towing…). Shown on the client report for its visit unless switched off there. Click a row to edit it.
+    plate-filter: Plate…
+    paid-by-anyone: Paid by anyone
+    show-all: Show all
+    download: Download Excel
+    add: + Add petty cash
+    edit: Edit {id}
+    kpi-total: Total {currency} in this view
+    kpi-entries: Entries
+    kpi-cars: Cars
+    no-category: (no category)
+    ref: Ref
+    visit: Visit
+    category: Category
+    what-for: What was it for?
+    what-for-ph: e.g. engine oil top-up at station
+    paid-by: Paid by
+    amount: Amount ({currency})
+    receipts: Receipts
+    linked-visit: Linked visit (optional)
+    no-amount: no amount yet
+    receipts-count: '{count, plural, one {1 receipt photo} other {# receipt photos}}'
+    add-receipt: Add receipt photo
+    receipt-hint: Photo of the receipt / bill (optional)
+    none: No petty cash recorded.
+    empty: No petty cash entries in this view.
+    confirm-delete: Delete petty cash entry {id}?
+  damage:
+    title: Damage log
+    subtitle: Every damage record across visits. Click a row to edit it and manage its photos.
+    all-stages: All stages
+    all-severities: All severities
+    all-conditions: Pre-existing & new
+    edit: Edit {id}
+    open-visit: Open visit
+    ref: Ref
+    stage: Stage
+    location: Location on car
+    type: Damage type
+    severity: Severity
+    condition: Pre-existing or new
+    occurred-at: Date / time
+    recorded-by: Recorded by
+    client-notified: Client notified?
+    photos: Photos
+    photos-count: '{count, plural, one {1 photo} other {# photos}}'
+    no-photo: no photo yet
+    add-photos: Add photos of this damage
+    empty: No damage records match.
+  dashboard:
+    title: Dashboard
+    subtitle: Hours are elapsed clock hours (24/7). Filtered by the date the car arrived at LSA.
+    download: Download Excel for this period
+    kpi:
+      visits: Visits
+      closed: Closed (back at LSA)
+      in-progress: In progress
+      jobs: Jobs logged
+      stops: Vendor stops
+      petty: Petty cash ({currency})
+      avg-turnaround: Avg turnaround (hrs)
+      within-target: Closed visits within target
+      open-24: Open visits older than 24 h
+    where-time-goes: Where does the time go? (average per visit)
+    stage: Stage
+    avg-hrs: Avg hrs
+    share: Share
+    who: Who controls it
+    delay-owner: Biggest delay by owner
+    owner: Owner of the biggest delay
+    closed-visits: Closed visits
+    by-lane: By lane (lane = slowest job on the visit)
+    lane: Lane
+    target: Target (hrs)
+    avg-turnaround: Avg turnaround (hrs)
+    pct-within: '% within target'
+    by-vendor: By vendor
+    stops: Stops
+    jobs-done: Jobs done
+    avg-per-stop: Avg time per stop (hrs)
+    avg-approval: Avg approval wait (hrs)
+    avg-net: Avg net work (hrs)
+    by-category: Jobs by category
+    damage-inspections: Damage & inspections
+    damage:
+      records: Damage records logged
+      new: …of which NEW (found after pickup)
+      no-pickup-inspection: Closed visits without a pickup inspection
+      no-return-inspection: Closed visits without a return inspection
+      no-pickup-photos: Closed visits without pickup photos
+      no-return-photos: Closed visits without return photos
+      data-problems: Closed visits with data problems
+    due-compliance: Service due compliance (odometer vs previous due km)
+    compliance:
+      comparable: Jobs with a previous due km to compare
+      overdue: …came in OVERDUE
+      pct: '% overdue'
+      avg-km: Average km overdue
+      worst-km: Worst km overdue
+      visits-overdue: Visits with an overdue job
+      missing-odo: Jobs missing an odometer reading
+  report:
+    title: Client report
+    subtitle: Pick a visit and choose what to show; the PDF is generated by the server. Company and client names are on the Settings page.
+    no-plate: no plate
+    toggle:
+      turnaround: Show turnaround time
+      vendorTimes: Show time at each vendor
+      overdue: Show overdue-service note
+      petty: Show petty cash spent
+      photos: Show damage photos
+      condPhotos: Include pickup / return photos (internal)
+    print: Print
+    download: Download PDF
+    damage-photos: Damage photos for this report
+    edit-damage: Edit damage records
+    add-damage: + Add a damage record
+    no-damage: No damage recorded on this visit. Add a damage record first, then attach its photos here.
+    loading: Generating report…
+  catalog:
+    title: Service catalog
+    subtitle: Every service a car may need. Lane sets the turnaround target; “interval (km)” drives Next Due (km) = odometer + interval (leave 0 for repairs). Renaming a service updates the jobs that use it.
+    search-placeholder: Search services or categories…
+    add: + Add service
+    service: Service
+    suggested-vendor: Suggested vendor
+    interval: Interval (km)
+    new-service: New service
+    empty: No services match.
+    confirm-delete: Delete service “{name}”? Existing jobs keep the name but lose lane info.
+  settings:
+    title: Settings
+    saved: Settings saved
+    header: Report header
+    company: Company name on report
+    client: Client name on report (optional)
+    client-ph: e.g. client / site name
+    currency: Currency (petty cash)
+    lanes: Turnaround lanes
+    lanes-help: Proposed targets – change to whatever you agree with the client. A visit takes the target of its slowest job.
+    add-lane: + Add lane
+    new-lane: New lane
+    lane-name: Lane
+    target-hours: Target (hours)
+    sort: Order
+    confirm-delete-lane: Delete lane “{name}”?
+    lists: Dropdown lists
+    lists-help: One entry per line. Vendors come from FleetOps vendors and staff from Fleetbase users.
+    list:
+      categories: Service categories
+      damage-locations: Damage locations
+      damage-types: Damage types
+      severities: Severities
+      stages: Inspection stages
+      job-statuses: Job statuses
+      expense-cats: Petty cash categories
+  export:
+    title: Data & export
+    period-title: Excel service report for a date range
+    period-help: Only the visits in the chosen period (with their jobs, vendor stops and damage), plus a Summary sheet with the period totals.
+    by: by
+    basis-arrived: Arrived at LSA date
+    basis-returned: Returned to LSA date
+    include-timing: Include turnaround & timing figures (turnaround, targets, hours per stage, time at vendors). Untick for a report without them.
+    include-vehicles: 'Include a Vehicles sheet (each car in the period: times serviced, jobs, last odometer).'
+    include-petty: Include petty cash (internal) – a Petty Cash sheet plus totals on the Summary. Leave unticked for client copies.
+    all-title: Export ALL data to Excel
+    all-help: 'Every sheet: Vehicles, Visits (with all calculated times), Vendor Stops, Services, Damage Log, Petty Cash and Service Catalog. Values only. Photos are not included.'
+    all-download: Download everything (.xlsx)

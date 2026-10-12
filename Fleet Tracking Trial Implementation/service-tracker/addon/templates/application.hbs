@@ -1,0 +1,17 @@
+{{page-title (t "service-tracker.title")}}
+<div class="service-tracker mx-auto w-full max-w-[1400px] p-4 text-gray-900 dark:text-gray-100">
+  <nav class="mb-4 flex flex-wrap gap-1 border-b border-gray-200 dark:border-gray-700 pb-2" aria-label={{t "service-tracker.title"}}>
+    {{#each this.tabs as |tab|}}
+      <LinkTo
+        @route={{tab.route}}
+        class="rounded px-3 py-1.5 text-sm font-medium text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 [&.active]:bg-blue-600 [&.active]:text-white"
+      >{{t tab.label}}</LinkTo>
+    {{/each}}
+  </nav>
+  <datalist id="st-plates">
+    {{#each this.lookups.plates as |p|}}
+      <option value={{p.plate}}></option>
+    {{/each}}
+  </datalist>
+  {{outlet}}
+</div>

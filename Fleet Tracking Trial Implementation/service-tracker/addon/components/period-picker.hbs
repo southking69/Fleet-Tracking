@@ -1,0 +1,14 @@
+<div class="flex flex-wrap items-center gap-2" ...attributes>
+  {{#each this.presetItems as |p|}}
+    <button
+      type="button"
+      class="rounded border px-2.5 py-1 text-xs font-medium {{if p.active "border-blue-600 bg-blue-600 text-white" "border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700"}}"
+      {{on "click" (fn this.preset p.key)}}
+    >{{t (concat "service-tracker.period." p.key)}}</button>
+  {{/each}}
+  <span class="mx-1 text-xs text-gray-500">{{t "service-tracker.common.from"}}</span>
+  <input type="date" class="rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 px-2 py-1 text-sm" value={{@from}} {{on "change" this.setFrom}} />
+  <span class="text-xs text-gray-500">{{t "service-tracker.common.to"}}</span>
+  <input type="date" class="rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 px-2 py-1 text-sm" value={{@to}} {{on "change" this.setTo}} />
+  <button type="button" class="rounded border border-gray-300 dark:border-gray-600 px-2.5 py-1 text-xs hover:bg-gray-50 dark:hover:bg-gray-700" {{on "click" this.clear}}>{{t "service-tracker.common.clear"}}</button>
+</div>

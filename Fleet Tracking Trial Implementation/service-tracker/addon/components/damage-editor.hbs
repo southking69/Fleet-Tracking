@@ -1,0 +1,42 @@
+<div class="mb-3 rounded-lg border border-gray-200 dark:border-gray-700 p-3" ...attributes>
+  <div class="mb-2 flex items-center gap-2 text-sm">
+    <b>{{@record.public_id}}</b>
+    <span class="text-xs text-gray-500">{{#if (st-photo-count @record.photos)}}{{t "service-tracker.damage.photos-count" count=(st-photo-count @record.photos)}}{{else}}{{t "service-tracker.damage.no-photo"}}{{/if}}</span>
+    <span class="flex-1"></span>
+    {{#if @onDelete}}
+      <button type="button" class="rounded bg-red-600 px-2 py-1 text-xs font-semibold text-white hover:bg-red-700" {{on "click" (fn @onDelete @record)}}>{{t "service-tracker.common.delete"}}</button>
+    {{/if}}
+  </div>
+  <div class="mb-3">
+    <PhotoUploader @photos={{@record.photos}} @subject={{this.subject}} @label={{t "service-tracker.damage.add-photos"}} @onChange={{this.photosChanged}} />
+  </div>
+  <div class="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
+    <label class="block text-xs font-medium text-gray-600 dark:text-gray-300">{{t "service-tracker.damage.stage"}}
+      <SelectField @value={{@record.stage}} @options={{@settings.stages}} @onChange={{fn this.update "stage"}} class="mt-1" />
+    </label>
+    <label class="block text-xs font-medium text-gray-600 dark:text-gray-300">{{t "service-tracker.damage.location"}}
+      <SelectField @value={{@record.location}} @options={{@settings.damageLocations}} @onChange={{fn this.update "location"}} class="mt-1" />
+    </label>
+    <label class="block text-xs font-medium text-gray-600 dark:text-gray-300">{{t "service-tracker.damage.type"}}
+      <SelectField @value={{@record.damage_type}} @options={{@settings.damageTypes}} @onChange={{fn this.update "damage_type"}} class="mt-1" />
+    </label>
+    <label class="block text-xs font-medium text-gray-600 dark:text-gray-300">{{t "service-tracker.damage.severity"}}
+      <SelectField @value={{@record.severity}} @options={{@settings.severities}} @onChange={{fn this.update "severity"}} class="mt-1" />
+    </label>
+    <label class="block text-xs font-medium text-gray-600 dark:text-gray-300">{{t "service-tracker.damage.condition"}}
+      <SelectField @value={{@record.condition}} @options={{this.conditions}} @onChange={{fn this.update "condition"}} class="mt-1" />
+    </label>
+    <label class="block text-xs font-medium text-gray-600 dark:text-gray-300">{{t "service-tracker.damage.occurred-at"}}
+      <DatetimeNowField @value={{@record.occurred_at}} @onChange={{fn this.update "occurred_at"}} class="mt-1" />
+    </label>
+    <label class="block text-xs font-medium text-gray-600 dark:text-gray-300">{{t "service-tracker.damage.recorded-by"}}
+      <SelectField @value={{@record.recorded_by_uuid}} @options={{@userOptions}} @onChange={{this.setRecordedBy}} class="mt-1" />
+    </label>
+    <label class="block text-xs font-medium text-gray-600 dark:text-gray-300">{{t "service-tracker.damage.client-notified"}}
+      <SelectField @value={{@record.client_notified}} @options={{this.yesNo}} @onChange={{fn this.update "client_notified"}} class="mt-1" />
+    </label>
+    <label class="block text-xs font-medium text-gray-600 dark:text-gray-300 sm:col-span-2 lg:col-span-3">{{t "service-tracker.common.notes"}}
+      <input type="text" class="mt-1 w-full rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 px-2 py-1.5 text-sm" value={{@record.notes}} {{on "change" (fn this.setText "notes")}} />
+    </label>
+  </div>
+</div>

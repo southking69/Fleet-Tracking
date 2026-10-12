@@ -1,0 +1,191 @@
+[
+ {
+  "name": "full closed visit, two vendors",
+  "visit": {
+   "arrived_at_lsa": "2026-10-06T08:00:00Z",
+   "picked_up_at": "2026-10-06T08:30:00Z",
+   "returned_at": "2026-10-06T16:00:00Z",
+   "target_hours": null
+  },
+  "stops": [
+   {
+    "vendor_name": "Petromin",
+    "arrived_at": "2026-10-06T09:00:00Z",
+    "approval_requested_at": "2026-10-06T09:20:00Z",
+    "approval_received_at": "2026-10-06T10:00:00Z",
+    "left_at": "2026-10-06T11:00:00Z"
+   },
+   {
+    "vendor_name": "Local Mechanic",
+    "arrived_at": "2026-10-06T12:00:00Z",
+    "approval_requested_at": null,
+    "approval_received_at": null,
+    "left_at": "2026-10-06T14:30:00Z"
+   }
+  ],
+  "expected": {
+   "stages": [
+    0.5,
+    0.5,
+    0.6666666666666666,
+    3.8333333333333335,
+    1,
+    1.5
+   ],
+   "total": 8,
+   "status": "Closed",
+   "big": 3,
+   "bigName": "Vendor work",
+   "owner": "Vendor",
+   "THV": 4.5,
+   "si": [
+    {
+     "atVendor": 2,
+     "appr": 0.6666666666666666,
+     "net": 1.3333333333333335
+    },
+    {
+     "atVendor": 2.5,
+     "appr": null,
+     "net": 2.5
+    }
+   ]
+  }
+ },
+ {
+  "name": "open visit",
+  "visit": {
+   "arrived_at_lsa": "2026-10-06T08:00:00Z",
+   "picked_up_at": null,
+   "returned_at": null,
+   "target_hours": null
+  },
+  "stops": [],
+  "expected": {
+   "stages": [
+    null,
+    null,
+    null,
+    null,
+    null,
+    null
+   ],
+   "total": null,
+   "status": "In progress",
+   "big": -1,
+   "bigName": "",
+   "owner": "",
+   "THV": null,
+   "si": []
+  }
+ },
+ {
+  "name": "not started",
+  "visit": {
+   "arrived_at_lsa": null,
+   "picked_up_at": null,
+   "returned_at": null,
+   "target_hours": null
+  },
+  "stops": [],
+  "expected": {
+   "stages": [
+    null,
+    null,
+    null,
+    null,
+    null,
+    null
+   ],
+   "total": null,
+   "status": "Not started",
+   "big": -1,
+   "bigName": "",
+   "owner": "",
+   "THV": null,
+   "si": []
+  }
+ },
+ {
+  "name": "closed, stop missing left",
+  "visit": {
+   "arrived_at_lsa": "2026-10-06T08:00:00Z",
+   "picked_up_at": "2026-10-06T09:00:00Z",
+   "returned_at": "2026-10-06T15:00:00Z",
+   "target_hours": null
+  },
+  "stops": [
+   {
+    "vendor_name": "X",
+    "arrived_at": "2026-10-06T10:00:00Z",
+    "approval_requested_at": null,
+    "approval_received_at": null,
+    "left_at": null
+   }
+  ],
+  "expected": {
+   "stages": [
+    1,
+    1,
+    0,
+    0,
+    null,
+    null
+   ],
+   "total": 7,
+   "status": "Closed",
+   "big": 0,
+   "bigName": "Pickup wait",
+   "owner": "Our team",
+   "THV": 0,
+   "si": [
+    {
+     "atVendor": null,
+     "appr": null,
+     "net": null
+    }
+   ]
+  }
+ },
+ {
+  "name": "approval longer than stay (negative net)",
+  "visit": {
+   "arrived_at_lsa": "2026-10-06T08:00:00Z",
+   "picked_up_at": "2026-10-06T08:10:00Z",
+   "returned_at": "2026-10-06T13:00:00Z",
+   "target_hours": null
+  },
+  "stops": [
+   {
+    "vendor_name": "X",
+    "arrived_at": "2026-10-06T09:00:00Z",
+    "approval_requested_at": "2026-10-06T09:05:00Z",
+    "approval_received_at": "2026-10-06T11:00:00Z",
+    "left_at": "2026-10-06T10:00:00Z"
+   }
+  ],
+  "expected": {
+   "stages": [
+    0.16666666666666666,
+    0.8333333333333334,
+    1.9166666666666667,
+    -0.9166666666666667,
+    0,
+    3
+   ],
+   "total": 5,
+   "status": "Closed",
+   "big": 5,
+   "bigName": "Return transit",
+   "owner": "Our team",
+   "THV": 1,
+   "si": [
+    {
+     "atVendor": 1,
+     "appr": 1.9166666666666667,
+     "net": -0.9166666666666667
+    }
+   ]
+  }
+ }
+]

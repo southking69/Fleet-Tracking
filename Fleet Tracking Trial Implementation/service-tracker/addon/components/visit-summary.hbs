@@ -1,0 +1,58 @@
+<div class="rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-3 shadow-sm" ...attributes>
+  <h2 class="mb-2 text-base font-bold">{{t "service-tracker.summary.title"}}</h2>
+  <div class="mb-2 flex flex-wrap items-center gap-1.5">
+    <StatusBadge @status={{this.calc.status}} />
+    {{#if this.hasMet}}
+      {{#if this.calc.met}}
+        <StatusBadge @text={{t "service-tracker.summary.within-target"}} @tone="ok" />
+      {{else}}
+        <StatusBadge @text={{t "service-tracker.summary.over-target"}} @tone="bad" />
+      {{/if}}
+    {{/if}}
+    {{#if this.calc.overdueN}}
+      <StatusBadge @text={{t this.overdueLabelKey count=this.calc.overdueN}} @tone="bad" />
+    {{/if}}
+  </div>
+  <div class="mb-3 text-sm">
+    {{#if this.calc.total}}
+      {{t "service-tracker.summary.total"}}: <b>{{fmt-hours this.calc.total}} h</b>
+    {{else if this.calc.open}}
+      {{t "service-tracker.summary.open-for"}}: <b>{{fmt-hours this.calc.open}} h</b>
+    {{else}}
+      {{t "service-tracker.summary.enter-times"}}
+    {{/if}}
+    {{#if this.calc.target}}
+      · {{t "service-tracker.summary.target"}}: <b>{{this.calc.target}} h{{#if this.calc.lane}} ({{this.calc.lane}}){{/if}}</b>
+    {{/if}}
+  </div>
+
+  <h3 class="mb-1.5 text-sm font-semibold">{{t "service-tracker.summary.where-time-went"}}</h3>
+  <StageBar @stages={{this.calc.stages}} @big={{this.calc.big}} />
+
+  {{#if this.calc.bigName}}
+    <div class="my-2 text-sm">{{t "service-tracker.summary.biggest-delay"}}: <b>{{this.calc.bigName}}</b> ({{this.calc.owner}})</div>
+  {{/if}}
+
+  <h3 class="mb-1 mt-3 text-sm font-semibold">{{t "service-tracker.summary.time-per-vendor"}}</h3>
+  {{#each this.vendors as |v|}}
+    <div class="flex justify-between text-sm"><span>{{v.name}}</span><span class="tabular-nums">{{fmt-hours v.hours}} h</span></div>
+  {{else}}
+    <div class="text-sm text-gray-500">–</div>
+  {{/each}}
+  {{#if this.calc.THV}}
+    <div class="mt-1 border-t border-gray-200 dark:border-gray-700 pt-1 text-sm">{{t "service-tracker.summary.total-at-vendors"}}: <b>{{fmt-hours this.calc.THV}} h</b></div>
+  {{/if}}
+
+  <div class="mt-3 text-sm">
+    {{t "service-tracker.summary.condition-photos"}}:
+    <b class={{unless (st-photo-count @visit.pickup_photos) "text-amber-700"}}>{{t "service-tracker.summary.n-pickup" count=(st-photo-count @visit.pickup_photos)}}</b>
+    · <b>{{t "service-tracker.summary.n-return" count=(st-photo-count @visit.return_photos)}}</b>
+  </div>
+  <div class="mt-1 text-sm">
+    {{t "service-tracker.summary.damage-records"}}: <b>{{@damageCount}}</b>
+    {{#if @newDamageCount}}(<b class="text-red-700">{{t "service-tracker.summary.n-new" count=@newDamageCount}}</b>){{/if}}
+  </div>
+  {{#if this.calc.check}}
+    <div class="mt-2 text-sm">{{t "service-tracker.summary.data-check"}}: <StatusBadge @text={{this.calc.check}} @tone={{this.checkTone}} /></div>
+  {{/if}}
+</div>

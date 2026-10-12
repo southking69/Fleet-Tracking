@@ -1,0 +1,43 @@
+<div class="mb-3">
+  <h1 class="text-xl font-bold">{{t "service-tracker.vehicles.title"}}</h1>
+  <p class="text-sm text-gray-500">{{t "service-tracker.vehicles.subtitle"}}</p>
+</div>
+<div class="mb-3 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-3">
+  <input type="search" class="w-80 max-w-full rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 px-2 py-1.5 text-sm" placeholder={{t "service-tracker.vehicles.search-placeholder"}} value={{this.q}} {{on "input" this.search}} />
+</div>
+<div class="overflow-x-auto rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800">
+  <table class="w-full text-sm">
+    <thead class="bg-gray-50 dark:bg-gray-900 text-left text-xs uppercase text-gray-500">
+      <tr>
+        <th class="px-3 py-2">{{t "service-tracker.common.plate"}}</th>
+        <th class="px-3 py-2">{{t "service-tracker.visits.col.make"}}</th>
+        <th class="px-3 py-2 text-right">{{t "service-tracker.vehicles.col.visits"}}</th>
+        <th class="px-3 py-2 text-right">{{t "service-tracker.vehicles.col.jobs"}}</th>
+        <th class="px-3 py-2">{{t "service-tracker.vehicles.col.last-visit"}}</th>
+        <th class="px-3 py-2 text-right">{{t "service-tracker.vehicles.col.last-odo"}}</th>
+        <th class="px-3 py-2"></th>
+        <th class="px-3 py-2">{{t "service-tracker.vehicles.col.due-status"}}</th>
+        <th class="px-3 py-2 text-right">{{t "service-tracker.vehicles.col.damages"}}</th>
+        <th class="px-3 py-2 text-right">{{t "service-tracker.vehicles.col.petty" currency=this.currency}}</th>
+      </tr>
+    </thead>
+    <tbody>
+      {{#each @model as |v|}}
+        <tr class="cursor-pointer border-t border-gray-100 dark:border-gray-700 hover:bg-blue-50 dark:hover:bg-gray-700" {{on "click" (fn this.open v)}}>
+          <td class="px-3 py-2 font-bold">{{v.plate}}</td>
+          <td class="px-3 py-2">{{v.makeModel}}</td>
+          <td class="px-3 py-2 text-right font-bold tabular-nums">{{v.visits}}</td>
+          <td class="px-3 py-2 text-right tabular-nums">{{v.jobs}}</td>
+          <td class="px-3 py-2">{{fmt-datetime v.lastVisit}}</td>
+          <td class="px-3 py-2 text-right tabular-nums">{{fmt-int v.lastOdometer}}</td>
+          <td class="px-3 py-2">{{#if v.inService}}<StatusBadge @text={{t "service-tracker.vehicles.in-service"}} @tone="blue" />{{/if}}</td>
+          <td class="px-3 py-2">{{#if (st-eq v.dueStatus "OVERDUE")}}<StatusBadge @status="OVERDUE" />{{else if (st-eq v.dueStatus "Due soon")}}<StatusBadge @text={{t "service-tracker.status.due-soon"}} @tone="warn" />{{/if}}</td>
+          <td class="px-3 py-2 text-right tabular-nums">{{v.damageRecords}}</td>
+          <td class="px-3 py-2 text-right tabular-nums">{{#if v.pettyCashMinor}}{{fmt-money v.pettyCashMinor}}{{else}}–{{/if}}</td>
+        </tr>
+      {{else}}
+        <tr><td colspan="10" class="px-3 py-8 text-center text-gray-500">{{t "service-tracker.vehicles.empty"}}</td></tr>
+      {{/each}}
+    </tbody>
+  </table>
+</div>

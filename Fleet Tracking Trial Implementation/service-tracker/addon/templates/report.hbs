@@ -1,0 +1,45 @@
+<div class="mb-3">
+  <h1 class="text-xl font-bold">{{t "service-tracker.report.title"}}</h1>
+  <p class="text-sm text-gray-500">{{t "service-tracker.report.subtitle"}}</p>
+</div>
+<div class="mb-3 flex flex-wrap items-center gap-x-4 gap-y-2 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-3">
+  <div class="w-72 max-w-full"><SelectField @value={{this.visit}} @options={{this.visitOptions}} @blank={{false}} @onChange={{this.selectVisit}} /></div>
+  {{#each this.toggles as |tg|}}
+    <label class="inline-flex items-center gap-1.5 text-sm">
+      <input type="checkbox" checked={{tg.checked}} {{on "change" (fn this.toggle tg.key)}} /> {{t tg.label}}
+    </label>
+  {{/each}}
+  <span class="flex-1"></span>
+  <button type="button" class="rounded border border-gray-300 dark:border-gray-600 px-3 py-1.5 text-sm disabled:opacity-40" disabled={{st-not this.pdfUrl}} {{on "click" this.print}}>{{t "service-tracker.report.print"}}</button>
+  <button type="button" class="rounded bg-blue-600 px-3 py-1.5 text-sm font-semibold text-white hover:bg-blue-700 disabled:opacity-40" disabled={{st-not this.pdfUrl}} {{on "click" this.download}}>{{t "service-tracker.report.download"}}</button>
+</div>
+
+{{#if this.selectedVisit}}
+  <section class="mb-4 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-4">
+    <div class="mb-2 flex items-center gap-2">
+      <h2 class="text-base font-bold">{{t "service-tracker.report.damage-photos"}}</h2>
+      <span class="flex-1"></span>
+      <LinkTo @route="visits.view" @model={{this.selectedVisit.public_id}} class="rounded border border-gray-300 dark:border-gray-600 px-2.5 py-1 text-xs">
+        {{if this.damages.length (t "service-tracker.report.edit-damage") (t "service-tracker.report.add-damage")}}
+      </LinkTo>
+    </div>
+    {{#each this.damages as |d|}}
+      <DamageEditor @record={{d}} @settings={{this.settings}} @userOptions={{this.lookups.userOptions}} @onSaved={{this.photosChanged}} @onChanged={{this.photosChanged}} />
+    {{else}}
+      <div class="py-3 text-center text-sm text-gray-500">{{t "service-tracker.report.no-damage"}}</div>
+    {{/each}}
+  </section>
+
+  <section class="rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-2">
+    {{#if this.loading}}
+      <div class="p-8 text-center text-sm text-gray-500">{{t "service-tracker.report.loading"}}</div>
+    {{else if this.error}}
+      <div class="p-8 text-center text-sm text-red-700">{{this.error}}</div>
+    {{/if}}
+    {{#if this.pdfUrl}}
+      <iframe id="st-report-frame" title={{t "service-tracker.report.title"}} src={{this.pdfUrl}} class="h-[80vh] w-full rounded {{if this.loading "hidden"}}"></iframe>
+    {{/if}}
+  </section>
+{{else}}
+  <div class="rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-8 text-center text-gray-500">{{t "service-tracker.visits.empty"}}</div>
+{{/if}}

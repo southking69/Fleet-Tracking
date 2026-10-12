@@ -1,0 +1,22 @@
+{
+  "name": "navigator-screens-dev-harness",
+  "private": true,
+  "description": "Dev-only harness (jest for the offline queue, tsc against stubs). NOT part of the files dropped into navigator-app.",
+  "scripts": {
+    "test": "jest --config _dev/jest.config.js",
+    "typecheck": "bash _dev/typecheck.sh"
+  },
+  "devDependencies": {
+    "@types/jest": "^29.5.12",
+    "@types/node": "^20.11.0",
+    "@types/react": "18.3.12",
+    "@react-navigation/native": "7.0.0",
+    "@react-navigation/native-stack": "7.0.0",
+    "date-fns": "4.1.0",
+    "jest": "^29.7.0",
+    "react": "18.3.1",
+    "react-native": "0.76.5",
+    "ts-jest": "^29.2.0",
+    "typescript": "^5.4.5"
+  }
+}

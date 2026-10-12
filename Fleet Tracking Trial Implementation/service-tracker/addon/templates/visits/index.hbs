@@ -1,0 +1,67 @@
+<div class="mb-3">
+  <h1 class="text-xl font-bold">{{t "service-tracker.visits.title"}}</h1>
+  <p class="text-sm text-gray-500">{{t "service-tracker.visits.subtitle"}}</p>
+</div>
+<div class="mb-3 flex flex-wrap items-center gap-2 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-3">
+  <input
+    type="search"
+    class="w-72 max-w-full rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 px-2 py-1.5 text-sm"
+    placeholder={{t "service-tracker.visits.search-placeholder"}}
+    value={{this.q}}
+    {{on "input" this.search}}
+  />
+  <div class="w-44">
+    <SelectField @value={{this.status}} @options={{this.statuses}} @blank={{t "service-tracker.visits.all-statuses"}} @onChange={{this.setStatus}} />
+  </div>
+  <span class="flex-1"></span>
+  <button type="button" class="rounded bg-blue-600 px-3 py-1.5 text-sm font-semibold text-white hover:bg-blue-700" {{on "click" this.newVisit}}>{{t "service-tracker.visits.new"}}</button>
+</div>
+<div class="overflow-x-auto rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800">
+  <table class="w-full text-sm">
+    <thead class="bg-gray-50 dark:bg-gray-900 text-left text-xs uppercase text-gray-500">
+      <tr>
+        <th class="px-3 py-2">{{t "service-tracker.visits.col.visit"}}</th>
+        <th class="px-3 py-2">{{t "service-tracker.common.plate"}}</th>
+        <th class="px-3 py-2">{{t "service-tracker.visits.col.make"}}</th>
+        <th class="px-3 py-2">{{t "service-tracker.common.status"}}</th>
+        <th class="px-3 py-2">{{t "service-tracker.visits.col.arrived"}}</th>
+        <th class="px-3 py-2 text-right">{{t "service-tracker.visits.col.total"}}</th>
+        <th class="px-3 py-2 text-right">{{t "service-tracker.visits.col.target"}}</th>
+        <th class="px-3 py-2">{{t "service-tracker.visits.col.met"}}</th>
+        <th class="px-3 py-2 text-right">{{t "service-tracker.visits.col.jobs"}}</th>
+        <th class="px-3 py-2 text-right">{{t "service-tracker.visits.col.stops"}}</th>
+        <th class="px-3 py-2">{{t "service-tracker.visits.col.overdue"}}</th>
+        <th class="px-3 py-2">{{t "service-tracker.visits.col.check"}}</th>
+      </tr>
+    </thead>
+    <tbody>
+      {{#each @model as |v|}}
+        <tr class="cursor-pointer border-t border-gray-100 dark:border-gray-700 hover:bg-blue-50 dark:hover:bg-gray-700" {{on "click" (fn this.open v)}}>
+          <td class="px-3 py-2 font-bold">{{v.public_id}}</td>
+          <td class="px-3 py-2">{{if v.plate v.plate "–"}}</td>
+          <td class="px-3 py-2">{{v.make_model}}</td>
+          <td class="px-3 py-2"><StatusBadge @status={{v.calc.status}} /></td>
+          <td class="px-3 py-2">{{fmt-datetime v.arrived_at_lsa}}</td>
+          <td class="px-3 py-2 text-right tabular-nums">
+            {{#if v.calc.total}}{{fmt-hours v.calc.total}}{{else if v.calc.open}}{{fmt-hours v.calc.open}} {{t "service-tracker.visits.open"}}{{else}}–{{/if}}
+          </td>
+          <td class="px-3 py-2 text-right tabular-nums">{{if v.calc.target v.calc.target "–"}}</td>
+          <td class="px-3 py-2">
+            {{#if (st-eq v.calc.met true)}}<StatusBadge @text={{t "service-tracker.common.yes"}} @tone="ok" />{{else if (st-eq v.calc.met false)}}<StatusBadge @text={{t "service-tracker.common.no"}} @tone="bad" />{{/if}}
+          </td>
+          <td class="px-3 py-2 text-right tabular-nums">{{v.jobs_count}}</td>
+          <td class="px-3 py-2 text-right tabular-nums">{{v.stops_count}}</td>
+          <td class="px-3 py-2">{{#if v.calc.overdueN}}<StatusBadge @text={{t "service-tracker.summary.overdue-n" count=v.calc.overdueN}} @tone="bad" />{{/if}}</td>
+          <td class="px-3 py-2">{{#if v.calc.check}}<StatusBadge @text={{v.calc.check}} @tone={{if (st-eq v.calc.check "OK") "ok" "warn"}} />{{/if}}</td>
+        </tr>
+      {{else}}
+        <tr><td colspan="12" class="px-3 py-8 text-center text-gray-500">{{t "service-tracker.visits.empty"}}</td></tr>
+      {{/each}}
+    </tbody>
+  </table>
+</div>
+<div class="mt-3 flex items-center justify-end gap-2 text-sm">
+  <button type="button" class="rounded border border-gray-300 dark:border-gray-600 px-3 py-1 disabled:opacity-40" disabled={{st-not this.hasPrev}} {{on "click" this.prev}}>‹ {{t "service-tracker.common.prev"}}</button>
+  <span class="text-gray-500">{{this.page}}{{#if this.meta.last_page}} / {{this.meta.last_page}}{{/if}}</span>
+  <button type="button" class="rounded border border-gray-300 dark:border-gray-600 px-3 py-1 disabled:opacity-40" disabled={{st-not this.hasNext}} {{on "click" this.next}}>{{t "service-tracker.common.next"}} ›</button>
+</div>

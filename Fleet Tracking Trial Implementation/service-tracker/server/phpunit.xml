@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:noNamespaceSchemaLocation="tests/vendor/phpunit/phpunit/phpunit.xsd"
+         bootstrap="tests/Unit/EngineBootstrap.php"
+         colors="true"
+         failOnWarning="true"
+         failOnRisky="true">
+  <testsuites>
+    <testsuite name="Engine">
+      <file>tests/Unit/EngineParityTest.php</file>
+    </testsuite>
+  </testsuites>
+</phpunit>

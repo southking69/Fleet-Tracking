@@ -1,0 +1,39 @@
+<div class="mb-3 rounded-lg border border-gray-200 dark:border-gray-700 p-3" ...attributes>
+  <div class="mb-2 flex items-center gap-2 text-sm">
+    <b>{{@record.public_id}}</b>
+    <span class="text-xs text-gray-500">
+      {{#if @record.amount}}{{fmt-money @record.amount}} {{@record.currency}}{{else}}{{t "service-tracker.petty.no-amount"}}{{/if}}
+      {{#if (st-photo-count @record.receipts)}} · {{t "service-tracker.petty.receipts-count" count=(st-photo-count @record.receipts)}}{{/if}}
+    </span>
+    <span class="flex-1"></span>
+    {{#if @onDelete}}
+      <button type="button" class="rounded bg-red-600 px-2 py-1 text-xs font-semibold text-white hover:bg-red-700" {{on "click" (fn @onDelete @record)}}>{{t "service-tracker.common.delete"}}</button>
+    {{/if}}
+  </div>
+  <div class="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
+    <label class="block text-xs font-medium text-gray-600 dark:text-gray-300">{{t "service-tracker.common.date"}}
+      <input type="date" class="mt-1 w-full rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 px-2 py-1.5 text-sm" value={{@record.entry_date}} {{on "change" this.setDate}} />
+    </label>
+    <label class="block text-xs font-medium text-gray-600 dark:text-gray-300">{{t "service-tracker.common.plate"}}
+      <input type="text" disabled={{@lockPlate}} list="st-plates" class="mt-1 w-full rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 px-2 py-1.5 text-sm" value={{@record.plate}} {{on "change" this.setPlate}} />
+    </label>
+    <label class="block text-xs font-medium text-gray-600 dark:text-gray-300">{{t "service-tracker.petty.linked-visit"}}
+      <SelectField @value={{@record.service_visit_uuid}} @options={{@visitOptions}} @onChange={{fn this.update "service_visit_uuid"}} class="mt-1" />
+    </label>
+    <label class="block text-xs font-medium text-gray-600 dark:text-gray-300">{{t "service-tracker.petty.category"}}
+      <SelectField @value={{@record.category}} @options={{@settings.expenseCats}} @onChange={{fn this.update "category"}} class="mt-1" />
+    </label>
+    <label class="block text-xs font-medium text-gray-600 dark:text-gray-300">{{t "service-tracker.petty.amount" currency=@settings.currency}}
+      <input type="number" min="0" step="0.01" class="mt-1 w-full rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 px-2 py-1.5 text-sm" value={{this.amountMajor}} {{on "change" this.setAmount}} />
+    </label>
+    <label class="block text-xs font-medium text-gray-600 dark:text-gray-300">{{t "service-tracker.petty.paid-by"}}
+      <input type="text" class="mt-1 w-full rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 px-2 py-1.5 text-sm" value={{@record.paid_by}} {{on "change" (fn this.setText "paid_by")}} />
+    </label>
+    <label class="block text-xs font-medium text-gray-600 dark:text-gray-300 sm:col-span-2 lg:col-span-3">{{t "service-tracker.petty.what-for"}}
+      <input type="text" placeholder={{t "service-tracker.petty.what-for-ph"}} class="mt-1 w-full rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 px-2 py-1.5 text-sm" value={{@record.description}} {{on "change" (fn this.setText "description")}} />
+    </label>
+  </div>
+  <div class="mt-3">
+    <PhotoUploader @photos={{@record.receipts}} @subject={{this.subject}} @label={{t "service-tracker.petty.add-receipt"}} @hint={{t "service-tracker.petty.receipt-hint"}} @onChange={{this.receiptsChanged}} />
+  </div>
+</div>

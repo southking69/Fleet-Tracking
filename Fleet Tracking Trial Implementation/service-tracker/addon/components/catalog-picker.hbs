@@ -1,0 +1,35 @@
+<div class="relative" ...attributes>
+  <input
+    type="text"
+    class="w-full rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 px-2 py-1.5 text-sm"
+    placeholder={{t "service-tracker.catalog-picker.placeholder"}}
+    value={{this.text}}
+    autocomplete="off"
+    {{on "focus" this.focus}}
+    {{on "input" this.input}}
+    {{on "blur" this.blur}}
+    {{on "keydown" this.keydown}}
+  />
+  {{#if this.open}}
+    {{! template-lint-disable no-pointer-down-event-binding }}
+    <div role="listbox" class="absolute z-30 mt-1 max-h-64 w-full overflow-auto rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 shadow-lg">
+      {{#each this.results as |row i|}}
+        <div
+          class="flex cursor-pointer flex-col px-2 py-1.5 text-sm hover:bg-blue-50 dark:hover:bg-gray-700 {{if (st-eq i this.highlighted) "bg-blue-50 dark:bg-gray-700"}}"
+          role="option"
+          aria-selected={{if (st-eq i this.highlighted) "true" "false"}}
+          {{on "mousedown" (fn this.pick row)}}
+        >
+          <span>{{row.name}}</span>
+          <span class="text-xs text-gray-500">{{row.meta}}</span>
+        </div>
+      {{/each}}
+      {{#if this.canCreate}}
+        <div class="cursor-pointer border-t border-gray-200 dark:border-gray-700 px-2 py-1.5 text-sm text-blue-700 dark:text-blue-300 hover:bg-blue-50 dark:hover:bg-gray-700" role="option" aria-selected="false" {{on "mousedown" this.create}}>
+          {{t "service-tracker.catalog-picker.add-new" name=this.text}}
+        </div>
+      {{/if}}
+    </div>
+    {{! template-lint-enable no-pointer-down-event-binding }}
+  {{/if}}
+</div>

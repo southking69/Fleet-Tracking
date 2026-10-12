@@ -1,0 +1,26 @@
+# Reverse proxy with automatic HTTPS (Caddy 2) on the Docker host. All Fleetbase ports are bound to 127.0.0.1 by the override file.
+# Replace the two hostnames (they must match API_FQDN / CONSOLE_FQDN in .env) and point both DNS A records at the host.
+# nginx / Traefik work equally well: what matters is (1) TLS, (2) WebSocket upgrade for /socketcluster/, (3) no body-size
+# limit below ~20 MB (inspection photo uploads), (4) generous read timeout (PDF / Excel generation).
+
+fleet.example.com {
+	encode zstd gzip
+	reverse_proxy 127.0.0.1:4200
+}
+
+api.fleet.example.com {
+	encode zstd gzip
+	request_body {
+		max_size 100MB
+	}
+	handle /socketcluster/* {
+		reverse_proxy 127.0.0.1:38000
+	}
+	handle {
+		reverse_proxy 127.0.0.1:8000 {
+			transport http {
+				read_timeout 120s
+			}
+		}
+	}
+}

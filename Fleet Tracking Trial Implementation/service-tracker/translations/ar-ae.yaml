@@ -1,0 +1,377 @@
+service-tracker:
+  title: متتبع الخدمة
+  nav:
+    visits: الزيارات
+    vehicles: المركبات
+    petty-cash: المصروفات النثرية
+    damage: سجل الأضرار
+    dashboard: لوحة المؤشرات
+    report: تقرير العميل
+    catalog: كتالوج الخدمات
+    settings: الإعدادات
+    export: البيانات والتصدير
+  common:
+    now: الآن
+    now-title: تعيين الوقت الحالي
+    delete: حذف
+    notes: ملاحظات
+    status: الحالة
+    plate: رقم اللوحة
+    date: التاريخ
+    from: من
+    to: إلى
+    clear: مسح
+    'yes': نعم
+    'no': لا
+    auto: تلقائي
+    prev: السابق
+    next: التالي
+  period:
+    today: اليوم
+    last7: آخر 7 أيام
+    last30: آخر 30 يومًا
+    thisMonth: هذا الشهر
+    lastMonth: الشهر الماضي
+  stages:
+    pickupWait: انتظار الاستلام
+    transitFirst: النقل إلى المورد الأول
+    approvalWait: انتظار الموافقة
+    vendorWork: عمل المورد
+    betweenVendors: بين الموردين
+    returnTransit: النقل للعودة
+  status:
+    closed: مغلقة
+    in-progress: قيد التنفيذ
+    not-started: لم تبدأ
+    overdue: متأخرة
+    on-time: في الموعد
+    odometer-missing: قراءة العداد مفقودة
+    no-previous-due: لا يوجد استحقاق سابق
+    due-soon: يستحق قريبًا
+    pending: معلّقة
+    done: منجزة
+    minor: طفيف
+    moderate: متوسط
+    major: كبير
+    new: جديد
+    pre-existing: موجود مسبقًا
+  photos:
+    add: إضافة صور
+    hint: انقر للاختيار · اسحب وأفلت · أو انقر هنا والصق (Ctrl+V)
+    save-first: احفظ السجل أولاً
+    zone-title: انقر لاختيار الصور أو اسحبها هنا أو اضغط Ctrl+V للصق
+    camera: التقاط صورة
+    alt: صورة
+    remove: إزالة الصورة
+    confirm-remove: هل تريد إزالة هذه الصورة؟
+    uploading: '{count, plural, one {جارٍ رفع صورة…} two {جارٍ رفع صورتين…} other {جارٍ رفع # صور…}}'
+    unreadable: تعذّرت قراءة "{name}". إذا كانت صورة HEIC فصدّرها بصيغة JPEG أولاً.
+    upload-failed: فشل رفع الصورة
+  catalog-picker:
+    placeholder: ابحث عن خدمة… مثل فرامل، زيت، إطار
+    add-new: + إضافة "{name}" كخدمة جديدة (حدّد مسارها في صفحة الكتالوج)
+  summary:
+    title: الملخص المباشر
+    within-target: ضمن الهدف
+    over-target: تجاوز الهدف
+    overdue-n: '{count, plural, one {خدمة متأخرة} two {خدمتان متأخرتان} other {# خدمات متأخرة}}'
+    overdue-n-plural: '{count, plural, one {خدمة متأخرة} two {خدمتان متأخرتان} other {# خدمات متأخرة}}'
+    total: إجمالي زمن الدورة
+    open-for: مفتوحة منذ
+    enter-times: أدخل وقتَي الوصول والعودة.
+    target: الهدف
+    where-time-went: أين ذهب الوقت
+    biggest-delay: أكبر تأخير
+    time-per-vendor: الوقت لدى كل مورد
+    total-at-vendors: الإجمالي لدى الموردين
+    condition-photos: صور الحالة
+    n-pickup: '{count} استلام'
+    n-return: '{count} إرجاع'
+    damage-records: سجلات الأضرار
+    n-new: '{count} جديدة'
+    data-check: فحص البيانات
+  visits:
+    title: الزيارات
+    subtitle: الزيارة الواحدة = رحلة سيارة من LSA إلى المورد (الموردين) والعودة. انقر على زيارة لإدخال خدماتها ومحطات الموردين والأضرار.
+    search-placeholder: ابحث برقم اللوحة أو رقم الزيارة أو الطراز…
+    all-statuses: كل الحالات
+    new: + زيارة جديدة
+    empty: لا توجد زيارات بعد. انقر على «+ زيارة جديدة» عند استلام سيارة من LSA.
+    open: مفتوحة
+    col:
+      visit: الزيارة
+      make: الطراز
+      arrived: الوصول إلى LSA
+      total: الإجمالي / المفتوح (ساعة)
+      target: الهدف (ساعة)
+      met: تحقق الهدف؟
+      jobs: الأعمال
+      stops: محطات الموردين
+      overdue: متأخر
+      check: فحص البيانات
+  visit:
+    title: الزيارة {id}
+    all-visits: كل الزيارات
+    car-history: سجل السيارة
+    client-report: تقرير العميل
+    delete: حذف الزيارة
+    details: تفاصيل الزيارة
+    plate: رقم اللوحة
+    technician: الفني
+    odometer: قراءة العداد عند الاستلام (كم)
+    arrived-lsa: الوصول إلى LSA (بدء الحساب)
+    picked-up: الاستلام من LSA
+    returned-lsa: العودة إلى LSA (إيقاف الحساب)
+    pickup-inspected: تم فحص الاستلام
+    return-inspected: تم فحص الإرجاع
+    condition-photos: صور حالة المركبة (داخلية)
+    condition-photos-help: سجلّك الخاص لحالة السيارة عند مغادرتها LSA وعودتها. لا يظهر في تقرير العميل ما لم تفعّله هناك.
+    at-pickup: عند الاستلام من LSA ({count})
+    at-return: عند العودة إلى LSA ({count})
+    add-pickup-photos: إضافة صور الاستلام
+    add-return-photos: إضافة صور الإرجاع
+    pickup-hint: 'مقترح: الأمام، الخلف، الجانب الأيسر، الجانب الأيمن، العداد/لوحة القيادة، مؤشر الوقود، الداخل، الإطارات'
+    return-hint: نفس زوايا الاستلام لتتمكن من المقارنة قبل/بعد
+    stops-title: محطات الموردين – الوقت لدى كل مورد
+    add-stop: + إضافة محطة مورد
+    no-stops: لا توجد محطات موردين بعد. أضف محطة عند وصول السيارة إلى كل مورد.
+    stop: المحطة {n}
+    vendor: المورد
+    arrived-vendor: الوصول إلى المورد
+    approval-requested: طلب الموافقة
+    approval-received: استلام الموافقة
+    left-vendor: مغادرة المورد (اكتمل العمل)
+    time-at-vendor: الوقت لدى المورد
+    approval-wait: انتظار الموافقة
+    net-work: صافي العمل
+    jobs-title: الأعمال / الخدمات على هذه السيارة
+    add-job: + إضافة عمل
+    no-jobs: لا توجد أعمال بعد. أضف كل عمل تحتاجه السيارة (تغيير زيت، فحمات فرامل، إطارات…).
+    job: العمل {n}
+    service-search: الخدمة (اكتب للبحث)
+    vendor-used: المورد المستخدم
+    approval-needed: هل تلزم موافقة؟
+    parts-replaced: القطع المستبدلة
+    next-due-override: تجاوز الاستحقاق القادم (كم)
+    next-due-date: الاستحقاق القادم (التاريخ)
+    lane: المسار
+    next-due: الاستحقاق القادم
+    previous-due: الاستحقاق السابق
+    petty-title: المصروفات النثرية في هذه الزيارة
+    damage-title: سجلات الأضرار
+    add-damage: + إضافة ضرر
+    no-damage: لا أضرار مسجلة لهذه الزيارة. انقر «+ إضافة ضرر» ثم أضف الصور.
+    plate-first: أدخل رقم لوحة السيارة في هذه الزيارة أولاً.
+    confirm-delete: هل تريد حذف الزيارة {id} وجميع محطاتها وأعمالها وسجلات الأضرار والصور؟
+    confirm-delete-stop: هل تريد حذف محطة المورد هذه؟
+    confirm-delete-job: هل تريد حذف هذا العمل؟
+    confirm-delete-damage: هل تريد حذف سجل الضرر هذا وصوره؟
+  vehicles:
+    title: المركبات
+    subtitle: كل سيارة تعاملت معها مع ما يستحق لاحقًا. ابحث برقم اللوحة (المسافات لا تهم) وانقر على سيارة لعرض سجلها الكامل ومصروفاتها النثرية.
+    search-placeholder: ابحث برقم اللوحة، مثل ABC1234…
+    empty: تظهر السيارات هنا تلقائيًا عندما تحمل الزيارات رقم لوحة.
+    in-service: في الصيانة الآن
+    col:
+      visits: مرات الصيانة (الزيارات)
+      jobs: الأعمال المنجزة
+      last-visit: آخر زيارة
+      last-odo: آخر قراءة عداد (كم)
+      due-status: حالة الاستحقاق
+      damages: سجلات الأضرار
+      petty: المصروفات النثرية ({currency})
+    all: كل المركبات
+    kpi:
+      visits: مرات الصيانة (الزيارات)
+      completed: الزيارات المكتملة
+      jobs: الأعمال المنجزة
+      last-visit: آخر زيارة
+      last-odo: آخر قراءة عداد (كم)
+      damages: سجلات الأضرار
+      petty: المصروفات النثرية ({currency})
+    visits: الزيارات
+    no-visits: لا زيارات لهذه السيارة.
+    odometer: العداد
+    due-title: الخدمات القادمة المستحقة (بناءً على آخر قراءة عداد)
+    service: الخدمة
+    last-done: آخر تنفيذ عند (كم)
+    next-due-at: الاستحقاق القادم عند (كم)
+    km-remaining: الكيلومترات المتبقية
+    no-due: لا توجد خدمات لها كيلومتر استحقاق قادم بعد.
+    history-title: سجل الخدمات
+    status-pickup: الحالة عند الاستلام
+    no-history: لا أعمال مسجلة بعد.
+    damage-history: سجل الأضرار
+    no-damage: لا أضرار مسجلة على هذه السيارة.
+    petty-title: المصروفات النثرية على هذه السيارة
+  petty:
+    title: المصروفات النثرية
+    subtitle: المبالغ النقدية المصروفة على السيارات (وقود، تعبئة، قطع صغيرة، سحب…). تظهر في تقرير العميل لزيارتها ما لم تُعطَّل هناك. انقر على صف لتعديله.
+    plate-filter: اللوحة…
+    paid-by-anyone: أي شخص
+    show-all: عرض الكل
+    download: تنزيل Excel
+    add: + إضافة مصروف نثري
+    edit: تعديل {id}
+    kpi-total: الإجمالي {currency} في هذا العرض
+    kpi-entries: القيود
+    kpi-cars: السيارات
+    no-category: (بدون فئة)
+    ref: المرجع
+    visit: الزيارة
+    category: الفئة
+    what-for: ما سبب الصرف؟
+    what-for-ph: 'مثل: تعبئة زيت المحرك في المحطة'
+    paid-by: دُفع بواسطة
+    amount: المبلغ ({currency})
+    receipts: الإيصالات
+    linked-visit: الزيارة المرتبطة (اختياري)
+    no-amount: لا مبلغ بعد
+    receipts-count: '{count, plural, one {صورة إيصال} two {صورتا إيصال} other {# صور إيصالات}}'
+    add-receipt: إضافة صورة إيصال
+    receipt-hint: صورة الإيصال / الفاتورة (اختياري)
+    none: لا مصروفات نثرية مسجلة.
+    empty: لا قيود مصروفات نثرية في هذا العرض.
+    confirm-delete: هل تريد حذف قيد المصروف النثري {id}؟
+  damage:
+    title: سجل الأضرار
+    subtitle: كل سجلات الأضرار عبر الزيارات. انقر على صف لتعديله وإدارة صوره.
+    all-stages: كل المراحل
+    all-severities: كل الدرجات
+    all-conditions: موجود مسبقًا وجديد
+    edit: تعديل {id}
+    open-visit: فتح الزيارة
+    ref: المرجع
+    stage: المرحلة
+    location: الموقع على السيارة
+    type: نوع الضرر
+    severity: الدرجة
+    condition: موجود مسبقًا أم جديد
+    occurred-at: التاريخ / الوقت
+    recorded-by: سجّله
+    client-notified: تم إبلاغ العميل؟
+    photos: الصور
+    photos-count: '{count, plural, one {صورة} two {صورتان} other {# صور}}'
+    no-photo: لا صور بعد
+    add-photos: إضافة صور لهذا الضرر
+    empty: لا سجلات أضرار مطابقة.
+  dashboard:
+    title: لوحة المؤشرات
+    subtitle: الساعات هي ساعات الساعة المنقضية (24/7). التصفية بتاريخ وصول السيارة إلى LSA.
+    download: تنزيل Excel لهذه الفترة
+    kpi:
+      visits: الزيارات
+      closed: مغلقة (عادت إلى LSA)
+      in-progress: قيد التنفيذ
+      jobs: الأعمال المسجلة
+      stops: محطات الموردين
+      petty: المصروفات النثرية ({currency})
+      avg-turnaround: متوسط زمن الدورة (ساعة)
+      within-target: الزيارات المغلقة ضمن الهدف
+      open-24: زيارات مفتوحة أقدم من 24 ساعة
+    where-time-goes: أين يذهب الوقت؟ (المتوسط لكل زيارة)
+    stage: المرحلة
+    avg-hrs: متوسط الساعات
+    share: الحصة
+    who: الجهة المسؤولة
+    delay-owner: أكبر تأخير حسب المسؤول
+    owner: مسؤول أكبر تأخير
+    closed-visits: الزيارات المغلقة
+    by-lane: حسب المسار (المسار = أبطأ عمل في الزيارة)
+    lane: المسار
+    target: الهدف (ساعة)
+    avg-turnaround: متوسط زمن الدورة (ساعة)
+    pct-within: '% ضمن الهدف'
+    by-vendor: حسب المورد
+    stops: المحطات
+    jobs-done: الأعمال المنجزة
+    avg-per-stop: متوسط الوقت لكل محطة (ساعة)
+    avg-approval: متوسط انتظار الموافقة (ساعة)
+    avg-net: متوسط صافي العمل (ساعة)
+    by-category: الأعمال حسب الفئة
+    damage-inspections: الأضرار والفحوصات
+    damage:
+      records: سجلات الأضرار المسجلة
+      new: …منها جديدة (اكتُشفت بعد الاستلام)
+      no-pickup-inspection: زيارات مغلقة بدون فحص استلام
+      no-return-inspection: زيارات مغلقة بدون فحص إرجاع
+      no-pickup-photos: زيارات مغلقة بدون صور استلام
+      no-return-photos: زيارات مغلقة بدون صور إرجاع
+      data-problems: زيارات مغلقة بها مشاكل بيانات
+    due-compliance: الالتزام بمواعيد الخدمة (العداد مقابل كم الاستحقاق السابق)
+    compliance:
+      comparable: أعمال لها كم استحقاق سابق للمقارنة
+      overdue: …وصلت متأخرة
+      pct: '% متأخرة'
+      avg-km: متوسط الكيلومترات المتأخرة
+      worst-km: أسوأ تأخر بالكيلومترات
+      visits-overdue: زيارات بها عمل متأخر
+      missing-odo: أعمال بدون قراءة عداد
+  report:
+    title: تقرير العميل
+    subtitle: اختر زيارة وما تريد عرضه؛ يُنشأ ملف PDF من الخادم. أسماء الشركة والعميل في صفحة الإعدادات.
+    no-plate: بدون لوحة
+    toggle:
+      turnaround: إظهار زمن الدورة
+      vendorTimes: إظهار الوقت لدى كل مورد
+      overdue: إظهار ملاحظة الخدمات المتأخرة
+      petty: إظهار المصروفات النثرية
+      photos: إظهار صور الأضرار
+      condPhotos: تضمين صور الاستلام / الإرجاع (داخلية)
+    print: طباعة
+    download: تنزيل PDF
+    damage-photos: صور الأضرار لهذا التقرير
+    edit-damage: تعديل سجلات الأضرار
+    add-damage: + إضافة سجل ضرر
+    no-damage: لا أضرار مسجلة في هذه الزيارة. أضف سجل ضرر أولاً ثم أرفق صوره هنا.
+    loading: جارٍ إنشاء التقرير…
+  catalog:
+    title: كتالوج الخدمات
+    subtitle: كل خدمة قد تحتاجها السيارة. المسار يحدد هدف زمن الدورة؛ «الفترة (كم)» تحدد الاستحقاق القادم = العداد + الفترة (اتركها 0 للإصلاحات). إعادة تسمية الخدمة تحدّث الأعمال التي تستخدمها.
+    search-placeholder: ابحث في الخدمات أو الفئات…
+    add: + إضافة خدمة
+    service: الخدمة
+    suggested-vendor: المورد المقترح
+    interval: الفترة (كم)
+    new-service: خدمة جديدة
+    empty: لا خدمات مطابقة.
+    confirm-delete: حذف الخدمة «{name}»؟ تحتفظ الأعمال الحالية بالاسم لكنها تفقد معلومات المسار.
+  settings:
+    title: الإعدادات
+    saved: تم حفظ الإعدادات
+    header: ترويسة التقرير
+    company: اسم الشركة في التقرير
+    client: اسم العميل في التقرير (اختياري)
+    client-ph: مثل اسم العميل / الموقع
+    currency: العملة (المصروفات النثرية)
+    lanes: مسارات زمن الدورة
+    lanes-help: أهداف مقترحة – غيّرها بما تتفق عليه مع العميل. تأخذ الزيارة هدف أبطأ أعمالها.
+    add-lane: + إضافة مسار
+    new-lane: مسار جديد
+    lane-name: المسار
+    target-hours: الهدف (ساعات)
+    sort: الترتيب
+    confirm-delete-lane: حذف المسار «{name}»؟
+    lists: القوائم المنسدلة
+    lists-help: إدخال واحد في كل سطر. الموردون من موردي FleetOps والموظفون من مستخدمي Fleetbase.
+    list:
+      categories: فئات الخدمة
+      damage-locations: مواقع الأضرار
+      damage-types: أنواع الأضرار
+      severities: درجات الخطورة
+      stages: مراحل الفحص
+      job-statuses: حالات الأعمال
+      expense-cats: فئات المصروفات النثرية
+  export:
+    title: البيانات والتصدير
+    period-title: تقرير خدمة Excel لفترة زمنية
+    period-help: الزيارات في الفترة المحددة فقط (مع أعمالها ومحطات الموردين والأضرار) مع ورقة ملخص بإجماليات الفترة.
+    by: حسب
+    basis-arrived: تاريخ الوصول إلى LSA
+    basis-returned: تاريخ العودة إلى LSA
+    include-timing: تضمين أرقام زمن الدورة والتوقيت (الدورة، الأهداف، ساعات كل مرحلة، الوقت لدى الموردين). ألغِ التحديد لتقرير بدونها.
+    include-vehicles: 'تضمين ورقة المركبات (كل سيارة في الفترة: مرات الصيانة، الأعمال، آخر عداد).'
+    include-petty: تضمين المصروفات النثرية (داخلي) – ورقة مصروفات وإجماليات في الملخص. اتركها بدون تحديد لنسخ العميل.
+    all-title: تصدير كل البيانات إلى Excel
+    all-help: 'كل الأوراق: المركبات، الزيارات (بكل الأوقات المحسوبة)، محطات الموردين، الخدمات، سجل الأضرار، المصروفات النثرية وكتالوج الخدمات. قيم فقط، دون صور.'
+    all-download: تنزيل كل شيء (.xlsx)

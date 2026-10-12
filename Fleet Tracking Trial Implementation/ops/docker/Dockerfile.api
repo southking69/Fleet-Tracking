@@ -1,0 +1,34 @@
+# syntax=docker/dockerfile:1.2
+# Fleetbase API image + the Jalal Service Tracker backend (composer package jalal/service-tracker-api).
+#
+# Build context: the ROOT of the Fleetbase checkout (so `packages/service-tracker` is reachable). Built by
+# `docker compose build application` through docker-compose.override.yml.
+#
+# NOT EXECUTED where this file was written (no Docker daemon / no packagist access there). The steps mirror the stock
+# docker/Dockerfile (composer runs as www-data in /fleetbase/api).
+ARG BASE_IMAGE=fleetbase/fleetbase-api:latest
+FROM ${BASE_IMAGE}
+
+ARG SERVICE_TRACKER_DIR=packages/service-tracker/server
+ARG GITHUB_AUTH_KEY
+
+USER root
+WORKDIR /fleetbase/api
+
+# The package is copied (not symlinked) into the image; composer's path repository then installs a copy into vendor/.
+COPY --chown=www-data:www-data ${SERVICE_TRACKER_DIR} /opt/jalal/service-tracker-api
+
+RUN if [ -n "$GITHUB_AUTH_KEY" ]; then echo "{\"github-oauth\": {\"github.com\": \"$GITHUB_AUTH_KEY\"}}" > auth.json && chown www-data:www-data auth.json; fi
+
+# 1) register the path repository  2) require the package (pulls maatwebsite/excel, barryvdh/laravel-dompdf if missing;
+#    fleetbase/fleetops-api is pinned to 0.6.71 by the package, so the base image MUST ship FleetOps 0.6.71)
+#    3) dump-autoload runs `artisan package:discover` (post-autoload-dump), which registers the service provider.
+RUN su www-data -s /bin/sh -c "\
+      composer config repositories.jalal-service-tracker '{\"type\":\"path\",\"url\":\"/opt/jalal/service-tracker-api\",\"options\":{\"symlink\":false}}' \
+   && composer require 'jalal/service-tracker-api:^0.1' --no-interaction --no-progress --no-scripts --no-cache --update-no-dev --update-with-dependencies \
+   && composer dump-autoload --optimize --no-dev"
+
+# fail the build (not the first request) if the package is not installed or its provider was not auto-discovered
+RUN su www-data -s /bin/sh -c "composer show jalal/service-tracker-api && grep -q ServiceTrackerServiceProvider bootstrap/cache/packages.php"
+
+RUN rm -f auth.json

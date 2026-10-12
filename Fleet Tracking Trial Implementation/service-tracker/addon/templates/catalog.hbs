@@ -1,0 +1,37 @@
+<div class="mb-3">
+  <h1 class="text-xl font-bold">{{t "service-tracker.catalog.title"}}</h1>
+  <p class="text-sm text-gray-500">{{t "service-tracker.catalog.subtitle"}}</p>
+</div>
+<div class="mb-3 flex flex-wrap items-center gap-2 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-3">
+  <input type="search" class="w-80 max-w-full rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 px-2 py-1.5 text-sm" placeholder={{t "service-tracker.catalog.search-placeholder"}} value={{this.search}} {{on "input" this.setSearch}} />
+  <span class="flex-1"></span>
+  <button type="button" class="rounded bg-blue-600 px-3 py-1.5 text-sm font-semibold text-white hover:bg-blue-700" {{on "click" this.add}}>{{t "service-tracker.catalog.add"}}</button>
+</div>
+<div class="overflow-x-auto rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800">
+  <table class="w-full text-sm">
+    <thead class="bg-gray-50 dark:bg-gray-900 text-left text-xs uppercase text-gray-500">
+      <tr>
+        <th class="px-3 py-2">{{t "service-tracker.catalog.service"}}</th>
+        <th class="px-3 py-2">{{t "service-tracker.petty.category"}}</th>
+        <th class="px-3 py-2">{{t "service-tracker.visit.lane"}}</th>
+        <th class="px-3 py-2">{{t "service-tracker.catalog.suggested-vendor"}}</th>
+        <th class="px-3 py-2">{{t "service-tracker.catalog.interval"}}</th>
+        <th class="px-3 py-2"></th>
+      </tr>
+    </thead>
+    <tbody>
+      {{#each this.rows as |item|}}
+        <tr class="border-t border-gray-100 dark:border-gray-700">
+          <td class="min-w-[18rem] px-3 py-1.5"><input type="text" class="w-full rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 px-2 py-1.5 text-sm" value={{item.name}} {{on "change" (fn this.rename item)}} /></td>
+          <td class="px-3 py-1.5"><SelectField @value={{item.category}} @options={{this.settings.categories}} @blank={{false}} @onChange={{fn this.setField item "category"}} /></td>
+          <td class="px-3 py-1.5"><SelectField @value={{item.lane_uuid}} @options={{this.laneOptions}} @blank={{false}} @onChange={{fn this.setField item "lane_uuid"}} /></td>
+          <td class="px-3 py-1.5"><SelectField @value={{item.suggested_vendor_uuid}} @options={{this.lookups.vendorOptions}} @onChange={{fn this.setVendor item}} /></td>
+          <td class="w-32 px-3 py-1.5"><input type="number" min="0" step="any" placeholder="0" class="w-full rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 px-2 py-1.5 text-sm" value={{item.interval_km}} {{on "change" (fn this.setNumber item)}} /></td>
+          <td class="px-3 py-1.5"><button type="button" class="rounded bg-red-600 px-2 py-1 text-xs font-semibold text-white hover:bg-red-700" {{on "click" (fn this.remove item)}}>{{t "service-tracker.common.delete"}}</button></td>
+        </tr>
+      {{else}}
+        <tr><td colspan="6" class="px-3 py-8 text-center text-gray-500">{{t "service-tracker.catalog.empty"}}</td></tr>
+      {{/each}}
+    </tbody>
+  </table>
+</div>

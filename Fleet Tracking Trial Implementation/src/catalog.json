@@ -1,0 +1,1017 @@
+[
+ {
+  "service": "Oil change - engine oil & filter",
+  "category": "Routine Maintenance",
+  "lane": "Express",
+  "vendor": "Petromin",
+  "interval": 5000
+ },
+ {
+  "service": "Oil filter replacement",
+  "category": "Routine Maintenance",
+  "lane": "Express",
+  "vendor": "Petromin",
+  "interval": 5000
+ },
+ {
+  "service": "Engine oil top-up",
+  "category": "Routine Maintenance",
+  "lane": "Express",
+  "vendor": "Petromin",
+  "interval": 0
+ },
+ {
+  "service": "Air filter replacement",
+  "category": "Routine Maintenance",
+  "lane": "Express",
+  "vendor": "Petromin",
+  "interval": 20000
+ },
+ {
+  "service": "Cabin / AC filter replacement",
+  "category": "Routine Maintenance",
+  "lane": "Express",
+  "vendor": "Petromin",
+  "interval": 20000
+ },
+ {
+  "service": "Fuel filter replacement",
+  "category": "Routine Maintenance",
+  "lane": "Standard",
+  "vendor": "Local Mechanic",
+  "interval": 40000
+ },
+ {
+  "service": "Spark plugs replacement",
+  "category": "Routine Maintenance",
+  "lane": "Standard",
+  "vendor": "Local Mechanic",
+  "interval": 40000
+ },
+ {
+  "service": "Wiper blades replacement",
+  "category": "Routine Maintenance",
+  "lane": "Express",
+  "vendor": "Petromin",
+  "interval": 0
+ },
+ {
+  "service": "Battery replacement",
+  "category": "Routine Maintenance",
+  "lane": "Express",
+  "vendor": "Petromin",
+  "interval": 0
+ },
+ {
+  "service": "Battery test / terminal cleaning",
+  "category": "Routine Maintenance",
+  "lane": "Express",
+  "vendor": "Petromin",
+  "interval": 0
+ },
+ {
+  "service": "Headlight / tail light bulb replacement",
+  "category": "Routine Maintenance",
+  "lane": "Express",
+  "vendor": "Petromin",
+  "interval": 0
+ },
+ {
+  "service": "Coolant top-up / flush",
+  "category": "Routine Maintenance",
+  "lane": "Express",
+  "vendor": "Petromin",
+  "interval": 40000
+ },
+ {
+  "service": "Brake fluid flush",
+  "category": "Routine Maintenance",
+  "lane": "Express",
+  "vendor": "Petromin",
+  "interval": 40000
+ },
+ {
+  "service": "Power steering fluid change",
+  "category": "Routine Maintenance",
+  "lane": "Express",
+  "vendor": "Petromin",
+  "interval": 60000
+ },
+ {
+  "service": "Transmission fluid (ATF) change",
+  "category": "Routine Maintenance",
+  "lane": "Standard",
+  "vendor": "Petromin",
+  "interval": 60000
+ },
+ {
+  "service": "Differential oil change",
+  "category": "Routine Maintenance",
+  "lane": "Standard",
+  "vendor": "Petromin",
+  "interval": 60000
+ },
+ {
+  "service": "Washer fluid top-up",
+  "category": "Routine Maintenance",
+  "lane": "Express",
+  "vendor": "Petromin",
+  "interval": 0
+ },
+ {
+  "service": "Drive belt (serpentine) replacement",
+  "category": "Routine Maintenance",
+  "lane": "Standard",
+  "vendor": "Local Mechanic",
+  "interval": 80000
+ },
+ {
+  "service": "Timing belt / chain replacement",
+  "category": "Routine Maintenance",
+  "lane": "Heavy",
+  "vendor": "Local Mechanic",
+  "interval": 100000
+ },
+ {
+  "service": "Periodic service - minor (oil, filters, check)",
+  "category": "Routine Maintenance",
+  "lane": "Express",
+  "vendor": "Petromin",
+  "interval": 5000
+ },
+ {
+  "service": "Periodic service - major (full service)",
+  "category": "Routine Maintenance",
+  "lane": "Standard",
+  "vendor": "Petromin",
+  "interval": 40000
+ },
+ {
+  "service": "Multi-point inspection",
+  "category": "Routine Maintenance",
+  "lane": "Express",
+  "vendor": "Petromin",
+  "interval": 0
+ },
+ {
+  "service": "Car wash / interior cleaning",
+  "category": "Routine Maintenance",
+  "lane": "Express",
+  "vendor": "Other Specialist",
+  "interval": 0
+ },
+ {
+  "service": "Tyre replacement - single",
+  "category": "Tyres & Wheels",
+  "lane": "Express",
+  "vendor": "Tyre Vendor",
+  "interval": 0
+ },
+ {
+  "service": "Tyre replacement - set of 4",
+  "category": "Tyres & Wheels",
+  "lane": "Express",
+  "vendor": "Tyre Vendor",
+  "interval": 0
+ },
+ {
+  "service": "Tyre puncture repair",
+  "category": "Tyres & Wheels",
+  "lane": "Express",
+  "vendor": "Tyre Vendor",
+  "interval": 0
+ },
+ {
+  "service": "Wheel balancing",
+  "category": "Tyres & Wheels",
+  "lane": "Express",
+  "vendor": "Tyre Vendor",
+  "interval": 0
+ },
+ {
+  "service": "Wheel alignment",
+  "category": "Tyres & Wheels",
+  "lane": "Express",
+  "vendor": "Tyre Vendor",
+  "interval": 10000
+ },
+ {
+  "service": "Tyre rotation",
+  "category": "Tyres & Wheels",
+  "lane": "Express",
+  "vendor": "Tyre Vendor",
+  "interval": 10000
+ },
+ {
+  "service": "Tyre pressure / TPMS check",
+  "category": "Tyres & Wheels",
+  "lane": "Express",
+  "vendor": "Tyre Vendor",
+  "interval": 0
+ },
+ {
+  "service": "TPMS sensor replacement",
+  "category": "Tyres & Wheels",
+  "lane": "Express",
+  "vendor": "Tyre Vendor",
+  "interval": 0
+ },
+ {
+  "service": "Spare tyre replacement",
+  "category": "Tyres & Wheels",
+  "lane": "Express",
+  "vendor": "Tyre Vendor",
+  "interval": 0
+ },
+ {
+  "service": "Rim / alloy wheel repair",
+  "category": "Tyres & Wheels",
+  "lane": "Standard",
+  "vendor": "Tyre Vendor",
+  "interval": 0
+ },
+ {
+  "service": "Rim / alloy wheel replacement",
+  "category": "Tyres & Wheels",
+  "lane": "Standard",
+  "vendor": "Tyre Vendor",
+  "interval": 0
+ },
+ {
+  "service": "Valve stem replacement",
+  "category": "Tyres & Wheels",
+  "lane": "Express",
+  "vendor": "Tyre Vendor",
+  "interval": 0
+ },
+ {
+  "service": "Wheel stud / nut replacement",
+  "category": "Tyres & Wheels",
+  "lane": "Standard",
+  "vendor": "Tyre Vendor",
+  "interval": 0
+ },
+ {
+  "service": "Brake pads - front",
+  "category": "Brakes",
+  "lane": "Standard",
+  "vendor": "Local Mechanic",
+  "interval": 0
+ },
+ {
+  "service": "Brake pads - rear",
+  "category": "Brakes",
+  "lane": "Standard",
+  "vendor": "Local Mechanic",
+  "interval": 0
+ },
+ {
+  "service": "Brake discs / rotors - front",
+  "category": "Brakes",
+  "lane": "Standard",
+  "vendor": "Local Mechanic",
+  "interval": 0
+ },
+ {
+  "service": "Brake discs / rotors - rear",
+  "category": "Brakes",
+  "lane": "Standard",
+  "vendor": "Local Mechanic",
+  "interval": 0
+ },
+ {
+  "service": "Brake shoes / drums - rear",
+  "category": "Brakes",
+  "lane": "Standard",
+  "vendor": "Local Mechanic",
+  "interval": 0
+ },
+ {
+  "service": "Brake caliper repair / replacement",
+  "category": "Brakes",
+  "lane": "Standard",
+  "vendor": "Local Mechanic",
+  "interval": 0
+ },
+ {
+  "service": "Brake hose / line repair",
+  "category": "Brakes",
+  "lane": "Standard",
+  "vendor": "Local Mechanic",
+  "interval": 0
+ },
+ {
+  "service": "Brake master cylinder repair / replacement",
+  "category": "Brakes",
+  "lane": "Standard",
+  "vendor": "Local Mechanic",
+  "interval": 0
+ },
+ {
+  "service": "Brake booster repair / replacement",
+  "category": "Brakes",
+  "lane": "Standard",
+  "vendor": "Local Mechanic",
+  "interval": 0
+ },
+ {
+  "service": "ABS sensor / module repair",
+  "category": "Brakes",
+  "lane": "Standard",
+  "vendor": "Local Mechanic",
+  "interval": 0
+ },
+ {
+  "service": "Handbrake / parking brake adjustment",
+  "category": "Brakes",
+  "lane": "Standard",
+  "vendor": "Local Mechanic",
+  "interval": 0
+ },
+ {
+  "service": "Brake noise / vibration diagnosis",
+  "category": "Brakes",
+  "lane": "Standard",
+  "vendor": "Local Mechanic",
+  "interval": 0
+ },
+ {
+  "service": "Engine diagnostics (scan / check-engine light)",
+  "category": "Engine & Cooling",
+  "lane": "Standard",
+  "vendor": "Local Mechanic",
+  "interval": 0
+ },
+ {
+  "service": "Engine overhaul / rebuild",
+  "category": "Engine & Cooling",
+  "lane": "Heavy",
+  "vendor": "Local Mechanic",
+  "interval": 0
+ },
+ {
+  "service": "Engine mount replacement",
+  "category": "Engine & Cooling",
+  "lane": "Standard",
+  "vendor": "Local Mechanic",
+  "interval": 0
+ },
+ {
+  "service": "Engine oil leak repair",
+  "category": "Engine & Cooling",
+  "lane": "Standard",
+  "vendor": "Local Mechanic",
+  "interval": 0
+ },
+ {
+  "service": "Valve cover gasket replacement",
+  "category": "Engine & Cooling",
+  "lane": "Standard",
+  "vendor": "Local Mechanic",
+  "interval": 0
+ },
+ {
+  "service": "Head gasket replacement",
+  "category": "Engine & Cooling",
+  "lane": "Heavy",
+  "vendor": "Local Mechanic",
+  "interval": 0
+ },
+ {
+  "service": "Water pump replacement",
+  "category": "Engine & Cooling",
+  "lane": "Standard",
+  "vendor": "Local Mechanic",
+  "interval": 0
+ },
+ {
+  "service": "Radiator repair / replacement",
+  "category": "Engine & Cooling",
+  "lane": "Standard",
+  "vendor": "Local Mechanic",
+  "interval": 0
+ },
+ {
+  "service": "Radiator hose / thermostat replacement",
+  "category": "Engine & Cooling",
+  "lane": "Standard",
+  "vendor": "Local Mechanic",
+  "interval": 0
+ },
+ {
+  "service": "Overheating diagnosis",
+  "category": "Engine & Cooling",
+  "lane": "Standard",
+  "vendor": "Local Mechanic",
+  "interval": 0
+ },
+ {
+  "service": "Turbocharger repair / replacement",
+  "category": "Engine & Cooling",
+  "lane": "Heavy",
+  "vendor": "Local Mechanic",
+  "interval": 0
+ },
+ {
+  "service": "Fuel pump replacement",
+  "category": "Engine & Cooling",
+  "lane": "Standard",
+  "vendor": "Local Mechanic",
+  "interval": 0
+ },
+ {
+  "service": "Fuel injector cleaning / replacement",
+  "category": "Engine & Cooling",
+  "lane": "Standard",
+  "vendor": "Local Mechanic",
+  "interval": 0
+ },
+ {
+  "service": "Throttle body cleaning",
+  "category": "Engine & Cooling",
+  "lane": "Express",
+  "vendor": "Local Mechanic",
+  "interval": 0
+ },
+ {
+  "service": "Engine misfire / rough idle diagnosis",
+  "category": "Engine & Cooling",
+  "lane": "Standard",
+  "vendor": "Local Mechanic",
+  "interval": 0
+ },
+ {
+  "service": "Ignition coil replacement",
+  "category": "Engine & Cooling",
+  "lane": "Standard",
+  "vendor": "Local Mechanic",
+  "interval": 0
+ },
+ {
+  "service": "Oxygen (O2) sensor replacement",
+  "category": "Engine & Cooling",
+  "lane": "Standard",
+  "vendor": "Local Mechanic",
+  "interval": 0
+ },
+ {
+  "service": "Exhaust system repair",
+  "category": "Engine & Cooling",
+  "lane": "Standard",
+  "vendor": "Local Mechanic",
+  "interval": 0
+ },
+ {
+  "service": "Catalytic converter replacement",
+  "category": "Engine & Cooling",
+  "lane": "Standard",
+  "vendor": "Local Mechanic",
+  "interval": 0
+ },
+ {
+  "service": "Engine tune-up",
+  "category": "Engine & Cooling",
+  "lane": "Standard",
+  "vendor": "Local Mechanic",
+  "interval": 0
+ },
+ {
+  "service": "Engine stalling / no-start diagnosis",
+  "category": "Engine & Cooling",
+  "lane": "Standard",
+  "vendor": "Local Mechanic",
+  "interval": 0
+ },
+ {
+  "service": "Clutch replacement",
+  "category": "Transmission & Drivetrain",
+  "lane": "Heavy",
+  "vendor": "Local Mechanic",
+  "interval": 0
+ },
+ {
+  "service": "Gearbox repair / overhaul",
+  "category": "Transmission & Drivetrain",
+  "lane": "Heavy",
+  "vendor": "Local Mechanic",
+  "interval": 0
+ },
+ {
+  "service": "Gearbox oil change (manual)",
+  "category": "Transmission & Drivetrain",
+  "lane": "Standard",
+  "vendor": "Local Mechanic",
+  "interval": 0
+ },
+ {
+  "service": "Axle repair (general)",
+  "category": "Transmission & Drivetrain",
+  "lane": "Standard",
+  "vendor": "Local Mechanic",
+  "interval": 0
+ },
+ {
+  "service": "CV axle / drive shaft replacement",
+  "category": "Transmission & Drivetrain",
+  "lane": "Standard",
+  "vendor": "Local Mechanic",
+  "interval": 0
+ },
+ {
+  "service": "Axle seal / CV boot replacement",
+  "category": "Transmission & Drivetrain",
+  "lane": "Standard",
+  "vendor": "Local Mechanic",
+  "interval": 0
+ },
+ {
+  "service": "Differential repair",
+  "category": "Transmission & Drivetrain",
+  "lane": "Heavy",
+  "vendor": "Local Mechanic",
+  "interval": 0
+ },
+ {
+  "service": "Transfer case service (4x4)",
+  "category": "Transmission & Drivetrain",
+  "lane": "Standard",
+  "vendor": "Local Mechanic",
+  "interval": 0
+ },
+ {
+  "service": "Propeller shaft / U-joint repair",
+  "category": "Transmission & Drivetrain",
+  "lane": "Standard",
+  "vendor": "Local Mechanic",
+  "interval": 0
+ },
+ {
+  "service": "Wheel bearing replacement",
+  "category": "Transmission & Drivetrain",
+  "lane": "Standard",
+  "vendor": "Local Mechanic",
+  "interval": 0
+ },
+ {
+  "service": "Flywheel replacement",
+  "category": "Transmission & Drivetrain",
+  "lane": "Heavy",
+  "vendor": "Local Mechanic",
+  "interval": 0
+ },
+ {
+  "service": "Shock absorbers replacement",
+  "category": "Suspension & Steering",
+  "lane": "Standard",
+  "vendor": "Local Mechanic",
+  "interval": 0
+ },
+ {
+  "service": "Struts replacement",
+  "category": "Suspension & Steering",
+  "lane": "Standard",
+  "vendor": "Local Mechanic",
+  "interval": 0
+ },
+ {
+  "service": "Control arm / ball joint replacement",
+  "category": "Suspension & Steering",
+  "lane": "Standard",
+  "vendor": "Local Mechanic",
+  "interval": 0
+ },
+ {
+  "service": "Tie rod end replacement",
+  "category": "Suspension & Steering",
+  "lane": "Standard",
+  "vendor": "Local Mechanic",
+  "interval": 0
+ },
+ {
+  "service": "Steering rack repair / replacement",
+  "category": "Suspension & Steering",
+  "lane": "Heavy",
+  "vendor": "Local Mechanic",
+  "interval": 0
+ },
+ {
+  "service": "Power steering pump repair / replacement",
+  "category": "Suspension & Steering",
+  "lane": "Standard",
+  "vendor": "Local Mechanic",
+  "interval": 0
+ },
+ {
+  "service": "Stabilizer bar link / bushing replacement",
+  "category": "Suspension & Steering",
+  "lane": "Standard",
+  "vendor": "Local Mechanic",
+  "interval": 0
+ },
+ {
+  "service": "Coil spring replacement",
+  "category": "Suspension & Steering",
+  "lane": "Standard",
+  "vendor": "Local Mechanic",
+  "interval": 0
+ },
+ {
+  "service": "Leaf spring replacement",
+  "category": "Suspension & Steering",
+  "lane": "Standard",
+  "vendor": "Local Mechanic",
+  "interval": 0
+ },
+ {
+  "service": "Suspension noise diagnosis",
+  "category": "Suspension & Steering",
+  "lane": "Standard",
+  "vendor": "Local Mechanic",
+  "interval": 0
+ },
+ {
+  "service": "Steering wheel vibration / pull diagnosis",
+  "category": "Suspension & Steering",
+  "lane": "Standard",
+  "vendor": "Local Mechanic",
+  "interval": 0
+ },
+ {
+  "service": "Alternator repair / replacement",
+  "category": "Electrical & Electronics",
+  "lane": "Standard",
+  "vendor": "Local Mechanic",
+  "interval": 0
+ },
+ {
+  "service": "Starter motor repair / replacement",
+  "category": "Electrical & Electronics",
+  "lane": "Standard",
+  "vendor": "Local Mechanic",
+  "interval": 0
+ },
+ {
+  "service": "Battery drain diagnosis",
+  "category": "Electrical & Electronics",
+  "lane": "Standard",
+  "vendor": "Local Mechanic",
+  "interval": 0
+ },
+ {
+  "service": "Wiring repair",
+  "category": "Electrical & Electronics",
+  "lane": "Standard",
+  "vendor": "Local Mechanic",
+  "interval": 0
+ },
+ {
+  "service": "Fuse / relay replacement",
+  "category": "Electrical & Electronics",
+  "lane": "Express",
+  "vendor": "Local Mechanic",
+  "interval": 0
+ },
+ {
+  "service": "Central locking repair",
+  "category": "Electrical & Electronics",
+  "lane": "Standard",
+  "vendor": "Local Mechanic",
+  "interval": 0
+ },
+ {
+  "service": "Power window repair",
+  "category": "Electrical & Electronics",
+  "lane": "Standard",
+  "vendor": "Local Mechanic",
+  "interval": 0
+ },
+ {
+  "service": "Door lock actuator repair",
+  "category": "Electrical & Electronics",
+  "lane": "Standard",
+  "vendor": "Local Mechanic",
+  "interval": 0
+ },
+ {
+  "service": "Dashboard warning light diagnosis",
+  "category": "Electrical & Electronics",
+  "lane": "Standard",
+  "vendor": "Local Mechanic",
+  "interval": 0
+ },
+ {
+  "service": "Sensor replacement (general)",
+  "category": "Electrical & Electronics",
+  "lane": "Standard",
+  "vendor": "Local Mechanic",
+  "interval": 0
+ },
+ {
+  "service": "Horn repair",
+  "category": "Electrical & Electronics",
+  "lane": "Express",
+  "vendor": "Local Mechanic",
+  "interval": 0
+ },
+ {
+  "service": "Lighting electrical fault repair",
+  "category": "Electrical & Electronics",
+  "lane": "Standard",
+  "vendor": "Local Mechanic",
+  "interval": 0
+ },
+ {
+  "service": "Key fob programming / replacement",
+  "category": "Electrical & Electronics",
+  "lane": "Standard",
+  "vendor": "Local Mechanic",
+  "interval": 0
+ },
+ {
+  "service": "Infotainment / audio repair",
+  "category": "Electrical & Electronics",
+  "lane": "Standard",
+  "vendor": "Local Mechanic",
+  "interval": 0
+ },
+ {
+  "service": "Parking sensor / reverse camera repair",
+  "category": "Electrical & Electronics",
+  "lane": "Standard",
+  "vendor": "Local Mechanic",
+  "interval": 0
+ },
+ {
+  "service": "GPS tracker install / repair",
+  "category": "Electrical & Electronics",
+  "lane": "Express",
+  "vendor": "Local Mechanic",
+  "interval": 0
+ },
+ {
+  "service": "ECU diagnosis / programming",
+  "category": "Electrical & Electronics",
+  "lane": "Heavy",
+  "vendor": "Local Mechanic",
+  "interval": 0
+ },
+ {
+  "service": "Instrument cluster repair",
+  "category": "Electrical & Electronics",
+  "lane": "Standard",
+  "vendor": "Local Mechanic",
+  "interval": 0
+ },
+ {
+  "service": "A/C regas (refrigerant recharge)",
+  "category": "A/C & Heating",
+  "lane": "Express",
+  "vendor": "Local Mechanic",
+  "interval": 0
+ },
+ {
+  "service": "A/C compressor repair / replacement",
+  "category": "A/C & Heating",
+  "lane": "Standard",
+  "vendor": "Local Mechanic",
+  "interval": 0
+ },
+ {
+  "service": "A/C condenser / evaporator repair",
+  "category": "A/C & Heating",
+  "lane": "Standard",
+  "vendor": "Local Mechanic",
+  "interval": 0
+ },
+ {
+  "service": "A/C blower motor replacement",
+  "category": "A/C & Heating",
+  "lane": "Standard",
+  "vendor": "Local Mechanic",
+  "interval": 0
+ },
+ {
+  "service": "A/C leak repair",
+  "category": "A/C & Heating",
+  "lane": "Standard",
+  "vendor": "Local Mechanic",
+  "interval": 0
+ },
+ {
+  "service": "A/C not cooling diagnosis",
+  "category": "A/C & Heating",
+  "lane": "Standard",
+  "vendor": "Local Mechanic",
+  "interval": 0
+ },
+ {
+  "service": "Heater repair",
+  "category": "A/C & Heating",
+  "lane": "Standard",
+  "vendor": "Local Mechanic",
+  "interval": 0
+ },
+ {
+  "service": "Windshield replacement",
+  "category": "Body, Glass & Interior",
+  "lane": "Standard",
+  "vendor": "Other Specialist",
+  "interval": 0
+ },
+ {
+  "service": "Windshield chip / crack repair",
+  "category": "Body, Glass & Interior",
+  "lane": "Express",
+  "vendor": "Other Specialist",
+  "interval": 0
+ },
+ {
+  "service": "Side window / rear glass replacement",
+  "category": "Body, Glass & Interior",
+  "lane": "Standard",
+  "vendor": "Other Specialist",
+  "interval": 0
+ },
+ {
+  "service": "Side mirror replacement",
+  "category": "Body, Glass & Interior",
+  "lane": "Standard",
+  "vendor": "Other Specialist",
+  "interval": 0
+ },
+ {
+  "service": "Bumper repair / replacement",
+  "category": "Body, Glass & Interior",
+  "lane": "Standard",
+  "vendor": "Other Specialist",
+  "interval": 0
+ },
+ {
+  "service": "Dent removal (paintless)",
+  "category": "Body, Glass & Interior",
+  "lane": "Standard",
+  "vendor": "Other Specialist",
+  "interval": 0
+ },
+ {
+  "service": "Scratch repair / polishing",
+  "category": "Body, Glass & Interior",
+  "lane": "Standard",
+  "vendor": "Other Specialist",
+  "interval": 0
+ },
+ {
+  "service": "Panel repaint",
+  "category": "Body, Glass & Interior",
+  "lane": "Heavy",
+  "vendor": "Other Specialist",
+  "interval": 0
+ },
+ {
+  "service": "Accident / collision repair",
+  "category": "Body, Glass & Interior",
+  "lane": "Heavy",
+  "vendor": "Other Specialist",
+  "interval": 0
+ },
+ {
+  "service": "Door handle / lock repair",
+  "category": "Body, Glass & Interior",
+  "lane": "Standard",
+  "vendor": "Other Specialist",
+  "interval": 0
+ },
+ {
+  "service": "Headlight restoration",
+  "category": "Body, Glass & Interior",
+  "lane": "Express",
+  "vendor": "Other Specialist",
+  "interval": 0
+ },
+ {
+  "service": "Headlight / tail light assembly replacement",
+  "category": "Body, Glass & Interior",
+  "lane": "Standard",
+  "vendor": "Other Specialist",
+  "interval": 0
+ },
+ {
+  "service": "Seat / upholstery repair",
+  "category": "Body, Glass & Interior",
+  "lane": "Standard",
+  "vendor": "Other Specialist",
+  "interval": 0
+ },
+ {
+  "service": "Floor mats replacement",
+  "category": "Body, Glass & Interior",
+  "lane": "Express",
+  "vendor": "Other Specialist",
+  "interval": 0
+ },
+ {
+  "service": "Window tinting",
+  "category": "Body, Glass & Interior",
+  "lane": "Express",
+  "vendor": "Other Specialist",
+  "interval": 0
+ },
+ {
+  "service": "Deep interior / exterior detailing",
+  "category": "Body, Glass & Interior",
+  "lane": "Express",
+  "vendor": "Other Specialist",
+  "interval": 0
+ },
+ {
+  "service": "Rust / corrosion repair",
+  "category": "Body, Glass & Interior",
+  "lane": "Heavy",
+  "vendor": "Other Specialist",
+  "interval": 0
+ },
+ {
+  "service": "Periodic technical inspection (Fahas)",
+  "category": "Inspection & Compliance",
+  "lane": "Express",
+  "vendor": "Other Specialist",
+  "interval": 0
+ },
+ {
+  "service": "Pre-rental / hand-back inspection",
+  "category": "Inspection & Compliance",
+  "lane": "Express",
+  "vendor": "Local Mechanic",
+  "interval": 0
+ },
+ {
+  "service": "Damage assessment / repair estimate",
+  "category": "Inspection & Compliance",
+  "lane": "Express",
+  "vendor": "Local Mechanic",
+  "interval": 0
+ },
+ {
+  "service": "Condition report",
+  "category": "Inspection & Compliance",
+  "lane": "Express",
+  "vendor": "Local Mechanic",
+  "interval": 0
+ },
+ {
+  "service": "Towing / vehicle recovery",
+  "category": "Recovery & Roadside",
+  "lane": "Express",
+  "vendor": "Other Specialist",
+  "interval": 0
+ },
+ {
+  "service": "Jump start / battery boost",
+  "category": "Recovery & Roadside",
+  "lane": "Express",
+  "vendor": "Petromin",
+  "interval": 0
+ },
+ {
+  "service": "Flat tyre roadside assistance",
+  "category": "Recovery & Roadside",
+  "lane": "Express",
+  "vendor": "Tyre Vendor",
+  "interval": 0
+ },
+ {
+  "service": "Fuel delivery",
+  "category": "Recovery & Roadside",
+  "lane": "Express",
+  "vendor": "Other Specialist",
+  "interval": 0
+ },
+ {
+  "service": "Other - mechanical (describe in Notes)",
+  "category": "Other",
+  "lane": "Standard",
+  "vendor": "Local Mechanic",
+  "interval": 0
+ },
+ {
+  "service": "Other - electrical (describe in Notes)",
+  "category": "Other",
+  "lane": "Standard",
+  "vendor": "Local Mechanic",
+  "interval": 0
+ },
+ {
+  "service": "Other - body / interior (describe in Notes)",
+  "category": "Other",
+  "lane": "Standard",
+  "vendor": "Other Specialist",
+  "interval": 0
+ },
+ {
+  "service": "Other - maintenance (describe in Notes)",
+  "category": "Other",
+  "lane": "Express",
+  "vendor": "Petromin",
+  "interval": 0
+ }
+]

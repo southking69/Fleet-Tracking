@@ -1,0 +1,13 @@
+<select
+  class="w-full rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 px-2 py-1.5 text-sm"
+  disabled={{@disabled}}
+  {{on "change" this.change}}
+  ...attributes
+>
+  {{#if this.showBlank}}
+    <option value="" selected={{this.blankSelected}}>{{this.blankLabel}}</option>
+  {{/if}}
+  {{#each this.items as |o|}}
+    <option value={{o.value}} selected={{o.selected}}>{{o.label}}</option>
+  {{/each}}
+</select>

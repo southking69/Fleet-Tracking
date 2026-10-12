@@ -1,0 +1,151 @@
+# Jalal Service Tracker trial: docker-compose.override.yml for a self-hosted Fleetbase.
+#
+# Copy to the ROOT of your Fleetbase checkout as `docker-compose.override.yml` (ops/scripts/prepare-fleetbase.sh does it),
+# next to a `.env` made from ops/.env.example. Docker Compose reads both automatically.
+# Requires Docker Compose v2.24+ (uses the `!override` / `!reset` merge tags).
+#
+# What this changes relative to Fleetbase's stock docker-compose.yml (read from fleetbase/fleetbase main, Oct 2026):
+#   * application / queue / scheduler run OUR image (stock fleetbase-api + the jalal/service-tracker-api package baked in)
+#   * console is rebuilt with the @jalal/service-tracker-engine Ember engine baked in (the console is a static build,
+#     extensions cannot be added to the stock console image at runtime)
+#   * MySQL gets a root password, is bound to localhost only, data lives in a named volume (the stock file mounts a
+#     bind directory and allows an EMPTY root password with port 3306 published on all interfaces)
+#   * file storage: local disk by default (persistent), S3 / GCS by env (see .env.example)
+#   * every published port is bound to 127.0.0.1; put the reverse proxy (ops/docker/Caddyfile.example) in front for HTTPS
+#   * timezone: see the TZ note below. READ IT: Fleetbase stores and computes in UTC by design.
+#
+# This file contains NO secrets; everything comes from `.env`.
+
+x-jalal-api-image: &api-image ${JALAL_API_IMAGE:-jalal/fleetbase-api:service-tracker}
+
+x-api-env: &api-env
+  # --- identity / URLs ---
+  APP_KEY: ${APP_KEY:?set APP_KEY in .env (base64:...)}
+  APP_NAME: ${APP_NAME:-Jalal Fleet}
+  APP_URL: ${APP_SCHEME:-https}://${API_FQDN:?set API_FQDN in .env}
+  CONSOLE_HOST: ${APP_SCHEME:-https}://${CONSOLE_FQDN:?set CONSOLE_FQDN in .env}
+  ENVIRONMENT: production
+  APP_ENV: production
+  APP_DEBUG: "false"
+  SESSION_DOMAIN: ${SESSION_DOMAIN:?set SESSION_DOMAIN in .env}
+  FRONTEND_HOSTS: ${FRONTEND_HOSTS:-}
+  # nginx (httpd) and Caddy are on private/loopback ranges, which Fleetbase trusts by default (config/trustedproxy.php)
+  TRUSTED_PROXIES: ${TRUSTED_PROXIES:-10.0.0.0/8,172.16.0.0/12,192.168.0.0/16,127.0.0.0/8,::1,fc00::/7}
+  # --- database / cache / queue ---
+  DATABASE_URL: mysql://${DB_USERNAME:-fleetbase}:${DB_PASSWORD:?set DB_PASSWORD in .env}@database/fleetbase
+  QUEUE_CONNECTION: redis
+  CACHE_DRIVER: redis
+  CACHE_URL: tcp://cache
+  REDIS_URL: tcp://cache
+  # --- files (photos, receipts, PDFs) ---
+  FILESYSTEM_DRIVER: ${FILESYSTEM_DRIVER:-public}
+  AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID:-}
+  AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY:-}
+  AWS_DEFAULT_REGION: ${AWS_DEFAULT_REGION:-me-south-1}
+  AWS_BUCKET: ${AWS_BUCKET:-}
+  AWS_URL: ${AWS_URL:-}
+  AWS_USE_PATH_STYLE_ENDPOINT: ${AWS_USE_PATH_STYLE_ENDPOINT:-false}
+  GOOGLE_CLOUD_PROJECT_ID: ${GOOGLE_CLOUD_PROJECT_ID:-}
+  GOOGLE_CLOUD_STORAGE_BUCKET: ${GOOGLE_CLOUD_STORAGE_BUCKET:-}
+  GOOGLE_CLOUD_KEY_FILE: ${GOOGLE_CLOUD_KEY_FILE:-}
+  # --- mail (verification codes, password resets) ---
+  MAIL_MAILER: ${MAIL_MAILER:-log}
+  MAIL_HOST: ${MAIL_HOST:-}
+  MAIL_PORT: ${MAIL_PORT:-}
+  MAIL_USERNAME: ${MAIL_USERNAME:-}
+  MAIL_PASSWORD: ${MAIL_PASSWORD:-}
+  MAIL_FROM_ADDRESS: ${MAIL_FROM_ADDRESS:-fleet@example.com}
+  MAIL_FROM_NAME: ${MAIL_FROM_NAME:-Jalal Fleet}
+  # --- timezone ---
+  # TZ only affects the container's system clock (log lines, `date`, go-crond). Laravel forces `config('app.timezone') = 'UTC'`
+  # (api/config/app.php is hard-coded) and Service Tracker reads/writes UTC and renders in its own `settings.timezone`
+  # (default Asia/Riyadh). Do NOT set TZ on the `database` service: MySQL `NOW()` / CURRENT_TIMESTAMP defaults would then
+  # drift 3 h away from the UTC values Laravel writes.
+  TZ: ${TZ:-Asia/Riyadh}
+
+services:
+  database:
+    # stock command keeps binary logging off; we additionally pin the server zone to UTC so a host TZ can never leak in.
+    command: ["mysqld", "--skip-log-bin", "--default-time-zone=+00:00"]
+    ports: !override
+      - "127.0.0.1:${DB_PORT:-3306}:3306"
+    volumes: !override
+      - fleetbase_mysql:/var/lib/mysql
+    environment:
+      MYSQL_ALLOW_EMPTY_PASSWORD: !reset null
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD:?set DB_ROOT_PASSWORD in .env}
+      MYSQL_DATABASE: fleetbase
+      MYSQL_USER: ${DB_USERNAME:-fleetbase}
+      MYSQL_PASSWORD: ${DB_PASSWORD:?set DB_PASSWORD in .env}
+
+  cache:
+    # redis only needs to be reachable from the compose network (no published port in the stock file either)
+    volumes:
+      - fleetbase_redis:/data
+
+  socket:
+    ports: !override
+      - "127.0.0.1:38000:8000"
+    environment:
+      # browsers connect to wss://${API_FQDN}/socketcluster/ through the reverse proxy
+      SOCKETCLUSTER_OPTIONS: '{"origins":"https://${CONSOLE_FQDN}:*,wss://${API_FQDN}:*,https://${API_FQDN}:*"}'
+
+  application:
+    image: *api-image
+    build:
+      context: .
+      dockerfile: jalal-ops/Dockerfile.api
+      args:
+        BASE_IMAGE: ${FLEETBASE_API_BASE_IMAGE:-fleetbase/fleetbase-api:latest}
+        SERVICE_TRACKER_DIR: packages/service-tracker/server
+        GITHUB_AUTH_KEY: ${GITHUB_AUTH_KEY:-}
+    # No `--watch` (that is the dev stage); same command as the stock app-release image.
+    command: ["sh", "-c", "php artisan octane:frankenphp --max-requests=1000 --port=8000 --host=0.0.0.0"]
+    environment: *api-env
+    volumes: !override
+      - ./api/.env:/fleetbase/api/.env
+      # photos / receipts / generated files when FILESYSTEM_DRIVER=public (local). Back this directory up (ops/CUTOVER.md).
+      - fleetbase_storage_app:/fleetbase/api/storage/app
+      - fleetbase_storage_logs:/fleetbase/api/storage/logs
+
+  queue:
+    image: *api-image
+    environment: *api-env
+    volumes:
+      - fleetbase_storage_app:/fleetbase/api/storage/app
+      - fleetbase_storage_logs:/fleetbase/api/storage/logs
+
+  scheduler:
+    # Runs `php artisan schedule:run` every minute (docker/crontab). FleetOps registers
+    # `fleetops:process-maintenance-triggers` DAILY in its service provider, so this container IS the maintenance worker.
+    # Laravel's schedule uses app.timezone (UTC): "daily" fires at 00:00 UTC = 03:00 Asia/Riyadh.
+    image: *api-image
+    environment: *api-env
+    volumes:
+      - fleetbase_storage_app:/fleetbase/api/storage/app
+      - fleetbase_storage_logs:/fleetbase/api/storage/logs
+
+  console:
+    build:
+      context: ./console
+      dockerfile: ../jalal-ops/Dockerfile.console
+      args:
+        ENVIRONMENT: production
+        DISABLE_RUNTIME_CONFIG: "false"
+    ports: !override
+      - "127.0.0.1:4200:4200"
+    volumes:
+      # runtime config (API_HOST, socket host): edit without rebuilding. Written by ops/scripts/prepare-fleetbase.sh.
+      - ./console/fleetbase.config.json:/usr/share/nginx/html/fleetbase.config.json:ro
+
+  httpd:
+    ports: !override
+      - "127.0.0.1:8000:80"
+    environment:
+      TZ: ${TZ:-Asia/Riyadh}
+
+volumes:
+  fleetbase_mysql:
+  fleetbase_redis:
+  fleetbase_storage_app:
+  fleetbase_storage_logs:

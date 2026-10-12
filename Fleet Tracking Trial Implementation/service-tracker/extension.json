@@ -1,0 +1,10 @@
+{
+    "name": "Service Tracker",
+    "version": "0.1.0",
+    "description": "Fleet service turnaround, vendor stops, damage and petty cash tracking for Fleetbase FleetOps.",
+    "repository": "https://github.com/jalal-holding/service-tracker",
+    "license": "MIT",
+    "author": "Jalal Holding",
+    "engine": "package.json",
+    "api": "server/composer.json"
+}

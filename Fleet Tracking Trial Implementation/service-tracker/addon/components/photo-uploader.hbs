@@ -1,0 +1,55 @@
+<div ...attributes>
+  <div
+    class="cursor-pointer rounded-lg border-2 border-dashed px-3 py-4 text-center text-sm {{if this.over "border-blue-500 bg-blue-50 dark:bg-blue-950" "border-gray-300 dark:border-gray-600"}} {{if this.disabled "opacity-60"}}"
+    tabindex="0"
+    role="button"
+    title={{t "service-tracker.photos.zone-title"}}
+    {{on "click" (fn this.openPicker (concat "st-file-" @subject.collection "-" @subject.uuid))}}
+    {{on "dragover" this.dragOver}}
+    {{on "dragleave" this.dragLeave}}
+    {{on "drop" this.drop}}
+    {{on "paste" this.paste}}
+  >
+    <div class="font-medium">{{if @label @label (t "service-tracker.photos.add")}}</div>
+    <div class="mt-0.5 text-xs text-gray-500">
+      {{#if @subject.uuid}}
+        {{if @hint @hint (t "service-tracker.photos.hint")}}
+      {{else}}
+        {{t "service-tracker.photos.save-first"}}
+      {{/if}}
+    </div>
+    {{#if this.busy}}
+      <div class="mt-1 text-xs text-blue-600">{{t "service-tracker.photos.uploading" count=this.pending}}</div>
+    {{/if}}
+  </div>
+  <input
+    id={{concat "st-file-" @subject.collection "-" @subject.uuid}}
+    type="file"
+    accept="image/*"
+    multiple
+    class="hidden"
+    disabled={{this.disabled}}
+    {{on "change" this.choose}}
+  />
+  <div class="mt-1.5 flex gap-2 text-xs">
+    <label class="inline-flex cursor-pointer items-center gap-1 rounded border border-gray-300 dark:border-gray-600 px-2 py-1 hover:bg-gray-50 dark:hover:bg-gray-700 {{if this.disabled "pointer-events-none opacity-50"}}">
+      {{t "service-tracker.photos.camera"}}
+      <input type="file" accept="image/*" capture="environment" class="hidden" disabled={{this.disabled}} {{on "change" this.choose}} />
+    </label>
+  </div>
+  {{#if this.photos.length}}
+    <div class="mt-2 flex flex-wrap gap-2">
+      {{#each this.photos as |p|}}
+        <div class="relative h-20 w-20 overflow-hidden rounded border border-gray-300 dark:border-gray-600">
+          <a href={{p.url}} target="_blank" rel="noopener noreferrer"><img src={{p.url}} alt={{t "service-tracker.photos.alt"}} class="h-full w-full object-cover" /></a>
+          <button
+            type="button"
+            class="absolute right-0.5 top-0.5 h-5 w-5 rounded-full bg-black/60 text-xs leading-5 text-white"
+            title={{t "service-tracker.photos.remove"}}
+            {{on "click" (fn this.remove p)}}
+          >×</button>
+        </div>
+      {{/each}}
+    </div>
+  {{/if}}
+</div>
